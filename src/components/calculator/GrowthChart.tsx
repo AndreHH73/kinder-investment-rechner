@@ -83,15 +83,15 @@ export function GrowthChart({
             onClick={() => onToggleCompare(!compareEnabled)}
             className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 font-medium ${
               compareEnabled
-                ? "border-sky-500 bg-sky-50 text-sky-700"
-                : "border-slate-200 bg-slate-50 text-slate-600"
+                ? "border-primary bg-primary/5 text-primary"
+                : "border-muted bg-background text-slate-600"
             }`}
           >
             <span
               className={`flex h-3 w-3 items-center justify-center rounded-full border ${
                 compareEnabled
-                  ? "border-sky-500 bg-sky-500"
-                  : "border-slate-300 bg-white"
+                  ? "border-primary bg-primary"
+                  : "border-muted bg-surface"
               }`}
             >
               {compareEnabled && (
@@ -100,7 +100,7 @@ export function GrowthChart({
             </span>
             Szenarien vergleichen
           </button>
-          <div className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1">
+          <div className="inline-flex items-center gap-2 rounded-full bg-background px-3 py-1">
             <span className="font-medium text-slate-600">Vergleichsspanne</span>
             {[50, 100, 200].map((value) => (
               <button
@@ -109,8 +109,8 @@ export function GrowthChart({
                 onClick={() => onRangeChange(value)}
                 className={`rounded-full px-2 py-0.5 ${
                   comparisonRange === value
-                    ? "bg-slate-900 text-slate-50"
-                    : "bg-white text-slate-700"
+                    ? "bg-primary text-surface"
+                    : "bg-surface text-slate-700"
                 }`}
               >
                 ±{value} €

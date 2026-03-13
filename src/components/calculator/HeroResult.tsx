@@ -15,50 +15,68 @@ export function HeroResult({ inputs, simulation }: HeroResultProps) {
   const years = inputs.targetAge - inputs.childAge;
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-7 text-slate-100 shadow-xl">
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_top,_#38bdf8_0,_transparent_55%),_radial-gradient(circle_at_bottom,_#22c55e_0,_transparent_55%)] opacity-40" />
-      <div className="relative flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="max-w-xl space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-300">
-            Projektiertes Vermögen
+    <section
+      className="mx-auto max-w-3xl rounded-3xl px-6 py-8 text-slate-100 shadow-xl md:max-w-5xl md:px-10 md:py-10"
+      style={{
+        background:
+          "linear-gradient(135deg, #0F2A44 0%, #1C4E80 60%, #0F2A44 100%)",
+      }}
+    >
+      <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="space-y-4">
+          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
+            Prognose zum Zielalter
           </p>
-          <h1 className="text-2xl font-semibold leading-tight md:text-3xl">
-            Mit{" "}
-            <span className="text-sky-300">
-              {formatCurrency(inputs.monthlyContribution)}
-            </span>{" "}
-            monatlich könnte dein Kind mit{" "}
-            <span className="text-sky-300">{inputs.targetAge}</span> Jahren
-            etwa{" "}
-            <span className="text-sky-300">{formatCurrency(endValue)}</span>{" "}
-            erreichen.
+          <h1 className="text-base font-medium text-slate-100 md:text-lg">
+            <span className="block">
+              Mit{" "}
+              <span className="font-semibold">
+                {formatCurrency(inputs.monthlyContribution).replace("€", "€")}
+              </span>{" "}
+              monatlich
+            </span>
+            <span className="block">könnte dein Kind</span>
           </h1>
-          <p className="text-sm text-slate-300">
-            Das entspricht einem geschätzten Ertrag von{" "}
-            <span className="font-semibold text-emerald-300">
-              {formatCurrency(gain)}
-            </span>{" "}
-            bei einer angenommenen Rendite von{" "}
-            <span className="font-semibold text-sky-200">
-              {formatPercent(inputs.expectedReturnPercentPerYear)}
-            </span>{" "}
-            über rund <span className="font-semibold">{years} Jahre</span>.
+          <p className="mt-1 text-5xl font-semibold tracking-tight text-[#2FA36B] md:text-6xl">
+            {formatCurrency(endValue)}
+          </p>
+          <p className="text-sm text-slate-200">
+            mit{" "}
+            <span className="font-semibold">{inputs.targetAge} Jahren</span>{" "}
+            erreichen.
+          </p>
+          <p className="mt-3 text-[11px] text-slate-200">
+            Davon etwa{" "}
+            <span className="font-semibold">{formatCurrency(gain)}</span>{" "}
+            Zinseszins-Ertrag über{" "}
+            <span className="font-semibold">{years} Jahre</span>.
           </p>
         </div>
-        <div className="mt-2 flex flex-col items-start gap-2 text-xs text-slate-300 md:items-end">
-          <div className="rounded-2xl bg-white/5 px-3 py-2 backdrop-blur">
-            <p className="text-[11px] uppercase tracking-[0.16em] text-slate-400">
-              Bisher eingezahlt (Projektion)
-            </p>
-            <p className="mt-1 text-sm font-semibold text-slate-50">
+        <div className="mt-4 flex flex-wrap gap-6 text-[11px] text-slate-200 md:justify-end">
+          <div>
+            <p className="text-xl font-semibold text-slate-50">
               {formatCurrency(totalContributions)}
             </p>
+            <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
+              Eingezahlt
+            </p>
           </div>
-          <p className="max-w-xs text-[11px] text-slate-400">
-            Hinweis: Es handelt sich um eine vereinfachte Hochrechnung auf Basis
-            der aktuellen Parameter. Steuern, Kosten und Inflation werden nicht
-            berücksichtigt.
-          </p>
+          <div>
+            <p className="text-xl font-semibold text-[#2FA36B]">
+              {formatCurrency(gain)}
+            </p>
+            <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
+              Ertrag / Gewinn
+            </p>
+          </div>
+          <div>
+            <p className="text-xl font-semibold text-slate-50">
+              {formatPercent(inputs.expectedReturnPercentPerYear)}
+            </p>
+            <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
+              Renditeannahme
+            </p>
+          </div>
         </div>
       </div>
     </section>

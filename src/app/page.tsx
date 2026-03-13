@@ -8,6 +8,8 @@ import { GrowthChart } from "@/components/calculator/GrowthChart";
 import { HeroResult } from "@/components/calculator/HeroResult";
 import { MilestoneForm } from "@/components/calculator/MilestoneForm";
 import { MilestonesSection } from "@/components/calculator/MilestonesSection";
+import { MobileInputStep } from "@/components/calculator/MobileInputStep";
+import { MobileResultStep } from "@/components/calculator/MobileResultStep";
 import { ParameterCard } from "@/components/calculator/ParameterCard";
 import { SavePlanModal } from "@/components/calculator/SavePlanModal";
 import { SummaryCards } from "@/components/calculator/SummaryCards";
@@ -31,6 +33,7 @@ export default function HomePage() {
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [compareScenarios, setCompareScenarios] = useState(false);
   const [comparisonRange, setComparisonRange] = useState<number>(200);
+  const [mobileStep, setMobileStep] = useState<1 | 2>(1);
 
   const {
     simulation,
@@ -46,17 +49,6 @@ export default function HomePage() {
     higherMonthly: number;
   } = useMemo(() => {
     const base = runCalculatorSimulation(inputs, milestones);
-
-    if (!compareScenarios) {
-      return {
-        simulation: base,
-        chartPoints: base.points,
-        ahaDifference: 0,
-        lowerMonthly: inputs.monthlyContribution,
-        higherMonthly: inputs.monthlyContribution,
-      };
-    }
-
     const delta = comparisonRange;
 
     const lowerInputs: CalculatorInputs = {
@@ -71,17 +63,19 @@ export default function HomePage() {
     const lower = runCalculatorSimulation(lowerInputs, milestones);
     const higher = runCalculatorSimulation(higherInputs, milestones);
 
-    const chartPoints = base.points.map((point, index) => ({
-      ...point,
-      lowerPortfolioValue:
-        lower.points[index]?.portfolioValue ?? point.portfolioValue,
-      higherPortfolioValue:
-        higher.points[index]?.portfolioValue ?? point.portfolioValue,
-      lowerContributionsValue:
-        lower.points[index]?.contributionsValue ?? point.contributionsValue,
-      higherContributionsValue:
-        higher.points[index]?.contributionsValue ?? point.contributionsValue,
-    }));
+    const chartPoints = compareScenarios
+      ? base.points.map((point, index) => ({
+          ...point,
+          lowerPortfolioValue:
+            lower.points[index]?.portfolioValue ?? point.portfolioValue,
+          higherPortfolioValue:
+            higher.points[index]?.portfolioValue ?? point.portfolioValue,
+          lowerContributionsValue:
+            lower.points[index]?.contributionsValue ?? point.contributionsValue,
+          higherContributionsValue:
+            higher.points[index]?.contributionsValue ?? point.contributionsValue,
+        }))
+      : base.points;
 
     return {
       simulation: base,
@@ -101,58 +95,112 @@ export default function HomePage() {
         <CalculatorHeader />
         <HeroResult inputs={inputs} simulation={simulation?.core ?? null} />
 
-        <section className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)]">
-          <ParameterCard value={inputs} onChange={setInputs} />
-          <GrowthChart
-            points={chartPoints}
-            compareEnabled={compareScenarios}
-            onToggleCompare={setCompareScenarios}
-            comparisonRange={comparisonRange}
-            onRangeChange={setComparisonRange}
-            baseMonthly={inputs.monthlyContribution}
-            lowerMonthly={lowerMonthly}
-            higherMonthly={higherMonthly}
-            ahaDifference={ahaDifference}
-          />
-        </section>
-
-        <div className="space-y-3">
-          <SummaryCards result={simulation} />
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => setSaveModalOpen(true)}
-              className="rounded-full bg-slate-900 px-4 py-2 text-xs font-medium text-slate-50 shadow-sm hover:bg-slate-800"
-            >
-              Plan speichern
-            </button>
-          </div>
+        {/* Mobile Flow */}
+        <div className="space-y-4 lg:hidden">
+          {mobileStep === 1 && (
+            <MobileInputStep
+              value={inputs}
+              onChange={setInputs}
+              onNext={() => setMobileStep(2)}
+            />
+          )}
+          {mobileStep === 2 && (
+            <MobileResultStep
+              simulation={simulation}
+              points={chartPoints}
+              compareEnabled={compareScenarios}
+              onToggleCompare={setCompareScenarios}
+              comparisonRange={comparisonRange}
+              onRangeChange={setComparisonRange}
+              baseMonthly={inputs.monthlyContribution}
+              lowerMonthly={lowerMonthly}
+              higherMonthly={higherMonthly}
+              ahaDifference={ahaDifference}
+              milestones={milestones}
+              onAddMilestone={() => {
+                const nextAge =
+                  (milestones[milestones.length - 1]?.age ??
+                    inputs.childAge + 1) as number;
+                setMilestoneMode("create");
+                setEditingMilestone({
+                  id: `m-${Date.now()}`,
+                  title: "",
+                  age: nextAge,
+                  amount: 0,
+                  type: "expense",
+                  description: "",
+                });
+              }}
+              onEditMilestone={(milestone) => {
+                setMilestoneMode("edit");
+                setEditingMilestone(milestone);
+              }}
+              onDeleteMilestone={(id) => {
+                setMilestones((prev) => prev.filter((m) => m.id !== id));
+              }}
+              onBack={() => setMobileStep(1)}
+              onSelectScenarioAmount={(amount) =>
+                setInputs((prev) => ({ ...prev, monthlyContribution: amount }))
+              }
+            />
+          )}
         </div>
 
-        <MilestonesSection
-          milestones={milestones}
-          onAdd={() => {
-            const nextAge = (milestones[milestones.length - 1]?.age ??
-              inputs.childAge +
-                1) as number;
-            setMilestoneMode("create");
-            setEditingMilestone({
-              id: `m-${Date.now()}`,
-              title: "",
-              age: nextAge,
-              amount: 0,
-              type: "expense",
-              description: "",
-            });
-          }}
-          onEdit={(milestone) => {
-            setMilestoneMode("edit");
-            setEditingMilestone(milestone);
-          }}
-          onDelete={(id) => {
-            setMilestones((prev) => prev.filter((m) => m.id !== id));
-          }}
-        />
+        {/* Desktop Layout */}
+        <div className="hidden flex-col gap-6 lg:flex">
+          <section className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)]">
+            <ParameterCard value={inputs} onChange={setInputs} />
+            <GrowthChart
+              points={chartPoints}
+              compareEnabled={compareScenarios}
+              onToggleCompare={setCompareScenarios}
+              comparisonRange={comparisonRange}
+              onRangeChange={setComparisonRange}
+              baseMonthly={inputs.monthlyContribution}
+              lowerMonthly={lowerMonthly}
+              higherMonthly={higherMonthly}
+              ahaDifference={ahaDifference}
+            />
+          </section>
+
+          <div className="space-y-3">
+            <SummaryCards result={simulation} />
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setSaveModalOpen(true)}
+                className="rounded-full bg-slate-900 px-4 py-2 text-xs font-medium text-slate-50 shadow-sm hover:bg-slate-800"
+              >
+                Plan speichern
+              </button>
+            </div>
+          </div>
+
+          <MilestonesSection
+            milestones={milestones}
+            onAdd={() => {
+              const nextAge =
+                (milestones[milestones.length - 1]?.age ??
+                  inputs.childAge + 1) as number;
+              setMilestoneMode("create");
+              setEditingMilestone({
+                id: `m-${Date.now()}`,
+                title: "",
+                age: nextAge,
+                amount: 0,
+                type: "expense",
+                description: "",
+              });
+            }}
+            onEdit={(milestone) => {
+              setMilestoneMode("edit");
+              setEditingMilestone(milestone);
+            }}
+            onDelete={(id) => {
+              setMilestones((prev) => prev.filter((m) => m.id !== id));
+            }}
+          />
+        </div>
 
         <footer className="mt-4 border-t border-slate-200 pt-4 text-[11px] text-slate-500">
           <p className="max-w-4xl">

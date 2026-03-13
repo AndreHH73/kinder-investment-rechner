@@ -1,22 +1,20 @@
+import Image from "next/image";
+
 export function CalculatorHeader() {
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-slate-200 pb-4">
-      <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-sky-600 text-sm font-semibold text-white shadow-md shadow-sky-500/40">
-          KI
-        </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-            Kinder-Investment
-          </p>
-          <p className="text-sm font-medium text-slate-900">
-            Zukunftsplaner für dein Kind
-          </p>
-        </div>
+    <header className="flex flex-col items-center gap-3 border-b border-muted pb-6 pt-4 md:pb-8 md:pt-6">
+      <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-surface shadow-sm ring-1 ring-muted md:h-20 md:w-20">
+        <Image
+          src="/logo.png"
+          alt="4FutureFamily Logo"
+          width={80}
+          height={80}
+          className="h-full w-full object-cover"
+        />
       </div>
-      <div className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-600">
-        Modellhafte Simulation – keine Anlageempfehlung
-      </div>
+      <p className="text-sm font-semibold tracking-tight text-foreground md:text-base">
+        Zukunftsplaner für dein Kind
+      </p>
     </header>
   );
 }

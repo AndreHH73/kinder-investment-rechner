@@ -24,7 +24,7 @@ export function MilestonesSection({
     .reduce((sum, m) => sum + Math.abs(m.amount), 0);
 
   return (
-    <section className="rounded-3xl bg-white p-6 shadow-lg shadow-slate-900/5">
+    <section className="rounded-3xl bg-white p-5 shadow-sm shadow-slate-900/5 md:p-6">
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-sm font-semibold text-slate-900">
@@ -54,16 +54,16 @@ export function MilestonesSection({
           return (
             <article
               key={m.id}
-              className="flex flex-col justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4"
+              className="flex flex-col justify-between rounded-2xl border border-slate-100 bg-slate-50/80 p-4"
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
-                    Alter {m.age}
-                  </p>
-                  <h3 className="mt-1 text-sm font-semibold text-slate-900">
+                  <h3 className="text-sm font-semibold text-slate-900">
                     {m.title}
                   </h3>
+                  <p className="mt-0.5 text-[11px] text-slate-500">
+                    {m.age} Jahre
+                  </p>
                   {m.description && (
                     <p className="mt-1 text-[11px] text-slate-600">
                       {m.description}
