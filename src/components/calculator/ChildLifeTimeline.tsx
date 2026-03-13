@@ -102,16 +102,23 @@ export function ChildLifeTimeline({
   return (
     <section
       id="child-life-timeline"
-      className="mx-auto w-full max-w-[420px] rounded-3xl bg-surface p-4 shadow-sm shadow-primary/5"
+      className="mx-auto w-full max-w-[480px] rounded-3xl p-8 shadow-xl shadow-slate-900/40"
+      style={{
+        background:
+          "linear-gradient(135deg, #0F2A44 0%, #1C4E80 60%, #0F2A44 100%)",
+      }}
     >
-      <h2 className="text-sm font-semibold text-slate-900">
-        Lebensweg deines Kindes
+      <h2 className="text-2xl font-semibold text-slate-50 md:text-3xl">
+        Der Lebensweg deines Kindes
       </h2>
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-2 text-sm text-blue-100">
+        Plane die wichtigsten Lebensschritte deines Kindes – und sieh sofort, ob dein Sparplan dafür reicht.
+      </p>
+      <p className="mt-1 text-xs text-blue-200/80">
         Sieh, wie sich das Vermögen über den Lebensweg entwickelt – mit oder ohne geplante Meilensteine.
       </p>
 
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="mt-5 flex flex-col gap-5">
         {items.map((item, index) => {
           const isFirst = index === 0;
           const isLast = index === items.length - 1;
@@ -119,34 +126,34 @@ export function ChildLifeTimeline({
           return (
             <div
               key={index}
-              className="flex items-stretch gap-3 text-xs text-slate-700"
+              className="flex items-stretch gap-3 text-xs text-blue-50"
             >
               {/* Left: Age */}
-              <div className="w-14 text-right text-[11px] font-medium text-slate-500">
+              <div className="w-16 text-right text-[12px] font-medium text-blue-100">
                 {Math.round(item.age)} Jahre
               </div>
 
               {/* Middle: Timeline */}
-              <div className="flex w-8 flex-col items-center">
+              <div className="flex w-10 flex-col items-center">
                 {!isFirst && (
-                  <div className="h-4 w-px bg-slate-200" aria-hidden="true" />
+                  <div className="h-4 w-px bg-blue-300/60" aria-hidden="true" />
                 )}
-                <div className="flex h-6 items-center">
-                  <div className="h-2 w-2 rounded-full bg-sky-500" />
+                <div className="flex h-8 items-center">
+                  <div className="h-4 w-4 rounded-full bg-sky-400 shadow-sm shadow-sky-900/40" />
                 </div>
                 {!isLast && (
-                  <div className="flex-1 w-px bg-slate-200" aria-hidden="true" />
+                  <div className="flex-1 w-px bg-blue-300/60" aria-hidden="true" />
                 )}
               </div>
 
               {/* Right: Content – reine Text-Timeline */}
-              <div className="flex-1 space-y-0.5 text-[11px]">
+              <div className="flex-1 space-y-1 text-[12px] md:text-[13px]">
                 {item.type === "start" && (
                   <>
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-slate-50">
                       Start des Sparplans
                     </p>
-                    <p className="text-slate-600">
+                    <p className="text-blue-100">
                       {item.description}
                     </p>
                   </>
@@ -154,12 +161,12 @@ export function ChildLifeTimeline({
 
                 {item.type === "fixed" && (
                   <>
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-slate-50">
                       {item.label}
                     </p>
-                    <p className="text-slate-600">
+                    <p className="text-blue-100">
                       Vermögen danach:{" "}
-                      <span className="font-semibold">
+                      <span className="font-semibold text-emerald-200">
                         {item.description}
                       </span>
                     </p>
@@ -168,13 +175,13 @@ export function ChildLifeTimeline({
 
                 {item.type === "end" && (
                   <>
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-slate-50">
                       🏁 Zielvermögen
                     </p>
-                    <p className="text-slate-600">
+                    <p className="text-blue-100">
                       Mit {Math.round(item.age)} Jahren
                     </p>
-                    <p className="text-sm font-semibold text-emerald-600">
+                    <p className="text-sm font-semibold text-emerald-300">
                       {item.description}
                     </p>
                   </>
@@ -182,23 +189,23 @@ export function ChildLifeTimeline({
 
                 {item.type === "milestone" && item.milestone && (
                   <>
-                    <p className="font-semibold text-slate-900">
-                      <span className="mr-1">
+                    <p className="font-semibold text-slate-50">
+                      <span className="mr-1 text-lg">
                         {getIconForMilestone(item.milestone)}
                       </span>
                       {item.milestone.title}
                     </p>
                     {item.detail && (
                       <>
-                        <p className="text-slate-600">
+                        <p className="text-blue-100">
                           Kosten:{" "}
-                          <span className="font-semibold">
+                          <span className="font-semibold text-rose-200">
                             {formatCurrency(Math.abs(item.milestone.amount))}
                           </span>
                         </p>
-                        <p className="text-slate-600">
+                        <p className="text-blue-100">
                           Vermögen danach:{" "}
-                          <span className="font-semibold">
+                          <span className="font-semibold text-emerald-200">
                             {formatCurrency(item.detail.balanceAfter)}
                           </span>
                         </p>

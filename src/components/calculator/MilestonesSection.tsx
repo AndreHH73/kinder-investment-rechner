@@ -112,7 +112,7 @@ export function MilestonesSection({
     <section className="rounded-3xl bg-white p-5 shadow-sm shadow-slate-900/5 md:p-6">
       <div>
         <h2 className="text-sm font-semibold text-slate-900">
-          Finanzielle Meilensteine
+          Welche Schritte möchtest du ermöglichen?
         </h2>
         <p className="mt-1 text-xs text-slate-500">
           Plane wichtige Lebensereignisse deines Kindes und sieh direkt, wie
@@ -157,7 +157,7 @@ export function MilestonesSection({
       </div>
 
       {/* Gruppe 2: Finanzierungsstatus */}
-      <div className="mt-5">
+      <div className="mt-4">
         {milestones.length > 0 && recommendation != null && (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
             <p className="text-sm font-semibold text-amber-900">
@@ -186,20 +186,14 @@ export function MilestonesSection({
         )}
 
         {milestones.length > 0 ? (
-          <div
-            className="mt-4 rounded-3xl px-5 py-5 text-[11px] text-slate-100 shadow-xl shadow-slate-900/40"
-            style={{
-              background:
-                "linear-gradient(135deg, #0F2A44 0%, #1C4E80 60%, #0F2A44 100%)",
-            }}
-          >
-            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
+          <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-4 text-[11px] text-slate-900 shadow-sm shadow-slate-200">
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Finanzierungsstatus deiner Meilensteine
             </p>
-            <p className="mt-1 text-xs text-slate-100/80">
+            <p className="mt-1 text-xs text-slate-600">
               Sieh auf einen Blick, welche Ziele bereits voll oder teilweise finanziert sind.
             </p>
-            <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
               {sorted
                 .filter((m) => m.amount < 0)
                 .map((m) => {
@@ -226,16 +220,16 @@ export function MilestonesSection({
                   return (
                     <div
                       key={`status-${m.id}`}
-                      className="flex flex-col justify-between rounded-2xl bg-slate-900/40 px-3 py-3 shadow-sm shadow-slate-900/40 ring-1 ring-slate-700/60"
+                      className="flex flex-col justify-between rounded-xl bg-white px-3 py-3 shadow-sm shadow-slate-200 ring-1 ring-slate-200"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-lg">{getIconForMilestone(m)}</span>
+                          <span className="text-xl">{getIconForMilestone(m)}</span>
                           <div>
-                            <p className="text-xs font-semibold text-slate-50">
+                            <p className="text-xs font-semibold text-slate-900">
                               {m.title}
                             </p>
-                            <p className="text-[10px] text-slate-300/80">
+                            <p className="text-[10px] text-slate-500">
                               Alter {Math.round(m.age)} – Ziel:{" "}
                               {formatCurrency(Math.abs(m.amount))}
                             </p>
@@ -248,17 +242,17 @@ export function MilestonesSection({
                         )}
                       </div>
                       <div className="mt-2">
-                        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800/80">
+                        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                           <div
                             className={`h-full rounded-full ${barColor} transition-all`}
                             style={{ width: `${progress}%` }}
                           />
                         </div>
-                        <p className="mt-1 text-[10px] text-slate-200">
+                        <p className="mt-1 text-[10px] text-slate-600">
                           {progress} %
                         </p>
                       </div>
-                      <div className="mt-1 space-y-0.5 text-[10px] text-slate-100">
+                      <div className="mt-1 space-y-0.5 text-[10px] text-slate-700">
                         {progress >= 100 ? (
                           <p>
                             {formatCurrency(detail.cost)} finanziert
@@ -278,8 +272,8 @@ export function MilestonesSection({
                         )}
                       </div>
                       {openDetailId === m.id && (
-                        <div className="mt-2 rounded-xl bg-slate-900/70 px-3 py-2 text-[10px] text-slate-100">
-                          <p className="font-semibold text-slate-100">
+                        <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-[10px] text-slate-700">
+                          <p className="font-semibold text-slate-900">
                             Vermögen mit {Math.round(m.age)} Jahren
                           </p>
                           <p className="mt-0.5">
@@ -287,14 +281,14 @@ export function MilestonesSection({
                               {formatCurrency(detail.balanceAtAge)}
                             </span>
                           </p>
-                          <p className="mt-1 text-slate-200">
+                          <p className="mt-1 text-slate-700">
                             Kosten
                             {" "}
                             <span className="font-semibold">
                               {formatCurrency(-Math.abs(m.amount))}
                             </span>
                           </p>
-                          <p className="mt-1 text-slate-200">
+                          <p className="mt-1 text-slate-700">
                             Verbleibend danach
                             {" "}
                             <span className="font-semibold">
@@ -302,7 +296,7 @@ export function MilestonesSection({
                             </span>
                           </p>
                           {detail.status && (
-                            <p className="mt-1 text-slate-200">
+                            <p className="mt-1 text-slate-700">
                               Status
                               {" "}
                               <span className="font-semibold">
@@ -320,7 +314,7 @@ export function MilestonesSection({
                               openDetailId === m.id ? null : m.id,
                             )
                           }
-                          className="text-[10px] font-medium text-slate-200 underline-offset-2 hover:underline"
+                          className="text-[10px] font-medium text-slate-700 underline-offset-2 hover:underline"
                         >
                           {openDetailId === m.id
                             ? "Details ausblenden"
@@ -330,14 +324,14 @@ export function MilestonesSection({
                           <button
                             type="button"
                             onClick={() => onEdit(m)}
-                            className="text-[10px] text-slate-200 hover:text-white"
+                            className="text-[10px] text-slate-600 hover:text-slate-900"
                           >
                             Bearbeiten
                           </button>
                           <button
                             type="button"
                             onClick={() => onDelete(m.id)}
-                            className="text-[10px] text-rose-200 hover:text-rose-100"
+                            className="text-[10px] text-rose-500 hover:text-rose-700"
                           >
                             Entfernen
                           </button>

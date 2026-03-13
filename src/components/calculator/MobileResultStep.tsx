@@ -62,8 +62,8 @@ export function MobileResultStep({
   return (
     <div className="space-y-4">
       <section className="rounded-3xl bg-surface p-5 shadow-sm shadow-primary/5">
-        <p className="text-sm text-slate-600">
-          So verändert mehr Sparen das Ergebnis
+        <p className="text-xl font-semibold text-slate-800">
+          Was passiert, wenn du mehr sparst?
         </p>
 
         <div className="mt-4">
