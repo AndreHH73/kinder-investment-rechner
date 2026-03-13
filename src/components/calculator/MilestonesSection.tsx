@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { formatCurrency, formatCurrencyWithSign } from "@/lib/format";
 import type { Milestone, MilestoneDetail } from "@/types/calculator";
 
@@ -89,6 +91,7 @@ export function MilestonesSection({
   onDelete,
 }: MilestonesSectionProps) {
   const sorted = [...milestones].sort((a, b) => a.age - b.age);
+  const [openDetailId, setOpenDetailId] = useState<string | null>(null);
 
   const getIconForMilestone = (m: Milestone): string => {
     const templateMatch = LIFEEVENT_TEMPLATES.find(
@@ -153,177 +156,50 @@ export function MilestonesSection({
         </div>
       </div>
 
-      {/* Gruppe 2: Freie Meilensteine */}
+      {/* Gruppe 2: Finanzierungsstatus */}
       <div className="mt-5">
-        <div className="flex items-center justify-between gap-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Deine Meilensteine
-          </h3>
-          <button
-            type="button"
-            onClick={onAdd}
-            className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-200"
-          >
-            + Meilenstein hinzufügen
-          </button>
-        </div>
-
-      {milestones.length > 0 ? (
-        <>
-          {recommendation != null && (
-            <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
-              <p className="text-sm font-semibold text-amber-900">
-                Nicht alle Meilensteine sind aktuell finanzierbar.
-              </p>
-              <p className="mt-1 text-sm text-amber-800">
-                Mit ca. {formatCurrency(recommendation.deltaFromCurrent).replace("€", "€")} mehr pro
-                Monat könnte der Plan aufgehen.
-              </p>
-              <p className="mt-1 text-sm font-medium text-amber-900">
-                Empfohlene Sparrate:{" "}
-                {formatCurrency(recommendation.recommendedMonthly).replace("€", "€")} / Monat
-              </p>
-              {onApplyRecommended && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    onApplyRecommended(recommendation.recommendedMonthly)
-                  }
-                  className="mt-3 rounded-full bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-amber-700"
-                >
-                  {formatCurrency(recommendation.recommendedMonthly).replace("€", "€")} übernehmen
-                </button>
-              )}
-            </div>
-          )}
-          <div className="mt-4 grid gap-3 md:grid-cols-2">
-            {sorted.map((m, index) => {
-              const isIncome = m.amount > 0;
-              const hasPreviousExpenseMilestones = sorted
-                .slice(0, index)
-                .some((prev) => prev.amount < 0);
-              const pillColor = isIncome
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-rose-50 text-rose-700";
-              const detail = milestoneDetails.get(m.id);
-
-              const statusTone =
-                detail?.status === "finanzierbar"
-                  ? "text-emerald-600"
-                  : detail?.status === "teilweise finanzierbar"
-                    ? "text-amber-600"
-                    : detail?.status === "nicht finanzierbar"
-                      ? "text-rose-600"
-                      : "";
-
-              return (
-                <article
-                  key={m.id}
-                  className="flex flex-col justify-between rounded-2xl border border-slate-100 bg-slate-50/80 p-4"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="text-sm font-semibold text-slate-900">
-                        {m.title}
-                      </h3>
-                      <p className="mt-0.5 text-[11px] text-slate-500">
-                        {m.age} Jahre
-                      </p>
-                      {m.description && (
-                        <p className="mt-1 text-[11px] text-slate-600">
-                          {m.description}
-                        </p>
-                      )}
-                    </div>
-                    <div
-                      className={`rounded-full px-2 py-1 text-[11px] font-medium ${pillColor}`}
-                    >
-                      {isIncome ? "Einnahme" : "Ausgabe"}
-                    </div>
-                  </div>
-
-                  <div className="mt-3 space-y-1.5 text-[11px] text-slate-600">
-                    <p className="font-medium text-slate-900">
-                      Kosten: {formatCurrency(Math.abs(m.amount))}
-                    </p>
-                    {detail != null && (
-                      <>
-                        <p>
-                          Vermögen mit {Math.round(m.age)} Jahren:{" "}
-                          {formatCurrency(detail.balanceAtAge)}
-                        </p>
-                        {hasPreviousExpenseMilestones && (
-                          <p className="text-xs text-slate-400">
-                            nach vorherigen Meilensteinen berechnet
-                          </p>
-                        )}
-                        <p>
-                          Verbleibend danach:{" "}
-                          {formatCurrency(detail.balanceAfter)}
-                        </p>
-                        {detail.shortfall > 0 && (
-                          <p className="font-medium text-rose-600">
-                            Fehlbetrag: {formatCurrency(detail.shortfall)}
-                          </p>
-                        )}
-                        {detail.status != null && (
-                          <p className={`font-medium ${statusTone}`}>
-                            Status: {detail.status}
-                          </p>
-                        )}
-                        {!isIncome && detail.cost > 0 && (
-                          <div className="mt-2">
-                            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
-                              <div
-                                className="h-full rounded-full bg-sky-500 transition-all"
-                                style={{
-                                  width: `${Math.min(100, detail.progressPercent)}%`,
-                                }}
-                              />
-                            </div>
-                            <p className="mt-0.5 text-[10px] text-slate-500">
-                              {Math.round(detail.progressPercent)} %
-                            </p>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-
-                  <div className="mt-3 flex items-center justify-between text-xs">
-                    <p className="font-semibold text-slate-900">
-                      {formatCurrencyWithSign(m.amount)}
-                    </p>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => onEdit(m)}
-                        className="text-[11px] text-slate-500 hover:text-slate-800"
-                      >
-                        Bearbeiten
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onDelete(m.id)}
-                        className="text-[11px] text-slate-500 hover:text-rose-600"
-                      >
-                        Entfernen
-                      </button>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+        {milestones.length > 0 && recommendation != null && (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
+            <p className="text-sm font-semibold text-amber-900">
+              Nicht alle Meilensteine sind aktuell finanzierbar.
+            </p>
+            <p className="mt-1 text-sm text-amber-800">
+              Mit ca. {formatCurrency(recommendation.deltaFromCurrent).replace("€", "€")} mehr pro
+              Monat könnte der Plan aufgehen.
+            </p>
+            <p className="mt-1 text-sm font-medium text-amber-900">
+              Empfohlene Sparrate:{" "}
+              {formatCurrency(recommendation.recommendedMonthly).replace("€", "€")} / Monat
+            </p>
+            {onApplyRecommended && (
+              <button
+                type="button"
+                onClick={() =>
+                  onApplyRecommended(recommendation.recommendedMonthly)
+                }
+                className="mt-3 rounded-full bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-amber-700"
+              >
+                {formatCurrency(recommendation.recommendedMonthly).replace("€", "€")} übernehmen
+              </button>
+            )}
           </div>
+        )}
 
-          <div className="mt-5 rounded-2xl bg-slate-900 px-4 py-4 text-[11px] text-slate-100">
-            <p className="font-medium uppercase tracking-[0.16em] text-slate-400">
+        {milestones.length > 0 ? (
+          <div
+            className="mt-4 rounded-3xl px-5 py-5 text-[11px] text-slate-100 shadow-xl shadow-slate-900/40"
+            style={{
+              background:
+                "linear-gradient(135deg, #0F2A44 0%, #1C4E80 60%, #0F2A44 100%)",
+            }}
+          >
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
               Finanzierungsstatus deiner Meilensteine
             </p>
-            <p className="mt-1 text-xs text-slate-200">
+            <p className="mt-1 text-xs text-slate-100/80">
               Sieh auf einen Blick, welche Ziele bereits voll oder teilweise finanziert sind.
             </p>
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
               {sorted
                 .filter((m) => m.amount < 0)
                 .map((m) => {
@@ -350,7 +226,7 @@ export function MilestonesSection({
                   return (
                     <div
                       key={`status-${m.id}`}
-                      className="rounded-xl bg-slate-900/40 px-3 py-3 ring-1 ring-slate-700/60"
+                      className="flex flex-col justify-between rounded-2xl bg-slate-900/40 px-3 py-3 shadow-sm shadow-slate-900/40 ring-1 ring-slate-700/60"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
@@ -359,7 +235,7 @@ export function MilestonesSection({
                             <p className="text-xs font-semibold text-slate-50">
                               {m.title}
                             </p>
-                            <p className="text-[10px] text-slate-400">
+                            <p className="text-[10px] text-slate-300/80">
                               Alter {Math.round(m.age)} – Ziel:{" "}
                               {formatCurrency(Math.abs(m.amount))}
                             </p>
@@ -372,17 +248,17 @@ export function MilestonesSection({
                         )}
                       </div>
                       <div className="mt-2">
-                        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-700">
+                        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800/80">
                           <div
                             className={`h-full rounded-full ${barColor} transition-all`}
                             style={{ width: `${progress}%` }}
                           />
                         </div>
-                        <p className="mt-1 text-[10px] text-slate-300">
+                        <p className="mt-1 text-[10px] text-slate-200">
                           {progress} %
                         </p>
                       </div>
-                      <div className="mt-1 space-y-0.5 text-[10px] text-slate-200">
+                      <div className="mt-1 space-y-0.5 text-[10px] text-slate-100">
                         {progress >= 100 ? (
                           <p>
                             {formatCurrency(detail.cost)} finanziert
@@ -401,18 +277,83 @@ export function MilestonesSection({
                           </>
                         )}
                       </div>
+                      {openDetailId === m.id && (
+                        <div className="mt-2 rounded-xl bg-slate-900/70 px-3 py-2 text-[10px] text-slate-100">
+                          <p className="font-semibold text-slate-100">
+                            Vermögen mit {Math.round(m.age)} Jahren
+                          </p>
+                          <p className="mt-0.5">
+                            <span className="font-semibold">
+                              {formatCurrency(detail.balanceAtAge)}
+                            </span>
+                          </p>
+                          <p className="mt-1 text-slate-200">
+                            Kosten
+                            {" "}
+                            <span className="font-semibold">
+                              {formatCurrency(-Math.abs(m.amount))}
+                            </span>
+                          </p>
+                          <p className="mt-1 text-slate-200">
+                            Verbleibend danach
+                            {" "}
+                            <span className="font-semibold">
+                              {formatCurrency(detail.balanceAfter)}
+                            </span>
+                          </p>
+                          {detail.status && (
+                            <p className="mt-1 text-slate-200">
+                              Status
+                              {" "}
+                              <span className="font-semibold">
+                                {detail.status}
+                              </span>
+                            </p>
+                          )}
+                        </div>
+                      )}
+                      <div className="mt-3 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOpenDetailId(
+                              openDetailId === m.id ? null : m.id,
+                            )
+                          }
+                          className="text-[10px] font-medium text-slate-200 underline-offset-2 hover:underline"
+                        >
+                          {openDetailId === m.id
+                            ? "Details ausblenden"
+                            : "Details zur Berechnung anzeigen"}
+                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => onEdit(m)}
+                            className="text-[10px] text-slate-200 hover:text-white"
+                          >
+                            Bearbeiten
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => onDelete(m.id)}
+                            className="text-[10px] text-rose-200 hover:text-rose-100"
+                          >
+                            Entfernen
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
             </div>
           </div>
-        </>
-      ) : (
-        <p className="mt-4 text-sm text-slate-500">
-          Noch keine Meilensteine hinzugefügt. Füge einen Meilenstein hinzu, um
-          den Sparplan realistischer zu planen.
-        </p>
-      )}
+        ) : (
+          <p className="mt-4 text-sm text-slate-500">
+            Noch keine Meilensteine hinzugefügt. Füge einen Meilenstein hinzu, um
+            den Sparplan realistischer zu planen.
+          </p>
+        )}
       </div>
     </section>
   );

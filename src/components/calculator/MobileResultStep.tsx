@@ -1,4 +1,5 @@
 import { GrowthChart } from "@/components/calculator/GrowthChart";
+import { ChildLifeTimeline } from "@/components/calculator/ChildLifeTimeline";
 import {
   MilestonesSection,
   type MilestoneTemplate,
@@ -121,6 +122,13 @@ export function MobileResultStep({
         onDelete={onDeleteMilestone}
       />
 
+      <ChildLifeTimeline milestones={milestones} simulation={simulation} />
+
+      <GrowthChart
+        points={points}
+        milestones={chartMilestones}
+      />
+
       <div className="flex justify-center">
         <button
           type="button"
@@ -130,11 +138,6 @@ export function MobileResultStep({
           Eckdaten anpassen
         </button>
       </div>
-
-      <GrowthChart
-        points={points}
-        milestones={chartMilestones}
-      />
     </div>
   );
 }
