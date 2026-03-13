@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { CalculatorHeader } from "@/components/calculator/Header";
 import { GrowthChart } from "@/components/calculator/GrowthChart";
@@ -17,7 +17,10 @@ import { ParameterCard } from "@/components/calculator/ParameterCard";
 import { SavePlanModal } from "@/components/calculator/SavePlanModal";
 import { SummaryCards } from "@/components/calculator/SummaryCards";
 import { defaultInputs } from "@/data/defaultMilestones";
-import { runCalculatorSimulation } from "@/lib/simulation";
+import {
+  getRecommendedMonthlyRate,
+  runCalculatorSimulation,
+} from "@/lib/simulation";
 import type {
   CalculatorInputs,
   CalculatorSimulationResult,
@@ -41,6 +44,9 @@ export default function HomePage() {
     monthly: number;
     endValue: number;
   } | null>(null);
+
+  const heroRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
 
   const {
     simulation,
@@ -96,17 +102,58 @@ export default function HomePage() {
     };
   }, [inputs, milestones, compareScenarios, comparisonRange]);
 
+  const recommendation = useMemo(() => {
+    if (!simulation?.milestoneDetails || milestones.length === 0) return null;
+    const expenseMilestones = milestones.filter((m) => m.amount < 0);
+    if (expenseMilestones.length === 0) return null;
+    const allFundable = expenseMilestones.every(
+      (m) => simulation.milestoneDetails.get(m.id)?.status === "finanzierbar",
+    );
+    if (allFundable) return null;
+    const recommended = getRecommendedMonthlyRate(inputs, milestones);
+    if (recommended == null) return null;
+    return {
+      recommendedMonthly: recommended,
+      deltaFromCurrent: recommended - inputs.monthlyContribution,
+    };
+  }, [simulation, inputs, milestones]);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const el = heroRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < 0) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [inputs, milestones]);
+
+  useEffect(() => {
+    if (mobileStep !== 2) return;
+    const el = heroRef.current;
+    if (!el) return;
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [mobileStep]);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
         <CalculatorHeader />
-        <HeroResult
-          inputs={inputs}
-          simulation={simulation?.core ?? null}
-          baselineScenario={
-            mobileStep === 2 ? baselineScenario : null
-          }
-        />
+        <div ref={heroRef}>
+          <HeroResult
+            inputs={inputs}
+            simulation={simulation?.core ?? null}
+            baselineScenario={
+              mobileStep === 2 ? baselineScenario : null
+            }
+            hasMilestones={milestones.length > 0}
+          />
+        </div>
 
         {/* Mobile Flow */}
         <div className="space-y-4 lg:hidden">
@@ -157,6 +204,10 @@ export default function HomePage() {
               onDeleteMilestone={(id) => {
                 setMilestones((prev) => prev.filter((m) => m.id !== id));
               }}
+              recommendation={recommendation}
+              onApplyRecommended={(amount) =>
+                setInputs((prev) => ({ ...prev, monthlyContribution: amount }))
+              }
               onAddFromTemplate={(template: MilestoneTemplate) => {
                 setMilestoneMode("create");
                 setEditingMilestone({
@@ -209,6 +260,10 @@ export default function HomePage() {
           <MilestonesSection
             milestones={milestones}
             milestoneDetails={simulation?.milestoneDetails}
+            recommendation={recommendation}
+            onApplyRecommended={(amount) =>
+              setInputs((prev) => ({ ...prev, monthlyContribution: amount }))
+            }
             finalBalance={simulation?.core?.finalBalance ?? 0}
             onAdd={() => {
               const nextAge =

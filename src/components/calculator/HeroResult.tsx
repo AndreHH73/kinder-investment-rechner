@@ -12,12 +12,14 @@ interface HeroResultProps {
   inputs: CalculatorInputs;
   simulation: SimulationResult | null;
   baselineScenario?: { monthly: number; endValue: number } | null;
+  hasMilestones?: boolean;
 }
 
 export function HeroResult({
   inputs,
   simulation,
   baselineScenario = null,
+  hasMilestones = false,
 }: HeroResultProps) {
   const endValue = simulation?.finalBalance ?? 0;
   const totalContributions = simulation?.totalContributions ?? 0;
@@ -66,7 +68,7 @@ export function HeroResult({
 
   return (
     <section
-      className={`mx-auto max-w-3xl rounded-3xl px-6 py-8 text-slate-100 shadow-xl transition-transform duration-200 md:max-w-5xl md:px-10 md:py-10 ${
+      className={`mx-auto max-w-3xl rounded-3xl px-5 py-5 text-slate-100 shadow-xl transition-transform duration-200 md:max-w-5xl md:px-6 md:py-6 ${
         heroPulse ? "scale-[1.01]" : "scale-100"
       }`}
       style={{
@@ -74,8 +76,8 @@ export function HeroResult({
           "linear-gradient(135deg, #0F2A44 0%, #1C4E80 60%, #0F2A44 100%)",
       }}
     >
-      <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-        <div className="space-y-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="space-y-2">
           <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
             Prognose zum Zielalter
           </p>
@@ -89,7 +91,7 @@ export function HeroResult({
             </span>
             <span className="block">könnte dein Kind</span>
           </h1>
-          <div className="mt-1 flex flex-wrap items-baseline gap-2">
+          <div className="mt-0.5 flex flex-wrap items-baseline gap-2">
             <p className="text-5xl font-semibold tracking-tight text-[#2FA36B] md:text-6xl">
               {formatCurrency(displayValue)}
             </p>
@@ -115,9 +117,14 @@ export function HeroResult({
               </span>
             )}
           </div>
+          <p className="mt-1 text-xs text-[#2FA36B]">
+            {hasMilestones
+              ? "(inkl. Finanzierung aller Meilensteine)"
+              : "(ohne geplante Meilensteine)"}
+          </p>
           {showDelta && delta !== 0 && (
             <p
-              className={`text-sm font-semibold ${
+              className={`mt-1 text-sm font-semibold ${
                 delta > 0 ? "text-emerald-400" : "text-red-400"
               }`}
             >
@@ -136,13 +143,13 @@ export function HeroResult({
               )}
             </p>
           )}
-          <p className="text-sm text-slate-200">
+          <p className="mt-2 text-sm text-slate-200">
             mit{" "}
             <span className="font-semibold">{inputs.targetAge} Jahren</span>{" "}
             erreichen.
           </p>
         </div>
-        <div className="mt-3 flex flex-wrap gap-6 text-[11px] text-slate-200 md:justify-end">
+        <div className="mt-4 flex flex-wrap gap-4 text-[11px] text-slate-200 md:justify-end">
           <div>
             <p className="text-xl font-semibold text-slate-50">
               {formatCurrency(totalContributions)}

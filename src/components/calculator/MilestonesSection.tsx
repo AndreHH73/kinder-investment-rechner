@@ -1,6 +1,11 @@
 import { formatCurrency, formatCurrencyWithSign } from "@/lib/format";
 import type { Milestone, MilestoneDetail } from "@/types/calculator";
 
+export interface SavingsRecommendation {
+  recommendedMonthly: number;
+  deltaFromCurrent: number;
+}
+
 export interface MilestoneTemplate {
   id: string;
   icon: string;
@@ -63,6 +68,8 @@ const LIFEEVENT_TEMPLATES: MilestoneTemplate[] = [
 interface MilestonesSectionProps {
   milestones: Milestone[];
   milestoneDetails?: Map<string, MilestoneDetail>;
+  recommendation?: SavingsRecommendation | null;
+  onApplyRecommended?: (amount: number) => void;
   finalBalance?: number;
   onAdd: () => void;
   onAddFromTemplate?: (template: MilestoneTemplate) => void;
@@ -73,6 +80,8 @@ interface MilestonesSectionProps {
 export function MilestonesSection({
   milestones,
   milestoneDetails = new Map(),
+  recommendation = null,
+  onApplyRecommended,
   finalBalance = 0,
   onAdd,
   onAddFromTemplate,
@@ -153,6 +162,32 @@ export function MilestonesSection({
 
       {milestones.length > 0 ? (
         <>
+          {recommendation != null && (
+            <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
+              <p className="text-sm font-semibold text-amber-900">
+                Nicht alle Meilensteine sind aktuell finanzierbar.
+              </p>
+              <p className="mt-1 text-sm text-amber-800">
+                Mit ca. {formatCurrency(recommendation.deltaFromCurrent).replace("€", "€")} mehr pro
+                Monat könnte der Plan aufgehen.
+              </p>
+              <p className="mt-1 text-sm font-medium text-amber-900">
+                Empfohlene Sparrate:{" "}
+                {formatCurrency(recommendation.recommendedMonthly).replace("€", "€")} / Monat
+              </p>
+              {onApplyRecommended && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    onApplyRecommended(recommendation.recommendedMonthly)
+                  }
+                  className="mt-3 rounded-full bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-amber-700"
+                >
+                  {formatCurrency(recommendation.recommendedMonthly).replace("€", "€")} übernehmen
+                </button>
+              )}
+            </div>
+          )}
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {sorted.map((m, index) => {
               const isIncome = m.amount > 0;

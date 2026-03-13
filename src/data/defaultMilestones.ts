@@ -1,9 +1,9 @@
 import type { CalculatorInputs, Milestone } from "@/types/calculator";
 
 export const defaultInputs: CalculatorInputs = {
-  monthlyContribution: 400,
   childAge: 2,
-  targetAge: 18,
+  monthlyContribution: 259,
+  targetAge: 67,
   expectedReturnPercentPerYear: 6,
   initialLumpSum: 0,
 };

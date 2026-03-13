@@ -373,4 +373,44 @@ export function runCalculatorSimulation(
   };
 }
 
+const RECOMMENDED_RATE_STEP_EUR = 5;
+const RECOMMENDED_RATE_MAX_EUR = 3000;
+
+/**
+ * Ermittelt die kleinste monatliche Sparrate, bei der alle aktiven
+ * Meilensteine (sequenziell) vollständig finanzierbar sind.
+ * Iterative Suche in 5-€-Schritten.
+ * @returns Empfohlene Sparrate in € oder null, wenn bereits alle finanzierbar sind.
+ */
+export function getRecommendedMonthlyRate(
+  inputs: CalculatorInputs,
+  milestones: Milestone[],
+): number | null {
+  const filtered = milestones.filter(
+    (m) => m.age >= inputs.childAge && m.age <= inputs.targetAge && m.amount < 0,
+  );
+  if (filtered.length === 0) return null;
+
+  let rate = inputs.monthlyContribution;
+  if (rate > RECOMMENDED_RATE_MAX_EUR) return null;
+
+  const allFundableAt = (monthly: number): boolean => {
+    const result = runCalculatorSimulation(
+      { ...inputs, monthlyContribution: monthly },
+      milestones,
+    );
+    return filtered.every(
+      (m) => result.milestoneDetails.get(m.id)?.status === "finanzierbar",
+    );
+  };
+
+  if (allFundableAt(rate)) return null;
+
+  while (rate <= RECOMMENDED_RATE_MAX_EUR) {
+    rate += RECOMMENDED_RATE_STEP_EUR;
+    if (allFundableAt(rate)) return rate;
+  }
+  return null;
+}
+
 

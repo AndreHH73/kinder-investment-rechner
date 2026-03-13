@@ -2,6 +2,7 @@ import { GrowthChart } from "@/components/calculator/GrowthChart";
 import {
   MilestonesSection,
   type MilestoneTemplate,
+  type SavingsRecommendation,
 } from "@/components/calculator/MilestonesSection";
 import { formatCurrency } from "@/lib/format";
 import type {
@@ -22,6 +23,8 @@ interface MobileResultStepProps {
   higherMonthly: number;
   ahaDifference: number;
   milestones: Milestone[];
+  recommendation?: SavingsRecommendation | null;
+  onApplyRecommended?: (amount: number) => void;
   onAddMilestone: () => void;
   onAddFromTemplate?: (template: MilestoneTemplate) => void;
   onEditMilestone: (m: Milestone) => void;
@@ -42,6 +45,8 @@ export function MobileResultStep({
   higherMonthly,
   ahaDifference,
   milestones,
+  recommendation = null,
+  onApplyRecommended,
   onAddMilestone,
   onAddFromTemplate,
   onEditMilestone,
@@ -114,6 +119,8 @@ export function MobileResultStep({
       <MilestonesSection
         milestones={milestones}
         milestoneDetails={simulation?.milestoneDetails}
+        recommendation={recommendation}
+        onApplyRecommended={onApplyRecommended}
         finalBalance={simulation?.core?.finalBalance ?? 0}
         onAdd={onAddMilestone}
         onAddFromTemplate={onAddFromTemplate}
