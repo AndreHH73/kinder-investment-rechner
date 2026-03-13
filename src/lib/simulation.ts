@@ -42,6 +42,13 @@ function sortEvents(events: InvestmentEvent[]): InvestmentEvent[] {
   });
 }
 
+function getEventLabel(event: InvestmentEvent): string {
+  const maybeDescription =
+    (event as { description?: string }).description ?? "";
+  const trimmed = maybeDescription.trim();
+  return trimmed.length > 0 ? trimmed : event.id;
+}
+
 interface ValidationResult {
   valid: boolean;
   errors: string[];
@@ -80,17 +87,17 @@ export function validateInput(
   for (const event of events) {
     if (event.age < input.childCurrentAge || event.age > input.targetAge) {
       errors.push(
-        `Ereignis "${event.description ?? event.id}" liegt außerhalb des gewählten Altersbereichs.`,
+        `Ereignis "${getEventLabel(event)}" liegt außerhalb des gewählten Altersbereichs.`,
       );
     }
     if (event.type !== "milestone" && event.amount <= 0) {
       errors.push(
-        `Ereignis "${event.description ?? event.id}" muss einen positiven Betrag haben.`,
+        `Ereignis "${getEventLabel(event)}" muss einen positiven Betrag haben.`,
       );
     }
     if (event.type === "milestone" && event.amount !== 0) {
       errors.push(
-        `Meilenstein "${event.description ?? event.id}" darf keinen Betrag haben.`,
+        `Meilenstein "${getEventLabel(event)}" darf keinen Betrag haben.`,
       );
     }
   }
