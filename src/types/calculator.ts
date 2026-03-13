@@ -29,10 +29,20 @@ export interface SimulationPoint {
    higherContributionsValue?: number;
 }
 
+export interface MilestoneDetail {
+  balanceAtAge: number;
+  balanceAfter: number;
+  cost: number;
+  shortfall: number;
+  progressPercent: number;
+  status: "finanzierbar" | "teilweise finanzierbar" | "nicht finanzierbar" | null;
+}
+
 export interface CalculatorSimulationResult {
   core: SimulationResult;
   points: SimulationPoint[];
   totalMilestoneIncome: number;
   totalMilestoneExpenses: number;
+  milestoneDetails: Map<string, MilestoneDetail>;
 }
 

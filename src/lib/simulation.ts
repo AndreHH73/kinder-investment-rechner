@@ -10,6 +10,7 @@ import type {
   CalculatorInputs,
   CalculatorSimulationResult,
   Milestone,
+  MilestoneDetail,
   SimulationPoint,
 } from "@/types/calculator";
 
@@ -271,6 +272,60 @@ export function buildSimulationPoints(
   });
 }
 
+/**
+ * Pro Meilenstein-Event: Vermögen unmittelbar davor und danach (sequenziell).
+ */
+export function computeMilestoneDetails(
+  core: SimulationResult,
+): Map<string, MilestoneDetail> {
+  const details = new Map<string, MilestoneDetail>();
+
+  for (const month of core.months) {
+    let balanceBeforeEvents = month.startingBalance + month.contributions;
+
+    for (const event of month.appliedEvents) {
+      if (event.type === "rate-change") continue;
+
+      const balanceAtAge = balanceBeforeEvents;
+      let balanceAfter: number;
+      const cost = event.amount;
+      let shortfall = 0;
+      let progressPercent = 100;
+      let status: MilestoneDetail["status"] = null;
+
+      if (event.type === "withdrawal") {
+        const actualWithdrawal = Math.min(event.amount, balanceBeforeEvents);
+        balanceAfter = balanceBeforeEvents - actualWithdrawal;
+        shortfall = Math.max(0, event.amount - actualWithdrawal);
+        progressPercent = event.amount > 0
+          ? Math.min(100, (balanceAtAge / event.amount) * 100)
+          : 100;
+        if (balanceAtAge >= event.amount) {
+          status = "finanzierbar";
+        } else if (balanceAtAge > 0) {
+          status = "teilweise finanzierbar";
+        } else {
+          status = "nicht finanzierbar";
+        }
+      } else {
+        balanceAfter = balanceBeforeEvents + event.amount;
+      }
+
+      details.set(event.id, {
+        balanceAtAge,
+        balanceAfter,
+        cost,
+        shortfall,
+        progressPercent,
+        status,
+      });
+      balanceBeforeEvents = balanceAfter;
+    }
+  }
+
+  return details;
+}
+
 export function runCalculatorSimulation(
   inputs: CalculatorInputs,
   milestones: Milestone[],
@@ -300,6 +355,7 @@ export function runCalculatorSimulation(
 
   const core = runSimulation(baseInput, milestoneEvents);
   const points = buildSimulationPoints(core);
+  const milestoneDetails = computeMilestoneDetails(core);
 
   const totalMilestoneIncome = filteredMilestones
     .filter((m) => m.amount > 0)
@@ -313,6 +369,7 @@ export function runCalculatorSimulation(
     points,
     totalMilestoneIncome,
     totalMilestoneExpenses,
+    milestoneDetails,
   };
 }
 

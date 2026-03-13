@@ -7,13 +7,16 @@ import { CalculatorHeader } from "@/components/calculator/Header";
 import { GrowthChart } from "@/components/calculator/GrowthChart";
 import { HeroResult } from "@/components/calculator/HeroResult";
 import { MilestoneForm } from "@/components/calculator/MilestoneForm";
-import { MilestonesSection } from "@/components/calculator/MilestonesSection";
+import {
+  MilestonesSection,
+  type MilestoneTemplate,
+} from "@/components/calculator/MilestonesSection";
 import { MobileInputStep } from "@/components/calculator/MobileInputStep";
 import { MobileResultStep } from "@/components/calculator/MobileResultStep";
 import { ParameterCard } from "@/components/calculator/ParameterCard";
 import { SavePlanModal } from "@/components/calculator/SavePlanModal";
 import { SummaryCards } from "@/components/calculator/SummaryCards";
-import { defaultInputs, defaultMilestones } from "@/data/defaultMilestones";
+import { defaultInputs } from "@/data/defaultMilestones";
 import { runCalculatorSimulation } from "@/lib/simulation";
 import type {
   CalculatorInputs,
@@ -23,7 +26,7 @@ import type {
 
 export default function HomePage() {
   const [inputs, setInputs] = useState<CalculatorInputs>(defaultInputs);
-  const [milestones, setMilestones] = useState<Milestone[]>(defaultMilestones);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(
     null,
   );
@@ -154,6 +157,17 @@ export default function HomePage() {
               onDeleteMilestone={(id) => {
                 setMilestones((prev) => prev.filter((m) => m.id !== id));
               }}
+              onAddFromTemplate={(template: MilestoneTemplate) => {
+                setMilestoneMode("create");
+                setEditingMilestone({
+                  id: `m-${Date.now()}`,
+                  title: template.title,
+                  age: template.defaultAge,
+                  amount: template.defaultAmount,
+                  type: "expense",
+                  description: `Typische Kosten: ${template.costLabel}`,
+                });
+              }}
               onBack={() => setMobileStep(1)}
               onSelectScenarioAmount={(amount) =>
                 setInputs((prev) => ({ ...prev, monthlyContribution: amount }))
@@ -194,6 +208,8 @@ export default function HomePage() {
 
           <MilestonesSection
             milestones={milestones}
+            milestoneDetails={simulation?.milestoneDetails}
+            finalBalance={simulation?.core?.finalBalance ?? 0}
             onAdd={() => {
               const nextAge =
                 (milestones[milestones.length - 1]?.age ??
@@ -206,6 +222,17 @@ export default function HomePage() {
                 amount: 0,
                 type: "expense",
                 description: "",
+              });
+            }}
+            onAddFromTemplate={(template: MilestoneTemplate) => {
+              setMilestoneMode("create");
+              setEditingMilestone({
+                id: `m-${Date.now()}`,
+                title: template.title,
+                age: template.defaultAge,
+                amount: template.defaultAmount,
+                type: "expense",
+                description: `Typische Kosten: ${template.costLabel}`,
               });
             }}
             onEdit={(milestone) => {

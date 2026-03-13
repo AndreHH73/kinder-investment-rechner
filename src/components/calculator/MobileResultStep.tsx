@@ -1,5 +1,8 @@
 import { GrowthChart } from "@/components/calculator/GrowthChart";
-import { MilestonesSection } from "@/components/calculator/MilestonesSection";
+import {
+  MilestonesSection,
+  type MilestoneTemplate,
+} from "@/components/calculator/MilestonesSection";
 import { formatCurrency } from "@/lib/format";
 import type {
   CalculatorSimulationResult,
@@ -20,6 +23,7 @@ interface MobileResultStepProps {
   ahaDifference: number;
   milestones: Milestone[];
   onAddMilestone: () => void;
+  onAddFromTemplate?: (template: MilestoneTemplate) => void;
   onEditMilestone: (m: Milestone) => void;
   onDeleteMilestone: (id: string) => void;
   onBack: () => void;
@@ -39,12 +43,12 @@ export function MobileResultStep({
   ahaDifference,
   milestones,
   onAddMilestone,
+  onAddFromTemplate,
   onEditMilestone,
   onDeleteMilestone,
   onBack,
   onSelectScenarioAmount,
 }: MobileResultStepProps) {
-  const core = simulation?.core ?? null;
 
   const delta = comparisonRange;
   const rawScenarios = [
@@ -105,93 +109,14 @@ export function MobileResultStep({
           </div>
         </div>
 
-        {core && (
-          <div className="mt-5 space-y-2">
-            <p className="text-[11px] font-medium text-slate-600">
-              Was dein Kind mit diesem Geld machen könnte
-            </p>
-            <div className="space-y-2">
-              {[
-                {
-                  id: "license",
-                  icon: "🚗",
-                  title: "Führerschein",
-                  costLabel: "3.500 €",
-                  costMin: 3500,
-                  costMax: 3500,
-                },
-                {
-                  id: "study",
-                  icon: "🎓",
-                  title: "Studium starten",
-                  costLabel: "5.000 – 10.000 €",
-                  costMin: 5000,
-                  costMax: 10000,
-                },
-                {
-                  id: "gapyear",
-                  icon: "🌍",
-                  title: "Auslandsjahr",
-                  costLabel: "8.000 – 15.000 €",
-                  costMin: 8000,
-                  costMax: 15000,
-                },
-                {
-                  id: "flat",
-                  icon: "🏡",
-                  title: "Erste Wohnung",
-                  costLabel: "6.000 – 10.000 €",
-                  costMin: 6000,
-                  costMax: 10000,
-                },
-              ].map((item) => {
-                const endWealth = core.finalBalance;
-                const thresholdFull = item.costMax;
-                const thresholdPartial = item.costMax * 0.5;
-
-                let status: string;
-                let statusTone: string;
-                if (endWealth >= thresholdFull) {
-                  status = "Voll finanzierbar";
-                  statusTone = "text-secondary";
-                } else if (endWealth >= thresholdPartial) {
-                  status = "Teilweise finanzierbar";
-                  statusTone = "text-amber-600";
-                } else {
-                  status = "Noch nicht vollständig gedeckt";
-                  statusTone = "text-rose-600";
-                }
-
-                return (
-                  <div
-                    key={item.id}
-                    className="flex items-start justify-between rounded-2xl border border-muted bg-background px-3 py-2.5 text-[11px]"
-                  >
-                    <div className="flex items-start gap-2">
-                      <span className="mt-0.5 text-base">{item.icon}</span>
-                      <div>
-                        <p className="text-[12px] font-semibold text-foreground">
-                          {item.title}
-                        </p>
-                        <p className="mt-0.5 text-[11px] text-slate-500">
-                          Kosten: {item.costLabel}
-                        </p>
-                      </div>
-                    </div>
-                    <p className={`ml-2 text-right text-[11px] ${statusTone}`}>
-                      {status}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </section>
 
       <MilestonesSection
         milestones={milestones}
+        milestoneDetails={simulation?.milestoneDetails}
+        finalBalance={simulation?.core?.finalBalance ?? 0}
         onAdd={onAddMilestone}
+        onAddFromTemplate={onAddFromTemplate}
         onEdit={onEditMilestone}
         onDelete={onDeleteMilestone}
       />
