@@ -4,37 +4,22 @@ import {
   AreaChart,
   CartesianGrid,
   Line,
+  ReferenceDot,
+  ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-
-import { formatAgeYears, formatCurrency } from "@/lib/format";
-import type { SimulationPoint } from "@/types/calculator";
+import type { ChartMilestone, SimulationPoint } from "@/types/calculator";
 
 interface GrowthChartProps {
   points: SimulationPoint[];
-  compareEnabled: boolean;
-  onToggleCompare: (enabled: boolean) => void;
-  comparisonRange: number;
-  onRangeChange: (range: number) => void;
-  baseMonthly: number;
-  lowerMonthly: number;
-  higherMonthly: number;
-  ahaDifference: number;
+  milestones?: ChartMilestone[];
 }
 
 export function GrowthChart({
   points,
-  compareEnabled,
-  onToggleCompare,
-  comparisonRange,
-  onRangeChange,
-  baseMonthly,
-  lowerMonthly,
-  higherMonthly,
-  ahaDifference,
+  milestones = [],
 }: GrowthChartProps) {
   const startAge = points[0]?.age ?? 0;
   const endAge = points[points.length - 1]?.age ?? startAge;
@@ -66,74 +51,16 @@ export function GrowthChart({
   }
 
   return (
-    <section className="rounded-3xl bg-white p-6 shadow-lg shadow-slate-900/5">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-sm font-semibold text-slate-900">
-            Projektion der Vermögensentwicklung
-          </h2>
-          <p className="mt-1 text-xs text-slate-500">
-            Sieh, wie Sparraten, Zinseszins und Meilensteine das Vermögen deines
-            Kindes über die Jahre beeinflussen.
-          </p>
-        </div>
-        <div className="flex flex-col items-end gap-2 text-[11px]">
-          <button
-            type="button"
-            onClick={() => onToggleCompare(!compareEnabled)}
-            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 font-medium ${
-              compareEnabled
-                ? "border-primary bg-primary/5 text-primary"
-                : "border-muted bg-background text-slate-600"
-            }`}
-          >
-            <span
-              className={`flex h-3 w-3 items-center justify-center rounded-full border ${
-                compareEnabled
-                  ? "border-primary bg-primary"
-                  : "border-muted bg-surface"
-              }`}
-            >
-              {compareEnabled && (
-                <span className="h-1.5 w-1.5 rounded-full bg-white" />
-              )}
-            </span>
-            Szenarien vergleichen
-          </button>
-          <div className="inline-flex items-center gap-2 rounded-full bg-background px-3 py-1">
-            <span className="font-medium text-slate-600">Vergleich</span>
-            {[25, 50, 100].map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => onRangeChange(value)}
-                className={`rounded-full px-2 py-0.5 ${
-                  comparisonRange === value
-                    ? "bg-primary text-surface"
-                    : "bg-surface text-slate-700"
-                }`}
-              >
-                +{value} €
-              </button>
-            ))}
-          </div>
-        </div>
+    <section className="rounded-3xl bg-white p-5 shadow-lg shadow-slate-900/5">
+      <div>
+        <h2 className="text-sm font-semibold text-slate-900">
+          Vermögensverlauf mit Meilensteinen
+        </h2>
+        <p className="mt-1 text-xs text-slate-500">
+          So wächst das Vermögen deines Kindes – inklusive geplanter Ausgaben unterwegs.
+        </p>
       </div>
-      <div className="mt-3 text-[11px] text-slate-600">
-        <p className="font-medium">Sparratenvergleich</p>
-        <div className="mt-1 flex flex-wrap gap-3">
-          <span>
-            🔵 {formatCurrency(lowerMonthly).replace("€", "€ / Monat")}
-          </span>
-          <span className="font-semibold text-emerald-700">
-            🟢 {formatCurrency(baseMonthly).replace("€", "€ / Monat")} (aktuell)
-          </span>
-          <span>
-            ⚪ {formatCurrency(higherMonthly).replace("€", "€ / Monat")}
-          </span>
-        </div>
-      </div>
-      <div className="mt-4 h-80 w-full md:h-96">
+      <div className="mt-4 h-72 w-full">
         <ResponsiveContainer>
           <AreaChart data={points}>
             <defs>
@@ -169,61 +96,6 @@ export function GrowthChart({
               axisLine={false}
               width={70}
             />
-            <Tooltip
-              cursor={{ stroke: "#cbd5f5", strokeWidth: 1 }}
-              content={({ active, payload, label }) => {
-                if (!active || !payload || payload.length === 0) return null;
-                const entry =
-                  payload.find(
-                    (e) =>
-                      e.dataKey !== "contributionsValue" &&
-                      e.dataKey !== "portfolioValue",
-                  ) ??
-                  payload.find((e) => e.dataKey === "portfolioValue") ??
-                  payload[0];
-                const key = entry.dataKey as string;
-                const point = entry.payload as SimulationPoint;
-
-                let portfolio = point.portfolioValue;
-                let contributions = point.contributionsValue;
-                if (key === "lowerPortfolioValue") {
-                  portfolio = point.lowerPortfolioValue ?? point.portfolioValue;
-                  contributions =
-                    point.lowerContributionsValue ?? point.contributionsValue;
-                } else if (key === "higherPortfolioValue") {
-                  portfolio = point.higherPortfolioValue ?? point.portfolioValue;
-                  contributions =
-                    point.higherContributionsValue ?? point.contributionsValue;
-                }
-
-                return (
-                  <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] shadow-md">
-                    <p className="mb-1 font-medium text-slate-700">
-                      Alter: {formatAgeYears(label as number)}
-                    </p>
-                    <p className="text-emerald-700">
-                      Vermögen{" "}
-                      <span className="ml-1 font-semibold">
-                        {formatCurrency(portfolio)}
-                      </span>
-                    </p>
-                    <p className="text-sky-700">
-                      Eingezahlt{" "}
-                      <span className="ml-1 font-semibold">
-                        {formatCurrency(contributions)}
-                      </span>
-                    </p>
-                  </div>
-                );
-              }}
-            />
-            <Area
-              type="monotone"
-              dataKey="contributionsValue"
-              stroke="#38bdf8"
-              fill="url(#contribFill)"
-              strokeWidth={1.5}
-            />
             <Area
               type="monotone"
               dataKey="portfolioValue"
@@ -239,44 +111,64 @@ export function GrowthChart({
               dot={false}
               isAnimationActive={false}
             />
-            {compareEnabled && (
-              <>
-                <Line
-                  type="monotone"
-                  dataKey="lowerPortfolioValue"
-                  stroke="#9CA3AF"
-                  strokeWidth={2}
-                  dot={false}
-                  isAnimationActive={false}
+            {milestones.map((m) => {
+              const color =
+                m.type === "income"
+                  ? "#10B981"
+                  : m.status === "finanzierbar"
+                    ? "#0EA5E9"
+                    : m.status === "teilweise finanzierbar"
+                      ? "#F59E0B"
+                      : m.status === "nicht finanzierbar"
+                        ? "#EF4444"
+                        : "#6B7280";
+              return (
+                <ReferenceLine
+                  key={m.id}
+                  x={m.age}
+                  stroke={color}
+                  strokeDasharray="0"
+                  strokeOpacity={0}
+                  ifOverflow="extendDomain"
+                  label={{
+                    value: Math.round(m.age).toString(),
+                    position: "top",
+                    fontSize: 10,
+                    fill: color,
+                    angle: 0,
+                  }}
                 />
-                <Line
-                  type="monotone"
-                  dataKey="higherPortfolioValue"
-                  stroke="#F59E0B"
-                  strokeWidth={4}
-                  dot={false}
-                  isAnimationActive={false}
+              );
+            })}
+            {milestones.map((m) => {
+              const color =
+                m.type === "income"
+                  ? "#10B981"
+                  : m.status === "finanzierbar"
+                    ? "#0EA5E9"
+                    : m.status === "teilweise finanzierbar"
+                      ? "#F59E0B"
+                      : m.status === "nicht finanzierbar"
+                        ? "#EF4444"
+                        : "#6B7280";
+              return (
+                <ReferenceDot
+                  key={`${m.id}-dot`}
+                  x={m.age}
+                  y={m.portfolioValue}
+                  r={5}
+                  fill={color}
+                  stroke="#ffffff"
+                  strokeWidth={1.5}
                 />
-              </>
-            )}
+              );
+            })}
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      {compareEnabled && ahaDifference > 0 && (
-        <div className="mt-4 flex items-start gap-2 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-3 text-[11px] text-amber-900">
-          <span className="text-base">💡</span>
-          <div>
-            <p className="font-semibold">Aha-Effekt</p>
-            <p className="mt-1">
-              Schon +{comparisonRange} € monatlich erhöhen das Vermögen um{" "}
-              <span className="font-semibold">
-                {formatCurrency(ahaDifference)}
-              </span>
-              .
-            </p>
-          </div>
-        </div>
-      )}
+      <p className="mt-3 text-[11px] text-slate-400">
+        Der Verlauf zeigt das Vermögen nach Finanzierung der Meilensteine.
+      </p>
     </section>
   );
 }

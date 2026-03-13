@@ -25,8 +25,8 @@ export interface SimulationPoint {
   contributionsValue: number;
   lowerPortfolioValue?: number;
   higherPortfolioValue?: number;
-   lowerContributionsValue?: number;
-   higherContributionsValue?: number;
+  lowerContributionsValue?: number;
+  higherContributionsValue?: number;
 }
 
 export interface MilestoneDetail {
@@ -36,6 +36,18 @@ export interface MilestoneDetail {
   shortfall: number;
   progressPercent: number;
   status: "finanzierbar" | "teilweise finanzierbar" | "nicht finanzierbar" | null;
+}
+
+export interface ChartMilestone {
+  id: string;
+  age: number;
+  title: string;
+  type: MilestoneType;
+  status: MilestoneDetail["status"];
+  portfolioValue: number;
+  balanceAtAge: number;
+  balanceAfter: number;
+  cost: number;
 }
 
 export interface CalculatorSimulationResult {

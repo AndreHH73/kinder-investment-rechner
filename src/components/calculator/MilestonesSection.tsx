@@ -90,12 +90,20 @@ export function MilestonesSection({
 }: MilestonesSectionProps) {
   const sorted = [...milestones].sort((a, b) => a.age - b.age);
 
-  const totalIncome = milestones
-    .filter((m) => m.amount > 0)
-    .reduce((sum, m) => sum + m.amount, 0);
-  const totalExpenses = milestones
-    .filter((m) => m.amount < 0)
-    .reduce((sum, m) => sum + Math.abs(m.amount), 0);
+  const getIconForMilestone = (m: Milestone): string => {
+    const templateMatch = LIFEEVENT_TEMPLATES.find(
+      (t) => t.title.toLowerCase() === m.title.toLowerCase(),
+    );
+    if (templateMatch) return templateMatch.icon;
+
+    const title = m.title.toLowerCase();
+    if (title.includes("führerschein")) return "🚗";
+    if (title.includes("auslandsjahr") || title.includes("welt")) return "🌍";
+    if (title.includes("studium") || title.includes("studien")) return "🎓";
+    if (title.includes("wohnung") || title.includes("immobilie") || title.includes("haus"))
+      return "🏡";
+    return "🎯";
+  };
 
   return (
     <section className="rounded-3xl bg-white p-5 shadow-sm shadow-slate-900/5 md:p-6">
@@ -308,36 +316,96 @@ export function MilestonesSection({
             })}
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-900 px-4 py-3 text-[11px] text-slate-100">
-        <div>
-          <p className="font-medium uppercase tracking-[0.16em] text-slate-400">
-            Zusammenfassung Meilensteine
-          </p>
-          <p className="mt-1 text-xs text-slate-200">
-            Nettowirkung deiner definierten Ereignisse auf das Portfolio.
-          </p>
-        </div>
-        <div className="flex gap-6">
-          <div>
-            <p className="text-slate-400">Gesamte erwartete Zuflüsse</p>
-            <p className="mt-1 font-semibold text-emerald-300">
-              {formatCurrency(totalIncome)}
+          <div className="mt-5 rounded-2xl bg-slate-900 px-4 py-4 text-[11px] text-slate-100">
+            <p className="font-medium uppercase tracking-[0.16em] text-slate-400">
+              Finanzierungsstatus deiner Meilensteine
             </p>
-          </div>
-          <div>
-            <p className="text-slate-400">Gesamte erwartete Ausgaben</p>
-            <p className="mt-1 font-semibold text-rose-300">
-              {formatCurrency(totalExpenses)}
+            <p className="mt-1 text-xs text-slate-200">
+              Sieh auf einen Blick, welche Ziele bereits voll oder teilweise finanziert sind.
             </p>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {sorted
+                .filter((m) => m.amount < 0)
+                .map((m) => {
+                  const detail = milestoneDetails.get(m.id);
+                  if (!detail || detail.cost <= 0) return null;
+
+                  const progress = Math.min(100, Math.round(detail.progressPercent));
+                  const financedAmount = detail.cost - detail.shortfall;
+                  const missingAmount = detail.shortfall;
+
+                  let barColor = "bg-slate-500";
+                  let statusTextColor = "text-slate-100";
+                  if (detail.status === "finanzierbar") {
+                    barColor = "bg-emerald-400";
+                    statusTextColor = "text-emerald-200";
+                  } else if (detail.status === "teilweise finanzierbar") {
+                    barColor = "bg-amber-400";
+                    statusTextColor = "text-amber-200";
+                  } else if (detail.status === "nicht finanzierbar") {
+                    barColor = "bg-rose-400";
+                    statusTextColor = "text-rose-200";
+                  }
+
+                  return (
+                    <div
+                      key={`status-${m.id}`}
+                      className="rounded-xl bg-slate-900/40 px-3 py-3 ring-1 ring-slate-700/60"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{getIconForMilestone(m)}</span>
+                          <div>
+                            <p className="text-xs font-semibold text-slate-50">
+                              {m.title}
+                            </p>
+                            <p className="text-[10px] text-slate-400">
+                              Alter {Math.round(m.age)} – Ziel:{" "}
+                              {formatCurrency(Math.abs(m.amount))}
+                            </p>
+                          </div>
+                        </div>
+                        {detail.status && (
+                          <span className={`text-[10px] font-medium ${statusTextColor}`}>
+                            {detail.status}
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-2">
+                        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-700">
+                          <div
+                            className={`h-full rounded-full ${barColor} transition-all`}
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                        <p className="mt-1 text-[10px] text-slate-300">
+                          {progress} %
+                        </p>
+                      </div>
+                      <div className="mt-1 space-y-0.5 text-[10px] text-slate-200">
+                        {progress >= 100 ? (
+                          <p>
+                            {formatCurrency(detail.cost)} finanziert
+                          </p>
+                        ) : (
+                          <>
+                            <p>
+                              {formatCurrency(financedAmount)} von{" "}
+                              {formatCurrency(detail.cost)} finanziert
+                            </p>
+                            {missingAmount > 0 && (
+                              <p className="text-rose-200">
+                                Fehlen: {formatCurrency(missingAmount)}
+                              </p>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
           </div>
-          <div>
-            <p className="text-slate-400">Netto-Effekt</p>
-            <p className="mt-1 font-semibold">
-              {formatCurrency(totalIncome - totalExpenses)}
-            </p>
-          </div>
-        </div>
-      </div>
         </>
       ) : (
         <p className="mt-4 text-sm text-slate-500">

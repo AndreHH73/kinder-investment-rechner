@@ -22,6 +22,7 @@ import {
   runCalculatorSimulation,
 } from "@/lib/simulation";
 import type {
+  ChartMilestone,
   CalculatorInputs,
   CalculatorSimulationResult,
   Milestone,
@@ -37,7 +38,6 @@ export default function HomePage() {
     "create",
   );
   const [saveModalOpen, setSaveModalOpen] = useState(false);
-  const [compareScenarios, setCompareScenarios] = useState(false);
   const [comparisonRange, setComparisonRange] = useState<number>(50);
   const [mobileStep, setMobileStep] = useState<1 | 2>(1);
   const [baselineScenario, setBaselineScenario] = useState<{
@@ -51,56 +51,87 @@ export default function HomePage() {
   const {
     simulation,
     chartPoints,
-    ahaDifference,
-    lowerMonthly,
-    higherMonthly,
+    chartMilestones,
   }: {
     simulation: CalculatorSimulationResult | null;
     chartPoints: import("@/types/calculator").SimulationPoint[];
-    ahaDifference: number;
-    lowerMonthly: number;
-    higherMonthly: number;
+    chartMilestones: ChartMilestone[];
   } = useMemo(() => {
     const base = runCalculatorSimulation(inputs, milestones);
-    const delta = comparisonRange;
+    const basePoints = base.points;
 
-    const lowerInputs: CalculatorInputs = {
-      ...inputs,
-      monthlyContribution: Math.max(0, inputs.monthlyContribution - delta),
-    };
-    const higherInputs: CalculatorInputs = {
-      ...inputs,
-      monthlyContribution: inputs.monthlyContribution + delta,
-    };
+    // Baue Punkte mit sichtbaren "Drops" bei kostenpflichtigen Meilensteinen
+    let chartPoints: import("@/types/calculator").SimulationPoint[] = [];
+    if (basePoints.length > 0) {
+      const expenseMilestones = milestones
+        .filter((m) => m.amount < 0)
+        .sort((a, b) => a.age - b.age);
 
-    const lower = runCalculatorSimulation(lowerInputs, milestones);
-    const higher = runCalculatorSimulation(higherInputs, milestones);
+      const remainingIds = new Set(expenseMilestones.map((m) => m.id));
+      const getDetail = (id: string) => base.milestoneDetails.get(id);
 
-    const chartPoints = compareScenarios
-      ? base.points.map((point, index) => ({
-          ...point,
-          lowerPortfolioValue:
-            lower.points[index]?.portfolioValue ?? point.portfolioValue,
-          higherPortfolioValue:
-            higher.points[index]?.portfolioValue ?? point.portfolioValue,
-          lowerContributionsValue:
-            lower.points[index]?.contributionsValue ?? point.contributionsValue,
-          higherContributionsValue:
-            higher.points[index]?.contributionsValue ?? point.contributionsValue,
-        }))
-      : base.points;
+      for (let i = 0; i < basePoints.length - 1; i += 1) {
+        const current = basePoints[i];
+        const next = basePoints[i + 1];
+        chartPoints.push(current);
+
+        const segmentMilestones = expenseMilestones.filter(
+          (m) =>
+            remainingIds.has(m.id) &&
+            m.age >= current.age &&
+            m.age <= next.age,
+        );
+
+        for (const m of segmentMilestones) {
+          remainingIds.delete(m.id);
+          const detail = getDetail(m.id);
+          if (!detail) continue;
+
+          const beforePoint: import("@/types/calculator").SimulationPoint = {
+            age: m.age,
+            portfolioValue: detail.balanceAtAge,
+            contributionsValue: current.contributionsValue,
+          };
+
+          const afterPoint: import("@/types/calculator").SimulationPoint = {
+            age: m.age,
+            portfolioValue: detail.balanceAfter,
+            contributionsValue: current.contributionsValue,
+          };
+
+          chartPoints.push(beforePoint, afterPoint);
+        }
+      }
+
+      chartPoints.push(basePoints[basePoints.length - 1]);
+    }
+
+    const chartMilestones: ChartMilestone[] = milestones.map((m) => {
+      const detail = base.milestoneDetails.get(m.id);
+      const yearPoint = base.core.years.find(
+        (y) => Math.round(y.age) === Math.round(m.age),
+      );
+      const portfolioValue =
+        detail?.balanceAtAge ?? yearPoint?.endingBalance ?? 0;
+      return {
+        id: m.id,
+        age: m.age,
+        title: m.title,
+        type: m.type,
+        status: detail?.status ?? null,
+        portfolioValue,
+        balanceAtAge: detail?.balanceAtAge ?? yearPoint?.startingBalance ?? 0,
+        balanceAfter: detail?.balanceAfter ?? yearPoint?.endingBalance ?? 0,
+        cost: detail?.cost ?? 0,
+      };
+    });
 
     return {
       simulation: base,
       chartPoints,
-      ahaDifference: Math.max(
-        0,
-        higher.core.finalBalance - base.core.finalBalance,
-      ),
-      lowerMonthly: lowerInputs.monthlyContribution,
-      higherMonthly: higherInputs.monthlyContribution,
+      chartMilestones,
     };
-  }, [inputs, milestones, compareScenarios, comparisonRange]);
+  }, [inputs, milestones, comparisonRange]);
 
   const recommendation = useMemo(() => {
     if (!simulation?.milestoneDetails || milestones.length === 0) return null;
@@ -174,14 +205,10 @@ export default function HomePage() {
             <MobileResultStep
               simulation={simulation}
               points={chartPoints}
-              compareEnabled={compareScenarios}
-              onToggleCompare={setCompareScenarios}
+              chartMilestones={chartMilestones}
               comparisonRange={comparisonRange}
               onRangeChange={setComparisonRange}
               baseMonthly={inputs.monthlyContribution}
-              lowerMonthly={lowerMonthly}
-              higherMonthly={higherMonthly}
-              ahaDifference={ahaDifference}
               milestones={milestones}
               onAddMilestone={() => {
                 const nextAge =
@@ -233,14 +260,7 @@ export default function HomePage() {
             <ParameterCard value={inputs} onChange={setInputs} />
             <GrowthChart
               points={chartPoints}
-              compareEnabled={compareScenarios}
-              onToggleCompare={setCompareScenarios}
-              comparisonRange={comparisonRange}
-              onRangeChange={setComparisonRange}
-              baseMonthly={inputs.monthlyContribution}
-              lowerMonthly={lowerMonthly}
-              higherMonthly={higherMonthly}
-              ahaDifference={ahaDifference}
+              milestones={chartMilestones}
             />
           </section>
 

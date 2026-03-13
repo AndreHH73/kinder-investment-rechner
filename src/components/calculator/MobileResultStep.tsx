@@ -6,6 +6,7 @@ import {
 } from "@/components/calculator/MilestonesSection";
 import { formatCurrency } from "@/lib/format";
 import type {
+  ChartMilestone,
   CalculatorSimulationResult,
   Milestone,
   SimulationPoint,
@@ -14,14 +15,10 @@ import type {
 interface MobileResultStepProps {
   simulation: CalculatorSimulationResult | null;
   points: SimulationPoint[];
-  compareEnabled: boolean;
-  onToggleCompare: (enabled: boolean) => void;
+  chartMilestones: ChartMilestone[];
   comparisonRange: number;
   onRangeChange: (range: number) => void;
   baseMonthly: number;
-  lowerMonthly: number;
-  higherMonthly: number;
-  ahaDifference: number;
   milestones: Milestone[];
   recommendation?: SavingsRecommendation | null;
   onApplyRecommended?: (amount: number) => void;
@@ -36,14 +33,10 @@ interface MobileResultStepProps {
 export function MobileResultStep({
   simulation,
   points,
-  compareEnabled,
-  onToggleCompare,
+  chartMilestones,
   comparisonRange,
   onRangeChange,
   baseMonthly,
-  lowerMonthly,
-  higherMonthly,
-  ahaDifference,
   milestones,
   recommendation = null,
   onApplyRecommended,
@@ -140,14 +133,7 @@ export function MobileResultStep({
 
       <GrowthChart
         points={points}
-        compareEnabled={compareEnabled}
-        onToggleCompare={onToggleCompare}
-        comparisonRange={comparisonRange}
-        onRangeChange={onRangeChange}
-        baseMonthly={baseMonthly}
-        lowerMonthly={lowerMonthly}
-        higherMonthly={higherMonthly}
-        ahaDifference={ahaDifference}
+        milestones={chartMilestones}
       />
     </div>
   );
