@@ -61,14 +61,17 @@ export function MobileResultStep({
 
   return (
     <div className="space-y-4">
-      <section className="rounded-3xl bg-surface p-5 shadow-sm shadow-primary/5">
-        <p className="text-xl font-semibold text-slate-800">
-          Was passiert, wenn du mehr sparst?
+      <section className="rounded-3xl bg-surface p-6 shadow-sm shadow-slate-200/80">
+        <h2 className="text-base font-semibold text-slate-800">
+          Sparrate anpassen
+        </h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Teste, wie sich eine höhere oder niedrigere Sparrate auf den Lebensweg deines Kindes auswirkt.
         </p>
 
         <div className="mt-4">
-          <p className="text-[11px] font-medium text-slate-600">
-            Szenarien (Sparrate pro Monat)
+          <p className="text-[11px] font-medium text-slate-500">
+            Vergleichsbereich
           </p>
           <div className="mt-2 flex flex-wrap gap-2 text-[11px]">
             {[25, 50, 100].map((value) => (
@@ -76,9 +79,9 @@ export function MobileResultStep({
                 key={value}
                 type="button"
                 onClick={() => onRangeChange(value)}
-                className={`rounded-full px-3 py-1.5 ${
+                className={`rounded-full px-3 py-1.5 font-medium ${
                   comparisonRange === value
-                    ? "bg-slate-900 text-slate-50"
+                    ? "bg-blue-600 text-white"
                     : "bg-slate-100 text-slate-700"
                 }`}
               >
@@ -86,7 +89,7 @@ export function MobileResultStep({
               </button>
             ))}
           </div>
-          <div className="mt-2 space-y-2 text-[11px]">
+          <div className="mt-3 space-y-2 text-[11px]">
             {scenarios.map((amount, index) => {
               const isCurrent = amount === baseMonthly;
               return (
@@ -94,20 +97,23 @@ export function MobileResultStep({
                   key={`scenario-${amount}-${index}`}
                   type="button"
                   onClick={() => onSelectScenarioAmount(amount)}
-                  className={`flex min-h-[44px] w-full items-center justify-center rounded-xl px-3 py-2 ${
+                  className={`flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border-2 px-3 py-2 transition-colors ${
                     isCurrent
-                      ? "bg-slate-900 text-slate-50"
-                      : "bg-slate-100 text-slate-700"
+                      ? "border-blue-500 bg-blue-50 text-slate-900"
+                      : "border-transparent bg-slate-100 text-slate-700"
                   }`}
                 >
                   {formatCurrency(amount).replace("€", "€ / Monat")}
-                  {isCurrent && " (aktuell)"}
+                  {isCurrent && (
+                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                      aktuell
+                    </span>
+                  )}
                 </button>
               );
             })}
           </div>
         </div>
-
       </section>
 
       <ChildLifeTimeline milestones={milestones} simulation={simulation} />

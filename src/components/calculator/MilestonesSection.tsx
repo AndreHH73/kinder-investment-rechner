@@ -153,6 +153,26 @@ export function MilestonesSection({
               )}
             </div>
           ))}
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-3">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <span className="text-xl">➕</span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-900">
+                  Eigenes Lebensereignis
+                </p>
+                <p className="mt-0.5 text-[11px] text-slate-500">
+                  Plane ein individuelles Ereignis mit eigenem Zeitpunkt und Kosten.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onAdd}
+              className="shrink-0 rounded-full bg-sky-600 px-3 py-1.5 text-[11px] font-medium text-white shadow-sm hover:bg-sky-700"
+            >
+              Hinzufügen
+            </button>
+          </div>
         </div>
       </div>
 
