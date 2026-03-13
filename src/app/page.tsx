@@ -1,65 +1,197 @@
-import Image from "next/image";
+/* eslint-disable import/no-extraneous-dependencies */
+"use client";
 
-export default function Home() {
+import { useMemo, useState } from "react";
+
+import { CalculatorHeader } from "@/components/calculator/Header";
+import { GrowthChart } from "@/components/calculator/GrowthChart";
+import { HeroResult } from "@/components/calculator/HeroResult";
+import { MilestoneForm } from "@/components/calculator/MilestoneForm";
+import { MilestonesSection } from "@/components/calculator/MilestonesSection";
+import { ParameterCard } from "@/components/calculator/ParameterCard";
+import { SavePlanModal } from "@/components/calculator/SavePlanModal";
+import { SummaryCards } from "@/components/calculator/SummaryCards";
+import { defaultInputs, defaultMilestones } from "@/data/defaultMilestones";
+import { runCalculatorSimulation } from "@/lib/simulation";
+import type {
+  CalculatorInputs,
+  CalculatorSimulationResult,
+  Milestone,
+} from "@/types/calculator";
+
+export default function HomePage() {
+  const [inputs, setInputs] = useState<CalculatorInputs>(defaultInputs);
+  const [milestones, setMilestones] = useState<Milestone[]>(defaultMilestones);
+  const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(
+    null,
+  );
+  const [milestoneMode, setMilestoneMode] = useState<"create" | "edit">(
+    "create",
+  );
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [compareScenarios, setCompareScenarios] = useState(false);
+  const [comparisonRange, setComparisonRange] = useState<number>(200);
+
+  const {
+    simulation,
+    chartPoints,
+    ahaDifference,
+    lowerMonthly,
+    higherMonthly,
+  }: {
+    simulation: CalculatorSimulationResult | null;
+    chartPoints: import("@/types/calculator").SimulationPoint[];
+    ahaDifference: number;
+    lowerMonthly: number;
+    higherMonthly: number;
+  } = useMemo(() => {
+    const base = runCalculatorSimulation(inputs, milestones);
+
+    if (!compareScenarios) {
+      return {
+        simulation: base,
+        chartPoints: base.points,
+        ahaDifference: 0,
+        lowerMonthly: inputs.monthlyContribution,
+        higherMonthly: inputs.monthlyContribution,
+      };
+    }
+
+    const delta = comparisonRange;
+
+    const lowerInputs: CalculatorInputs = {
+      ...inputs,
+      monthlyContribution: Math.max(0, inputs.monthlyContribution - delta),
+    };
+    const higherInputs: CalculatorInputs = {
+      ...inputs,
+      monthlyContribution: inputs.monthlyContribution + delta,
+    };
+
+    const lower = runCalculatorSimulation(lowerInputs, milestones);
+    const higher = runCalculatorSimulation(higherInputs, milestones);
+
+    const chartPoints = base.points.map((point, index) => ({
+      ...point,
+      lowerPortfolioValue:
+        lower.points[index]?.portfolioValue ?? point.portfolioValue,
+      higherPortfolioValue:
+        higher.points[index]?.portfolioValue ?? point.portfolioValue,
+      lowerContributionsValue:
+        lower.points[index]?.contributionsValue ?? point.contributionsValue,
+      higherContributionsValue:
+        higher.points[index]?.contributionsValue ?? point.contributionsValue,
+    }));
+
+    return {
+      simulation: base,
+      chartPoints,
+      ahaDifference: Math.max(
+        0,
+        higher.core.finalBalance - base.core.finalBalance,
+      ),
+      lowerMonthly: lowerInputs.monthlyContribution,
+      higherMonthly: higherInputs.monthlyContribution,
+    };
+  }, [inputs, milestones, compareScenarios, comparisonRange]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen bg-slate-50">
+      <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
+        <CalculatorHeader />
+        <HeroResult inputs={inputs} simulation={simulation?.core ?? null} />
+
+        <section className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)]">
+          <ParameterCard value={inputs} onChange={setInputs} />
+          <GrowthChart
+            points={chartPoints}
+            compareEnabled={compareScenarios}
+            onToggleCompare={setCompareScenarios}
+            comparisonRange={comparisonRange}
+            onRangeChange={setComparisonRange}
+            baseMonthly={inputs.monthlyContribution}
+            lowerMonthly={lowerMonthly}
+            higherMonthly={higherMonthly}
+            ahaDifference={ahaDifference}
+          />
+        </section>
+
+        <div className="space-y-3">
+          <SummaryCards result={simulation} />
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setSaveModalOpen(true)}
+              className="rounded-full bg-slate-900 px-4 py-2 text-xs font-medium text-slate-50 shadow-sm hover:bg-slate-800"
+            >
+              Plan speichern
+            </button>
+          </div>
+        </div>
+
+        <MilestonesSection
+          milestones={milestones}
+          onAdd={() => {
+            const nextAge = (milestones[milestones.length - 1]?.age ??
+              inputs.childAge +
+                1) as number;
+            setMilestoneMode("create");
+            setEditingMilestone({
+              id: `m-${Date.now()}`,
+              title: "",
+              age: nextAge,
+              amount: 0,
+              type: "expense",
+              description: "",
+            });
+          }}
+          onEdit={(milestone) => {
+            setMilestoneMode("edit");
+            setEditingMilestone(milestone);
+          }}
+          onDelete={(id) => {
+            setMilestones((prev) => prev.filter((m) => m.id !== id));
+          }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+        <footer className="mt-4 border-t border-slate-200 pt-4 text-[11px] text-slate-500">
+          <p className="max-w-4xl">
+            Hinweis / Disclaimer: Diese Berechnungen sind modellhaft und dienen
+            ausschließlich der Veranschaulichung möglicher Wertentwicklungen.
+            Renditen sind nicht garantiert, tatsächliche Wertverläufe können von
+            den Annahmen abweichen. Steuern, Kosten und individuelle
+            Vertragsbedingungen werden nicht berücksichtigt. Die Ergebnisse
+            stellen keine Finanz-, Anlage-, Steuer- oder Rechtsberatung dar und
+            können eine persönliche Beratung nicht ersetzen.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        </footer>
       </main>
+      <MilestoneForm
+        initial={editingMilestone}
+        mode={milestoneMode}
+        onSubmit={(milestone) => {
+          setMilestones((prev) => {
+            if (milestoneMode === "create") {
+              return [...prev, milestone];
+            }
+            return prev.map((m) => (m.id === milestone.id ? milestone : m));
+          });
+          setEditingMilestone(null);
+        }}
+        onDelete={(id) => {
+          setMilestones((prev) => prev.filter((m) => m.id !== id));
+          setEditingMilestone(null);
+        }}
+        onClose={() => setEditingMilestone(null)}
+      />
+      <SavePlanModal
+        open={saveModalOpen}
+        inputs={inputs}
+        milestones={milestones}
+        onClose={() => setSaveModalOpen(false)}
+      />
     </div>
   );
 }
+
+
