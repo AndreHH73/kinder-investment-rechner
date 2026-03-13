@@ -110,6 +110,8 @@ export function MobileResultStep({
 
       </section>
 
+      <ChildLifeTimeline milestones={milestones} simulation={simulation} />
+
       <MilestonesSection
         milestones={milestones}
         milestoneDetails={simulation?.milestoneDetails}
@@ -121,8 +123,6 @@ export function MobileResultStep({
         onEdit={onEditMilestone}
         onDelete={onDeleteMilestone}
       />
-
-      <ChildLifeTimeline milestones={milestones} simulation={simulation} />
 
       <GrowthChart
         points={points}

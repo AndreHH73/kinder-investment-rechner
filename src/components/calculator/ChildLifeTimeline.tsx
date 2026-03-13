@@ -42,6 +42,16 @@ export function ChildLifeTimeline({
     return "text-slate-500";
   };
 
+  const getIconForMilestone = (m: Milestone | { title: string }): string => {
+    const title = m.title.toLowerCase();
+    if (title.includes("führerschein")) return "🚗";
+    if (title.includes("auslandsjahr") || title.includes("welt")) return "🌍";
+    if (title.includes("studium") || title.includes("studien")) return "🎓";
+    if (title.includes("wohnung") || title.includes("immobilie") || title.includes("haus"))
+      return "🏡";
+    return "🎯";
+  };
+
   const hasMilestones = sorted.length > 0;
 
   // Hilfsfunktion: nächstes Jahr im Simulationsergebnis suchen
@@ -90,7 +100,10 @@ export function ChildLifeTimeline({
   ].sort((a, b) => a.age - b.age);
 
   return (
-    <section className="mx-auto w-full max-w-[420px] rounded-3xl bg-surface p-4 shadow-sm shadow-primary/5">
+    <section
+      id="child-life-timeline"
+      className="mx-auto w-full max-w-[420px] rounded-3xl bg-surface p-4 shadow-sm shadow-primary/5"
+    >
       <h2 className="text-sm font-semibold text-slate-900">
         Lebensweg deines Kindes
       </h2>
@@ -126,61 +139,64 @@ export function ChildLifeTimeline({
                 )}
               </div>
 
-              {/* Right: Content */}
-              <div className="flex-1">
+              {/* Right: Content – reine Text-Timeline */}
+              <div className="flex-1 space-y-0.5 text-[11px]">
                 {item.type === "start" && (
-                  <div className="rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
-                    <p className="text-[11px] font-semibold text-slate-900">
+                  <>
+                    <p className="font-semibold text-slate-900">
                       Start des Sparplans
                     </p>
-                    <p className="mt-1 text-[11px] text-slate-600">
+                    <p className="text-slate-600">
                       {item.description}
                     </p>
-                  </div>
+                  </>
                 )}
 
                 {item.type === "fixed" && (
-                  <div className="rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
-                    <p className="text-[11px] font-semibold text-slate-900">
+                  <>
+                    <p className="font-semibold text-slate-900">
                       {item.label}
                     </p>
-                    <p className="mt-1 text-[11px] text-slate-600">
-                      {item.description}
+                    <p className="text-slate-600">
+                      Vermögen danach:{" "}
+                      <span className="font-semibold">
+                        {item.description}
+                      </span>
                     </p>
-                  </div>
+                  </>
                 )}
 
                 {item.type === "end" && (
-                  <div className="rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
-                    <p className="text-[11px] font-semibold text-slate-900">
-                      Zielvermögen
+                  <>
+                    <p className="font-semibold text-slate-900">
+                      🏁 Zielvermögen
                     </p>
-                    <p className="mt-0.5 text-[11px] text-slate-600">
+                    <p className="text-slate-600">
                       Mit {Math.round(item.age)} Jahren
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-emerald-600">
+                    <p className="text-sm font-semibold text-emerald-600">
                       {item.description}
                     </p>
-                  </div>
+                  </>
                 )}
 
                 {item.type === "milestone" && item.milestone && (
-                  <div className="rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
-                    <p className="text-[11px] font-semibold text-slate-900">
+                  <>
+                    <p className="font-semibold text-slate-900">
+                      <span className="mr-1">
+                        {getIconForMilestone(item.milestone)}
+                      </span>
                       {item.milestone.title}
                     </p>
-                    <p className="mt-0.5 text-[11px] text-slate-500">
-                      Kosten: {formatCurrency(item.milestone.amount)}
-                    </p>
                     {item.detail && (
-                      <div className="mt-1 space-y-0.5 text-[11px] text-slate-600">
-                        <p>
-                          Vermögen vorher:{" "}
+                      <>
+                        <p className="text-slate-600">
+                          Kosten:{" "}
                           <span className="font-semibold">
-                            {formatCurrency(item.detail.balanceAtAge)}
+                            {formatCurrency(Math.abs(item.milestone.amount))}
                           </span>
                         </p>
-                        <p>
+                        <p className="text-slate-600">
                           Vermögen danach:{" "}
                           <span className="font-semibold">
                             {formatCurrency(item.detail.balanceAfter)}
@@ -198,9 +214,9 @@ export function ChildLifeTimeline({
                             {item.detail.status}
                           </p>
                         )}
-                      </div>
+                      </>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
             </div>

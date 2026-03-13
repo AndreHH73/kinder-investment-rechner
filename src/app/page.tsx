@@ -154,13 +154,14 @@ export default function HomePage() {
       isFirstRender.current = false;
       return;
     }
+    if (mobileStep !== 2) return;
     const el = heroRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
     if (rect.top < 0) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [inputs, milestones]);
+  }, [inputs, milestones, mobileStep]);
 
   useEffect(() => {
     if (mobileStep !== 2) return;
@@ -232,9 +233,10 @@ export default function HomePage() {
                 setMilestones((prev) => prev.filter((m) => m.id !== id));
               }}
               recommendation={recommendation}
-              onApplyRecommended={(amount) =>
-                setInputs((prev) => ({ ...prev, monthlyContribution: amount }))
-              }
+              onApplyRecommended={(amount) => {
+                setInputs((prev) => ({ ...prev, monthlyContribution: amount }));
+                setBaselineScenario(null);
+              }}
               onAddFromTemplate={(template: MilestoneTemplate) => {
                 setMilestoneMode("create");
                 setEditingMilestone({
@@ -281,9 +283,10 @@ export default function HomePage() {
             milestones={milestones}
             milestoneDetails={simulation?.milestoneDetails}
             recommendation={recommendation}
-            onApplyRecommended={(amount) =>
-              setInputs((prev) => ({ ...prev, monthlyContribution: amount }))
-            }
+            onApplyRecommended={(amount) => {
+              setInputs((prev) => ({ ...prev, monthlyContribution: amount }));
+              setBaselineScenario(null);
+            }}
             finalBalance={simulation?.core?.finalBalance ?? 0}
             onAdd={() => {
               const nextAge =
@@ -343,6 +346,12 @@ export default function HomePage() {
             return prev.map((m) => (m.id === milestone.id ? milestone : m));
           });
           setEditingMilestone(null);
+          if (typeof window !== "undefined") {
+            const el = document.getElementById("child-life-timeline");
+            if (el) {
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }
         }}
         onDelete={(id) => {
           setMilestones((prev) => prev.filter((m) => m.id !== id));
