@@ -32,8 +32,12 @@ export default function HomePage() {
   );
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [compareScenarios, setCompareScenarios] = useState(false);
-  const [comparisonRange, setComparisonRange] = useState<number>(200);
+  const [comparisonRange, setComparisonRange] = useState<number>(50);
   const [mobileStep, setMobileStep] = useState<1 | 2>(1);
+  const [baselineScenario, setBaselineScenario] = useState<{
+    monthly: number;
+    endValue: number;
+  } | null>(null);
 
   const {
     simulation,
@@ -93,7 +97,13 @@ export default function HomePage() {
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
         <CalculatorHeader />
-        <HeroResult inputs={inputs} simulation={simulation?.core ?? null} />
+        <HeroResult
+          inputs={inputs}
+          simulation={simulation?.core ?? null}
+          baselineScenario={
+            mobileStep === 2 ? baselineScenario : null
+          }
+        />
 
         {/* Mobile Flow */}
         <div className="space-y-4 lg:hidden">
@@ -101,7 +111,13 @@ export default function HomePage() {
             <MobileInputStep
               value={inputs}
               onChange={setInputs}
-              onNext={() => setMobileStep(2)}
+              onNext={() => {
+                setBaselineScenario({
+                  monthly: inputs.monthlyContribution,
+                  endValue: simulation?.core?.finalBalance ?? 0,
+                });
+                setMobileStep(2);
+              }}
             />
           )}
           {mobileStep === 2 && (

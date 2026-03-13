@@ -101,8 +101,8 @@ export function GrowthChart({
             Szenarien vergleichen
           </button>
           <div className="inline-flex items-center gap-2 rounded-full bg-background px-3 py-1">
-            <span className="font-medium text-slate-600">Vergleichsspanne</span>
-            {[50, 100, 200].map((value) => (
+            <span className="font-medium text-slate-600">Vergleich</span>
+            {[25, 50, 100].map((value) => (
               <button
                 key={value}
                 type="button"
@@ -113,7 +113,7 @@ export function GrowthChart({
                     : "bg-surface text-slate-700"
                 }`}
               >
-                ±{value} €
+                +{value} €
               </button>
             ))}
           </div>
