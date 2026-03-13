@@ -58,25 +58,38 @@ export function ChildLifeTimeline({
   const getYearAtAge = (age: number) =>
     years.find((y) => Math.round(y.age) === Math.round(age));
 
-  const baseStations =
-    hasMilestones
-      ? []
-      : [
-          ...[16, 18, 25].map((age) => {
-            const year = getYearAtAge(age);
-            if (!year) return null;
-            return {
-              type: "fixed" as const,
-              age: year.age,
-              label: `Vermögen mit ${Math.round(year.age)} Jahren`,
-              description: formatCurrency(year.endingBalance),
-            };
-          }),
-        ].filter(Boolean);
+  type TimelineItem =
+    | { type: "start"; label: string; age: number; description: string }
+    | { type: "end"; label: string; age: number; description: string }
+    | {
+        type: "milestone";
+        age: number;
+        milestone: Milestone;
+        detail: MilestoneDetail | undefined;
+      }
+    | { type: "fixed"; age: number; label: string; description: string };
 
-  const items = [
+  const baseStationsRaw = hasMilestones
+    ? []
+    : [16, 18, 25].map((age) => {
+        const year = getYearAtAge(age);
+        if (!year) return null;
+        return {
+          type: "fixed" as const,
+          age: year.age,
+          label: `Vermögen mit ${Math.round(year.age)} Jahren`,
+          description: formatCurrency(year.endingBalance),
+        };
+      });
+
+  type FixedStation = Extract<TimelineItem, { type: "fixed" }>;
+  const baseStations = baseStationsRaw.filter(
+    (item): item is FixedStation => item !== null,
+  );
+
+  const timelineItemsRaw: (TimelineItem | null)[] = [
     {
-      type: "start" as const,
+      type: "start",
       label: "Start des Sparplans",
       age: startYear.age,
       description: `Startvermögen: ${formatCurrency(startYear.startingBalance)}`,
@@ -92,12 +105,16 @@ export function ChildLifeTimeline({
     }),
     ...baseStations,
     {
-      type: "end" as const,
+      type: "end",
       label: "Zielvermögen",
       age: endYear.age,
       description: formatCurrency(core.finalBalance),
     },
-  ].sort((a, b) => a.age - b.age);
+  ];
+
+  const items = timelineItemsRaw
+    .filter((item): item is TimelineItem => item !== null)
+    .sort((a, b) => a.age - b.age);
 
   return (
     <section
