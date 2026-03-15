@@ -78,9 +78,6 @@ export function HeroResult({
     >
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-2">
-          <p className="typo-a3 text-slate-300">
-            Prognose zum Zielalter
-          </p>
           <p className="typo-a2 font-medium text-slate-100">
             Mit{" "}
             <span className="font-bold">
