@@ -164,7 +164,7 @@ export function MilestoneForm({
             <button
               type="button"
               onClick={handleSubmit}
-              className="rounded-full bg-sky-600 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-sky-700"
+              className="rounded-full bg-primary-action px-3 py-1.5 font-medium text-white shadow-sm hover:bg-[#1a4a75]"
             >
               Speichern
             </button>

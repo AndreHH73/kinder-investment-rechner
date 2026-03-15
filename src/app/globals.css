@@ -2,6 +2,7 @@
 
 :root {
   --ff-primary: #0f2a44;
+  --ff-primary-action: #1C4E80;
   --ff-secondary: #2fa36b;
   --ff-gold: #e7b54a;
   --ff-background: #f5f7fa;
@@ -14,6 +15,7 @@
   --color-background: var(--ff-background);
   --color-foreground: var(--ff-text);
   --color-primary: var(--ff-primary);
+  --color-primary-action: var(--ff-primary-action);
   --color-secondary: var(--ff-secondary);
   --color-gold: var(--ff-gold);
   --color-surface: var(--ff-surface);

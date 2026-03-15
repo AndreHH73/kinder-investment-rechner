@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useState } from "react";
 
 import { formatCurrency, formatCurrencyWithSign } from "@/lib/format";
@@ -77,6 +78,8 @@ interface MilestonesSectionProps {
   onAddFromTemplate?: (template: MilestoneTemplate) => void;
   onEdit: (milestone: Milestone) => void;
   onDelete: (id: string) => void;
+  /** Wenn gesetzt (z. B. Mobile): wird zwischen Auswahl und Finanzierungsstatus gerendert; Finanzierungsstatus nur bei milestones.length > 0 */
+  slotBetweenSelectionAndFinancing?: ReactNode;
 }
 
 export function MilestonesSection({
@@ -89,6 +92,7 @@ export function MilestonesSection({
   onAddFromTemplate,
   onEdit,
   onDelete,
+  slotBetweenSelectionAndFinancing,
 }: MilestonesSectionProps) {
   const sorted = [...milestones].sort((a, b) => a.age - b.age);
   const [openDetailId, setOpenDetailId] = useState<string | null>(null);
@@ -108,20 +112,21 @@ export function MilestonesSection({
     return "🎯";
   };
 
-  return (
-    <section className="rounded-3xl bg-white p-5 shadow-sm shadow-slate-900/5 md:p-6">
+  const sectionClass =
+    "rounded-3xl bg-white p-5 shadow-sm shadow-slate-900/5 md:p-6";
+
+  const selectionBlock = (
+    <>
       <div>
         <h2 className="text-sm font-semibold text-slate-900">
-          Welche Schritte möchtest du ermöglichen?
+          Welche Lebensschritte möchtest du für dein Kind ermöglichen?
         </h2>
         <p className="mt-1 text-xs text-slate-500">
           Plane wichtige Lebensschritte deines Kindes und sieh direkt, wie
           sie den Vermögensverlauf beeinflussen.
         </p>
       </div>
-
-      {/* Gruppe 1: Typische Lebensschritte */}
-        <div className="mt-5">
+      <div className="mt-5">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
           Typische Lebensschritte
         </h3>
@@ -146,38 +151,36 @@ export function MilestonesSection({
                 <button
                   type="button"
                   onClick={() => onAddFromTemplate(template)}
-                  className="shrink-0 rounded-full bg-sky-600 px-3 py-1.5 text-[11px] font-medium text-white shadow-sm hover:bg-sky-700"
+                  className="shrink-0 rounded-full bg-primary-action px-3 py-1.5 text-[11px] font-medium text-white shadow-sm hover:bg-[#1a4a75]"
                 >
                   Hinzufügen
                 </button>
               )}
             </div>
           ))}
-          <div className="flex items-center justify-between gap-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-3">
-            <div className="flex min-w-0 flex-1 items-center gap-3">
-              <span className="text-xl">➕</span>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-slate-900">
-                  Eigener Lebensschritt
-                </p>
-                <p className="mt-0.5 text-[11px] text-slate-500">
-                  Plane einen individuellen Lebensschritt mit eigenem Zeitpunkt und Kosten.
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={onAdd}
-              className="shrink-0 rounded-full bg-sky-600 px-3 py-1.5 text-[11px] font-medium text-white shadow-sm hover:bg-sky-700"
+          <button
+            type="button"
+            onClick={onAdd}
+            className="flex w-full items-center gap-3 rounded-2xl border border-[#1a4a75] px-4 py-3 text-left transition-opacity active:opacity-90"
+            style={{ background: "#1C4E80" }}
+          >
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/25 text-lg font-semibold text-white"
+              aria-hidden
             >
-              Hinzufügen
-            </button>
-          </div>
+              +
+            </span>
+            <p className="min-w-0 flex-1 text-sm font-semibold text-white">
+              Eigenen Lebensschritt planen
+            </p>
+          </button>
         </div>
       </div>
+    </>
+  );
 
-      {/* Gruppe 2: Finanzierungsstatus */}
-      <div className="mt-4">
+  const financingBlock = (
+    <div className="mt-4">
         {milestones.length > 0 && recommendation != null && (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
             <p className="text-sm font-semibold text-amber-900">
@@ -368,7 +371,25 @@ export function MilestonesSection({
             den Sparplan realistischer zu planen.
           </p>
         )}
-      </div>
+    </div>
+  );
+
+  if (slotBetweenSelectionAndFinancing != null) {
+    return (
+      <>
+        <section className={sectionClass}>{selectionBlock}</section>
+        {slotBetweenSelectionAndFinancing}
+        {milestones.length > 0 && (
+          <section className={sectionClass}>{financingBlock}</section>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <section className={sectionClass}>
+      {selectionBlock}
+      {financingBlock}
     </section>
   );
 }

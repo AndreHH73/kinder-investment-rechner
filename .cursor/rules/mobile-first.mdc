@@ -1,0 +1,35 @@
+---
+description: Mobile-first UI work – only optimize mobile; leave desktop/tablet stable
+globs: src/**/*.tsx, src/**/*.css
+alwaysApply: true
+---
+
+# Mobile-First: Nur Mobile optimieren
+
+## Arbeitsregel
+
+- **Referenz-Breakpoint:** Mobile (kleine Viewports).
+- **Scope:** Änderungen gelten vorerst **nur für Mobile** (kleine Breakpoints).
+- **Desktop & Tablet:** Nicht mit umbauen oder mitoptimieren; Layout und Styles stabil lassen.
+- **Keine globalen Änderungen**, die automatisch alle Viewports gleichzeitig verändern.
+
+## Technische Umsetzung
+
+1. **Breakpoint-spezifisch arbeiten**
+   - Mobile-Styles als Basis (ohne Präfix oder `max-sm`/`max-md` wo sinnvoll).
+   - Zusätzliche Anpassungen nur für kleine Breiten (z. B. `sm:`, `md:` vermeiden, wenn sie Desktop/Tablet verändern).
+   - Desktop/Tablet-Styles nicht so anpassen, dass sie Mobile überschreiben.
+
+2. **Tailwind-Konvention**
+   - Basis-Klassen = Mobile.
+   - Größere Breakpoints (`md:`, `lg:`, `xl:`) nur setzen, wenn ausdrücklich für spätere Desktop-Optimierung oder um bestehendes Desktop-Verhalten zu erhalten.
+   - Bei neuen Features: zuerst nur Mobile implementieren; Desktop in einem **eigenen Schritt** später.
+
+3. **Schutz der Mobile-Version**
+   - Wenn später Desktop angepasst wird: Mobile-Styles nicht überschreiben.
+   - Desktop-Anpassungen nur über Breakpoint-Präfixe (z. B. `lg:`, `md:`) ergänzen, nicht die gleichen Eigenschaften ohne Breakpoint ändern.
+
+## Ziel
+
+1. **Phase 1:** Mobile sauber finalisieren.
+2. **Phase 2:** Desktop und Tablet in einem **separaten Schritt** optimieren, ohne Mobile zu verändern.

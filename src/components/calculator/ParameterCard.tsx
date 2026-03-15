@@ -41,7 +41,7 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
             onChange={(e) =>
               update({ monthlyContribution: Number(e.target.value) })
             }
-            className="mt-2 w-full cursor-pointer accent-sky-600"
+            className="mt-2 w-full cursor-pointer accent-primary-action"
           />
           <input
             type="number"
@@ -67,7 +67,7 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
             step={1}
             value={value.childAge}
             onChange={(e) => update({ childAge: Number(e.target.value) })}
-            className="mt-2 w-full cursor-pointer accent-sky-600"
+            className="mt-2 w-full cursor-pointer accent-primary-action"
           />
           <input
             type="number"
@@ -91,7 +91,7 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
             step={1}
             value={value.targetAge}
             onChange={(e) => update({ targetAge: Number(e.target.value) })}
-            className="mt-2 w-full cursor-pointer accent-sky-600"
+            className="mt-2 w-full cursor-pointer accent-primary-action"
           />
           <input
             type="number"
@@ -119,7 +119,7 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
             onChange={(e) =>
               update({ expectedReturnPercentPerYear: Number(e.target.value) })
             }
-            className="mt-2 w-full cursor-pointer accent-sky-600"
+            className="mt-2 w-full cursor-pointer accent-primary-action"
           />
           <input
             type="number"

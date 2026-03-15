@@ -60,7 +60,22 @@ export function MobileResultStep({
     .sort((a, b) => a - b);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <MilestonesSection
+        milestones={milestones}
+        milestoneDetails={simulation?.milestoneDetails}
+        recommendation={recommendation}
+        onApplyRecommended={onApplyRecommended}
+        finalBalance={simulation?.core?.finalBalance ?? 0}
+        onAdd={onAddMilestone}
+        onAddFromTemplate={onAddFromTemplate}
+        onEdit={onEditMilestone}
+        onDelete={onDeleteMilestone}
+        slotBetweenSelectionAndFinancing={
+          <ChildLifeTimeline milestones={milestones} simulation={simulation} />
+        }
+      />
+
       <section className="rounded-3xl bg-surface p-6 shadow-sm shadow-slate-200/80">
         <h2 className="text-base font-semibold text-slate-800">
           Sparrate anpassen
@@ -81,7 +96,7 @@ export function MobileResultStep({
                 onClick={() => onRangeChange(value)}
                 className={`rounded-full px-3 py-1.5 font-medium ${
                   comparisonRange === value
-                    ? "bg-blue-600 text-white"
+                    ? "bg-primary-action text-white"
                     : "bg-slate-100 text-slate-700"
                 }`}
               >
@@ -99,13 +114,13 @@ export function MobileResultStep({
                   onClick={() => onSelectScenarioAmount(amount)}
                   className={`flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border-2 px-3 py-2 transition-colors ${
                     isCurrent
-                      ? "border-blue-500 bg-blue-50 text-slate-900"
+                      ? "border-primary-action bg-primary-action/10 text-slate-900"
                       : "border-transparent bg-slate-100 text-slate-700"
                   }`}
                 >
                   {formatCurrency(amount).replace("€", "€ / Monat")}
                   {isCurrent && (
-                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                    <span className="rounded-full bg-primary-action/15 px-2 py-0.5 text-[10px] font-medium text-primary-action">
                       aktuell
                     </span>
                   )}
@@ -116,26 +131,12 @@ export function MobileResultStep({
         </div>
       </section>
 
-      <ChildLifeTimeline milestones={milestones} simulation={simulation} />
-
-      <MilestonesSection
-        milestones={milestones}
-        milestoneDetails={simulation?.milestoneDetails}
-        recommendation={recommendation}
-        onApplyRecommended={onApplyRecommended}
-        finalBalance={simulation?.core?.finalBalance ?? 0}
-        onAdd={onAddMilestone}
-        onAddFromTemplate={onAddFromTemplate}
-        onEdit={onEditMilestone}
-        onDelete={onDeleteMilestone}
-      />
-
       <GrowthChart
         points={points}
         milestones={chartMilestones}
       />
 
-      <div className="flex justify-center">
+      <div className="flex justify-center pt-2">
         <button
           type="button"
           onClick={onBack}

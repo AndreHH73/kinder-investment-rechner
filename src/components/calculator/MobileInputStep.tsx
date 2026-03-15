@@ -53,7 +53,7 @@ export function MobileInputStep({
             onChange={(e) =>
               update({ childAge: Number(e.target.value) || 0 })
             }
-            className="ff-slider mt-3 w-full cursor-pointer accent-primary"
+            className="ff-slider mt-3 w-full cursor-pointer accent-primary-action"
           />
         </div>
         <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
@@ -84,7 +84,7 @@ export function MobileInputStep({
             onChange={(e) =>
               update({ monthlyContribution: Number(e.target.value) })
             }
-            className="ff-slider mt-3 w-full cursor-pointer accent-primary"
+            className="ff-slider mt-3 w-full cursor-pointer accent-primary-action"
           />
         </div>
         <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
@@ -117,7 +117,7 @@ export function MobileInputStep({
               const clamped = Math.max(value.childAge + 1, raw);
               update({ targetAge: clamped });
             }}
-            className="ff-slider mt-3 w-full cursor-pointer accent-primary"
+            className="ff-slider mt-3 w-full cursor-pointer accent-primary-action"
           />
         </div>
       </div>
@@ -166,7 +166,7 @@ export function MobileInputStep({
       <button
         type="button"
         onClick={onNext}
-        className="mt-5 w-full rounded-full bg-primary px-6 py-3.5 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#0b1f33] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        className="mt-5 w-full rounded-full bg-primary-action px-6 py-3.5 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#1a4a75] focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2"
       >
         Lebensschritte planen
       </button>
