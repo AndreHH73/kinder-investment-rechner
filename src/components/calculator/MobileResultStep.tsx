@@ -77,18 +77,18 @@ export function MobileResultStep({
       />
 
       <section className="rounded-3xl bg-surface p-6 shadow-sm shadow-slate-200/80">
-        <h2 className="text-base font-semibold text-slate-800">
+        <h2 className="typo-a1 text-slate-800">
           Sparrate anpassen
         </h2>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="typo-a2 mt-1 text-slate-600">
           Teste, wie sich eine höhere oder niedrigere Sparrate auf den Lebensweg deines Kindes auswirkt.
         </p>
 
         <div className="mt-4">
-          <p className="text-[11px] font-medium text-slate-500">
+          <p className="typo-a3 text-slate-500">
             Vergleichsbereich
           </p>
-          <div className="mt-2 flex flex-wrap gap-2 text-[11px]">
+          <div className="typo-a4 mt-2 flex flex-wrap gap-2">
             {[25, 50, 100].map((value) => (
               <button
                 key={value}
@@ -104,7 +104,7 @@ export function MobileResultStep({
               </button>
             ))}
           </div>
-          <div className="mt-3 space-y-2 text-[11px]">
+          <div className="typo-a4 mt-3 space-y-2">
             {scenarios.map((amount, index) => {
               const isCurrent = amount === baseMonthly;
               return (
@@ -120,7 +120,7 @@ export function MobileResultStep({
                 >
                   {formatCurrency(amount).replace("€", "€ / Monat")}
                   {isCurrent && (
-                    <span className="rounded-full bg-primary-action/15 px-2 py-0.5 text-[10px] font-medium text-primary-action">
+                    <span className="typo-a4 rounded-full bg-primary-action/15 px-2 py-0.5 font-medium text-primary-action">
                       aktuell
                     </span>
                   )}
@@ -140,7 +140,7 @@ export function MobileResultStep({
         <button
           type="button"
           onClick={onBack}
-          className="rounded-full border border-muted bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm"
+          className="typo-a4 rounded-full border border-muted bg-background px-4 py-2 font-medium text-foreground shadow-sm"
         >
           Eckdaten anpassen
         </button>

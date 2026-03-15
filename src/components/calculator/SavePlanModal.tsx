@@ -69,24 +69,24 @@ export function SavePlanModal({
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-slate-900/40 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-900">
+          <h3 className="typo-a1 text-slate-900">
             Plan speichern
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="text-xs text-slate-500 hover:text-slate-700"
+            className="typo-a4 text-slate-500 hover:text-slate-700"
           >
             Schließen
           </button>
         </div>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="typo-a2 mt-2 text-slate-500">
           Speichere die aktuellen Parameter und Lebensschritte lokal auf diesem
           Gerät. Später kann diese Funktion mit einem Backend verbunden werden.
         </p>
-        <div className="mt-4 space-y-3 text-xs">
+        <div className="mt-4 space-y-3">
           <div>
-            <label className="block font-medium text-slate-700">
+            <label className="typo-a4-medium block text-slate-700">
               Name des Kindes
             </label>
             <input
@@ -97,7 +97,7 @@ export function SavePlanModal({
             />
           </div>
           <div>
-            <label className="block font-medium text-slate-700">
+            <label className="typo-a4-medium block text-slate-700">
               Geburtsjahr
             </label>
             <input
@@ -110,7 +110,7 @@ export function SavePlanModal({
             />
           </div>
           <div>
-            <label className="block font-medium text-slate-700">
+            <label className="typo-a4-medium block text-slate-700">
               E-Mail-Adresse
             </label>
             <input
@@ -121,7 +121,7 @@ export function SavePlanModal({
             />
           </div>
         </div>
-        <div className="mt-4 flex items-center justify-between text-xs">
+        <div className="typo-a4 mt-4 flex items-center justify-between">
           {saved && (
             <p className="text-emerald-700">
               Plan wurde erfolgreich lokal gespeichert.

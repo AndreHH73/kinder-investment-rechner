@@ -30,6 +30,48 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Typo-CI: einheitliche Typografie-Stufen (mobile first) */
+.typo-a1 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+@media (min-width: 768px) {
+  .typo-a1 {
+    font-size: 24px;
+  }
+}
+
+.typo-a2 {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+@media (min-width: 768px) {
+  .typo-a2 {
+    font-size: 16px;
+  }
+}
+
+.typo-a3 {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.typo-a4 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.typo-a4-medium {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
 /* Slider styling for Eckdaten */
 input.ff-slider[type="range"] {
   -webkit-appearance: none;

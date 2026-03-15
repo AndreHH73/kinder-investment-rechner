@@ -18,17 +18,17 @@ export function MobileInputStep({
 
   return (
     <section className="rounded-3xl bg-surface p-5 shadow-sm shadow-primary/5">
-      <h2 className="text-sm font-semibold text-foreground">
+      <h2 className="typo-a1 text-foreground">
         Schritt 1 – Eckdaten
       </h2>
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="typo-a2 mt-1 text-slate-500">
         Starte mit den wichtigsten Angaben. Du kannst Details später jederzeit
         anpassen.
       </p>
 
-      <div className="mt-4 grid gap-3 text-xs md:grid-cols-3">
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
         <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
-          <p className="text-[11px] text-slate-500">Alter des Kindes</p>
+          <p className="typo-a3 text-slate-500">Alter des Kindes</p>
           <div className="mt-1 grid grid-cols-[90px_32px_auto] items-center">
             <input
               type="number"
@@ -42,7 +42,7 @@ export function MobileInputStep({
               className="w-full border-none bg-transparent text-left text-[26px] font-semibold text-foreground outline-none"
             />
             <div />
-            <span className="text-sm text-slate-500">Jahre</span>
+            <span className="typo-a4 text-slate-500">Jahre</span>
           </div>
           <input
             type="range"
@@ -57,7 +57,7 @@ export function MobileInputStep({
           />
         </div>
         <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
-          <p className="text-[11px] text-slate-500">Monatliche Sparrate</p>
+          <p className="typo-a3 text-slate-500">Monatliche Sparrate</p>
           <div className="mt-1 grid grid-cols-[90px_32px_auto] items-center">
             <input
               type="number"
@@ -73,7 +73,7 @@ export function MobileInputStep({
               className="w-full border-none bg-transparent text-left text-[26px] font-semibold text-foreground outline-none"
             />
             <div />
-            <span className="text-sm text-slate-500">€</span>
+            <span className="typo-a4 text-slate-500">€</span>
           </div>
           <input
             type="range"
@@ -88,7 +88,7 @@ export function MobileInputStep({
           />
         </div>
         <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
-          <p className="text-[11px] text-slate-500">Zielalter</p>
+          <p className="typo-a3 text-slate-500">Zielalter</p>
           <div className="mt-1 grid grid-cols-[90px_32px_auto] items-center">
             <input
               type="number"
@@ -104,7 +104,7 @@ export function MobileInputStep({
               className="w-full border-none bg-transparent text-left text-[26px] font-semibold text-foreground outline-none"
             />
             <div />
-            <span className="text-sm text-slate-500">Jahre</span>
+            <span className="typo-a4 text-slate-500">Jahre</span>
           </div>
           <input
             type="range"
@@ -122,13 +122,13 @@ export function MobileInputStep({
         </div>
       </div>
 
-      <details className="mt-4 rounded-2xl border border-muted bg-background px-3 py-2 text-xs text-foreground">
+      <details className="typo-a4 mt-4 rounded-2xl border border-muted bg-background px-3 py-2 text-foreground">
         <summary className="cursor-pointer list-none font-medium">
           Weitere Einstellungen
         </summary>
         <div className="mt-3 space-y-3">
           <div>
-            <label className="block font-medium text-foreground">
+            <label className="typo-a4-medium block text-foreground">
               Erwartete Rendite p.a.
             </label>
             <input
@@ -146,7 +146,7 @@ export function MobileInputStep({
             />
           </div>
           <div>
-            <label className="block font-medium text-foreground">
+            <label className="typo-a4-medium block text-foreground">
               Startkapital (optional)
             </label>
             <input

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { formatCurrency, formatCurrencyWithSign, formatPercent } from "@/lib/format";
+import { formatCurrency, formatCurrencyWithSign } from "@/lib/format";
 import type { CalculatorInputs } from "@/types/calculator";
 import type { SimulationResult } from "@/types/investment";
 
@@ -78,22 +78,19 @@ export function HeroResult({
     >
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-2">
-          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
+          <p className="typo-a3 text-slate-300">
             Prognose zum Zielalter
           </p>
-          <h1 className="text-base font-medium text-slate-100 md:text-lg">
-            <span className="block">
-              Mit{" "}
-              <span className="font-semibold">
-                {formatCurrency(inputs.monthlyContribution).replace("€", "€")}
-              </span>{" "}
-              monatlich
-            </span>
-            <span className="block">ermöglichst du deinem Kind,</span>
-          </h1>
+          <p className="typo-a2 font-medium text-slate-100">
+            Mit{" "}
+            <span className="font-bold">
+              {formatCurrency(inputs.monthlyContribution).replace("€", "€")}
+            </span>{" "}
+            € monatlich ermöglichst du deinem Kind,
+          </p>
           <div className="mt-0.5 flex flex-wrap items-baseline gap-2">
             <p className="text-5xl font-semibold tracking-tight text-[#2FA36B] md:text-6xl">
-              {formatCurrency(displayValue)}
+              {formatCurrency(displayValue)}*
             </p>
             {delta !== 0 && (
               <span
@@ -117,17 +114,19 @@ export function HeroResult({
               </span>
             )}
           </div>
-          <p className="text-base font-medium text-slate-100 md:text-lg">
-            aufzubauen.
-          </p>
-          <p className="mt-1 text-xs text-[#2FA36B]">
+          <p className="typo-a4 text-[#2FA36B]">
             {hasMilestones
               ? "(inkl. Finanzierung aller Lebensschritte)"
               : "(ohne geplante Lebensschritte)"}
           </p>
+          <p className="typo-a4 text-slate-200">
+            mit{" "}
+            <span className="font-semibold">{inputs.targetAge} Jahren</span>{" "}
+            aufzubauen.
+          </p>
           {showDelta && delta !== 0 && (
             <p
-              className={`mt-1 text-sm font-semibold ${
+              className={`typo-a4-medium mt-1 ${
                 delta > 0 ? "text-emerald-400" : "text-red-400"
               }`}
             >
@@ -146,34 +145,21 @@ export function HeroResult({
               )}
             </p>
           )}
-          <p className="mt-2 text-sm text-slate-200">
-            mit{" "}
-            <span className="font-semibold">{inputs.targetAge} Jahren</span>{" "}
-            erreichen.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-4 text-[11px] text-slate-200 md:gap-6">
+          <div className="mt-4 flex flex-wrap gap-4 text-slate-200 md:gap-6">
             <div>
-              <p className="text-xl font-semibold text-slate-50">
+              <p className="typo-a4-medium text-lg text-slate-50">
                 {formatCurrency(totalContributions)}
               </p>
-              <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
+              <p className="typo-a3 mt-0.5 text-slate-400">
                 Eingezahlt
               </p>
             </div>
             <div>
-              <p className="text-xl font-semibold text-[#2FA36B]">
+              <p className="typo-a4-medium text-lg text-[#2FA36B]">
                 {formatCurrency(gain)}
               </p>
-              <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
+              <p className="typo-a3 mt-0.5 text-slate-400">
                 Ertrag / Gewinn
-              </p>
-            </div>
-            <div>
-              <p className="text-xl font-semibold text-slate-50">
-                {formatPercent(inputs.expectedReturnPercentPerYear)}
-              </p>
-              <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
-                Renditeannahme
               </p>
             </div>
           </div>

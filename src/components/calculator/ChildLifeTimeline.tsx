@@ -125,13 +125,13 @@ export function ChildLifeTimeline({
           "linear-gradient(135deg, #0F2A44 0%, #1C4E80 60%, #0F2A44 100%)",
       }}
     >
-      <h2 className="text-2xl font-semibold text-slate-50 md:text-3xl">
+      <h2 className="typo-a1 text-slate-50">
         Der Lebensweg deines Kindes
       </h2>
-      <p className="mt-2 text-sm text-blue-100">
+      <p className="typo-a2 mt-2 text-blue-100">
         Plane die wichtigsten Lebensschritte deines Kindes – und sieh sofort, ob dein Sparplan dafür reicht.
       </p>
-      <p className="mt-1 text-xs text-blue-200/80">
+      <p className="typo-a4 mt-1 text-blue-200/80">
         Sieh, wie sich das Vermögen über den Lebensweg entwickelt – mit oder ohne geplante Lebensschritte.
       </p>
 
@@ -143,10 +143,10 @@ export function ChildLifeTimeline({
           return (
             <div
               key={index}
-              className="flex items-stretch gap-3 text-xs text-blue-50"
+              className="typo-a4 flex items-stretch gap-3 text-blue-50"
             >
               {/* Left: Age */}
-              <div className="w-16 text-right text-[12px] font-medium text-blue-100">
+              <div className="typo-a3 w-16 text-right text-blue-100">
                 {Math.round(item.age)} Jahre
               </div>
 
@@ -164,13 +164,13 @@ export function ChildLifeTimeline({
               </div>
 
               {/* Right: Content – reine Text-Timeline */}
-              <div className="flex-1 space-y-1 text-[12px] md:text-[13px]">
+              <div className="flex-1 space-y-1">
                 {item.type === "start" && (
                   <>
-                    <p className="font-semibold text-slate-50">
+                    <p className="typo-a4-medium text-slate-50">
                       Start des Sparplans
                     </p>
-                    <p className="text-blue-100">
+                    <p className="typo-a4 text-blue-100">
                       {item.description}
                     </p>
                   </>
@@ -178,10 +178,10 @@ export function ChildLifeTimeline({
 
                 {item.type === "fixed" && (
                   <>
-                    <p className="font-semibold text-slate-50">
+                    <p className="typo-a4-medium text-slate-50">
                       {item.label}
                     </p>
-                    <p className="text-blue-100">
+                    <p className="typo-a4 text-blue-100">
                       Vermögen danach:{" "}
                       <span className="font-semibold text-emerald-200">
                         {item.description}
@@ -192,13 +192,13 @@ export function ChildLifeTimeline({
 
                 {item.type === "end" && (
                   <>
-                    <p className="font-semibold text-slate-50">
+                    <p className="typo-a4-medium text-slate-50">
                       🏁 Zielvermögen
                     </p>
-                    <p className="text-blue-100">
+                    <p className="typo-a4 text-blue-100">
                       Mit {Math.round(item.age)} Jahren
                     </p>
-                    <p className="text-sm font-semibold text-emerald-300">
+                    <p className="typo-a4-medium text-emerald-300">
                       {item.description}
                     </p>
                   </>
@@ -206,7 +206,7 @@ export function ChildLifeTimeline({
 
                 {item.type === "milestone" && item.milestone && (
                   <>
-                    <p className="font-semibold text-slate-50">
+                    <p className="typo-a4-medium text-slate-50">
                       <span className="mr-1 text-lg">
                         {getIconForMilestone(item.milestone)}
                       </span>
@@ -214,13 +214,13 @@ export function ChildLifeTimeline({
                     </p>
                     {item.detail && (
                       <>
-                        <p className="text-blue-100">
+                        <p className="typo-a4 text-blue-100">
                           Kosten:{" "}
                           <span className="font-semibold text-rose-200">
                             {formatCurrency(Math.abs(item.milestone.amount))}
                           </span>
                         </p>
-                        <p className="text-blue-100">
+                        <p className="typo-a4 text-blue-100">
                           Vermögen danach:{" "}
                           <span className="font-semibold text-emerald-200">
                             {formatCurrency(item.detail.balanceAfter)}
@@ -228,7 +228,7 @@ export function ChildLifeTimeline({
                         </p>
                         {item.detail.status && (
                           <p
-                            className={`mt-0.5 font-medium ${getStatusColor(
+                            className={`typo-a4 mt-0.5 font-medium ${getStatusColor(
                               item.detail.status,
                             )}`}
                           >
@@ -248,9 +248,9 @@ export function ChildLifeTimeline({
         })}
       </div>
       {!hasMilestones && (
-        <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-3 py-2 text-[11px] text-slate-600">
-          <p className="font-medium">Noch keine Lebensschritte geplant</p>
-          <p className="mt-0.5">
+        <div className="typo-a4 mt-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-3 py-2 text-slate-600">
+          <p className="typo-a4-medium">Noch keine Lebensschritte geplant</p>
+          <p className="typo-a2 mt-0.5">
             Füge typische Lebensschritte hinzu, um den Sparplan realistischer zu planen.
           </p>
         </div>

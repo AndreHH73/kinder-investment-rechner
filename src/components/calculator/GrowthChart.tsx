@@ -40,10 +40,10 @@ export function GrowthChart({
   if (points.length === 0) {
     return (
       <section className="rounded-3xl bg-white p-6 shadow-lg shadow-slate-900/5">
-        <h2 className="text-sm font-semibold text-slate-900">
+        <h2 className="typo-a1 text-slate-900">
           Vermögensentwicklung
         </h2>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="typo-a2 mt-1 text-slate-500">
           Die Grafik wird angezeigt, sobald eine gültige Simulation vorliegt.
         </p>
       </section>
@@ -53,10 +53,10 @@ export function GrowthChart({
   return (
     <section className="rounded-3xl bg-white p-5 shadow-lg shadow-slate-900/5">
       <div>
-        <h2 className="text-sm font-semibold text-slate-900">
+        <h2 className="typo-a1 text-slate-900">
           Vermögensverlauf mit Lebensschritten
         </h2>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="typo-a2 mt-1 text-slate-500">
           So wächst das Vermögen deines Kindes – inklusive geplanter Ausgaben unterwegs.
         </p>
       </div>
@@ -166,7 +166,7 @@ export function GrowthChart({
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <p className="mt-3 text-[11px] text-slate-400">
+      <p className="typo-a4 mt-3 text-slate-400">
         Der Verlauf zeigt das Vermögen nach Finanzierung der Lebensschritte.
       </p>
     </section>

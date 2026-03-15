@@ -17,6 +17,7 @@ import { ParameterCard } from "@/components/calculator/ParameterCard";
 import { SavePlanModal } from "@/components/calculator/SavePlanModal";
 import { SummaryCards } from "@/components/calculator/SummaryCards";
 import { defaultInputs } from "@/data/defaultMilestones";
+import { formatPercent } from "@/lib/format";
 import {
   getRecommendedMonthlyRate,
   runCalculatorSimulation,
@@ -323,15 +324,17 @@ export default function HomePage() {
           />
         </div>
 
-        <footer className="mt-4 border-t border-slate-200 pt-4 text-[11px] text-slate-500">
+        <footer className="typo-a4 mt-4 border-t border-slate-200 pt-4 text-slate-500">
           <p className="max-w-4xl">
-            Hinweis / Disclaimer: Diese Berechnungen sind modellhaft und dienen
-            ausschließlich der Veranschaulichung möglicher Wertentwicklungen.
-            Renditen sind nicht garantiert, tatsächliche Wertverläufe können von
-            den Annahmen abweichen. Steuern, Kosten und individuelle
-            Vertragsbedingungen werden nicht berücksichtigt. Die Ergebnisse
-            stellen keine Finanz-, Anlage-, Steuer- oder Rechtsberatung dar und
-            können eine persönliche Beratung nicht ersetzen.
+            * Berechnet mit einer angenommenen Rendite von{" "}
+            {formatPercent(inputs.expectedReturnPercentPerYear)} p.&nbsp;a. Die
+            Berechnungen sind modellhaft und dienen ausschließlich der
+            Veranschaulichung möglicher Wertentwicklungen. Renditen sind nicht
+            garantiert, tatsächliche Wertverläufe können von den Annahmen
+            abweichen. Steuern, Kosten und individuelle Vertragsbedingungen
+            werden nicht berücksichtigt. Die Ergebnisse stellen keine
+            Finanz-, Anlage-, Steuer- oder Rechtsberatung dar und können eine
+            persönliche Beratung nicht ersetzen.
           </p>
         </footer>
       </main>

@@ -63,18 +63,18 @@ export function MilestoneForm({
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-slate-900/40 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
+          <h3 className="typo-a1 text-slate-900">{title}</h3>
           <button
             type="button"
             onClick={onClose}
-            className="text-xs text-slate-500 hover:text-slate-700"
+            className="typo-a4 text-slate-500 hover:text-slate-700"
           >
             Schließen
           </button>
         </div>
-        <div className="mt-4 space-y-3 text-xs">
+        <div className="mt-4 space-y-3">
           <div>
-            <label className="block font-medium text-slate-700">
+            <label className="typo-a4-medium block text-slate-700">
               Titel des Lebensschritts
             </label>
             <input
@@ -86,9 +86,9 @@ export function MilestoneForm({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-medium text-slate-700">
-                Alter (Jahre)
-              </label>
+            <label className="typo-a4-medium block text-slate-700">
+              Alter (Jahre)
+            </label>
               <input
                 type="number"
                 min={0}
@@ -99,7 +99,7 @@ export function MilestoneForm({
               />
             </div>
             <div>
-              <label className="block font-medium text-slate-700">Typ</label>
+              <label className="typo-a4-medium block text-slate-700">Typ</label>
               <select
                 value={draft.type}
                 onChange={(e) =>
@@ -116,7 +116,7 @@ export function MilestoneForm({
             </div>
           </div>
           <div>
-            <label className="block font-medium text-slate-700">
+            <label className="typo-a4-medium block text-slate-700">
               Betrag in Euro
             </label>
             <input
@@ -126,13 +126,13 @@ export function MilestoneForm({
               onChange={(e) => setAmountInput(e.target.value)}
               className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
             />
-            <p className="mt-1 text-[11px] text-slate-500">
+            <p className="typo-a4 mt-1 text-slate-500">
               Positive Beträge erhöhen, negative Beträge verringern das
               Vermögen.
             </p>
           </div>
           <div>
-            <label className="block font-medium text-slate-700">
+            <label className="typo-a4-medium block text-slate-700">
               Beschreibung (optional)
             </label>
             <textarea
@@ -143,7 +143,7 @@ export function MilestoneForm({
             />
           </div>
         </div>
-        <div className="mt-4 flex justify-between gap-2 text-xs">
+        <div className="typo-a4 mt-4 flex justify-between gap-2">
           {mode === "edit" && onDelete && (
             <button
               type="button"

@@ -118,16 +118,16 @@ export function MilestonesSection({
   const selectionBlock = (
     <>
       <div>
-        <h2 className="text-sm font-semibold text-slate-900">
+        <h2 className="typo-a1 text-slate-900">
           Welche Lebensschritte möchtest du für dein Kind ermöglichen?
         </h2>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="typo-a2 mt-1 text-slate-500">
           Plane wichtige Lebensschritte deines Kindes und sieh direkt, wie
           sie den Vermögensverlauf beeinflussen.
         </p>
       </div>
       <div className="mt-5">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <h3 className="typo-a3 text-slate-500">
           Typische Lebensschritte
         </h3>
         <div className="mt-2 grid gap-3 sm:grid-cols-2">
@@ -139,10 +139,10 @@ export function MilestonesSection({
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <span className="text-xl">{template.icon}</span>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="typo-a4-medium text-slate-900">
                     {template.title}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-slate-500">
+                  <p className="typo-a4 mt-0.5 text-slate-500">
                     {template.typicalCostLabel}
                   </p>
                 </div>
@@ -151,7 +151,7 @@ export function MilestonesSection({
                 <button
                   type="button"
                   onClick={() => onAddFromTemplate(template)}
-                  className="shrink-0 rounded-full bg-primary-action px-3 py-1.5 text-[11px] font-medium text-white shadow-sm hover:bg-[#1a4a75]"
+                  className="typo-a4 shrink-0 rounded-full bg-primary-action px-3 py-1.5 font-medium text-white shadow-sm hover:bg-[#1a4a75]"
                 >
                   Hinzufügen
                 </button>
@@ -170,7 +170,7 @@ export function MilestonesSection({
             >
               +
             </span>
-            <p className="min-w-0 flex-1 text-sm font-semibold text-white">
+            <p className="typo-a4-medium min-w-0 flex-1 text-white">
               Eigenen Lebensschritt planen
             </p>
           </button>
@@ -183,14 +183,14 @@ export function MilestonesSection({
     <div className="mt-4">
         {milestones.length > 0 && recommendation != null && (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
-            <p className="text-sm font-semibold text-amber-900">
+            <p className="typo-a4-medium text-amber-900">
               Nicht alle Lebensschritte sind aktuell finanzierbar.
             </p>
-            <p className="mt-1 text-sm text-amber-800">
+            <p className="typo-a4 mt-1 text-amber-800">
               Mit ca. {formatCurrency(recommendation.deltaFromCurrent).replace("€", "€")} mehr pro
               Monat könnte der Plan aufgehen.
             </p>
-            <p className="mt-1 text-sm font-medium text-amber-900">
+            <p className="typo-a4 mt-1 font-medium text-amber-900">
               Empfohlene Sparrate:{" "}
               {formatCurrency(recommendation.recommendedMonthly).replace("€", "€")} / Monat
             </p>
@@ -200,7 +200,7 @@ export function MilestonesSection({
                 onClick={() =>
                   onApplyRecommended(recommendation.recommendedMonthly)
                 }
-                className="mt-3 rounded-full bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-amber-700"
+                className="typo-a4 mt-3 rounded-full bg-amber-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-amber-700"
               >
                 {formatCurrency(recommendation.recommendedMonthly).replace("€", "€")} übernehmen
               </button>
@@ -209,11 +209,11 @@ export function MilestonesSection({
         )}
 
         {milestones.length > 0 ? (
-          <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-4 text-[11px] text-slate-900 shadow-sm shadow-slate-200">
-            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+          <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-4 text-slate-900 shadow-sm shadow-slate-200">
+            <p className="typo-a3 text-slate-500">
               Finanzierungsstatus deiner Lebensschritte
             </p>
-            <p className="mt-1 text-xs text-slate-600">
+            <p className="typo-a2 mt-1 text-slate-600">
               Sieh auf einen Blick, welche Ziele bereits voll oder teilweise finanziert sind.
             </p>
             <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -249,17 +249,17 @@ export function MilestonesSection({
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{getIconForMilestone(m)}</span>
                           <div>
-                            <p className="text-xs font-semibold text-slate-900">
+                            <p className="typo-a4-medium text-slate-900">
                               {m.title}
                             </p>
-                            <p className="text-[10px] text-slate-500">
+                            <p className="typo-a4 text-slate-500">
                               Alter {Math.round(m.age)} – Ziel:{" "}
                               {formatCurrency(Math.abs(m.amount))}
                             </p>
                           </div>
                         </div>
                         {detail.status && (
-                          <span className={`text-[10px] font-medium ${statusTextColor}`}>
+                          <span className={`typo-a4 font-medium ${statusTextColor}`}>
                             {detail.status}
                           </span>
                         )}
@@ -271,11 +271,11 @@ export function MilestonesSection({
                             style={{ width: `${progress}%` }}
                           />
                         </div>
-                        <p className="mt-1 text-[10px] text-slate-600">
+                        <p className="typo-a4 mt-1 text-slate-600">
                           {progress} %
                         </p>
                       </div>
-                      <div className="mt-1 space-y-0.5 text-[10px] text-slate-700">
+                      <div className="typo-a4 mt-1 space-y-0.5 text-slate-700">
                         {progress >= 100 ? (
                           <p>
                             {formatCurrency(detail.cost)} finanziert
@@ -295,7 +295,7 @@ export function MilestonesSection({
                         )}
                       </div>
                       {openDetailId === m.id && (
-                        <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-[10px] text-slate-700">
+                        <div className="typo-a4 mt-2 rounded-lg bg-slate-50 px-3 py-2 text-slate-700">
                           <p className="font-semibold text-slate-900">
                             Vermögen mit {Math.round(m.age)} Jahren
                           </p>
@@ -337,7 +337,7 @@ export function MilestonesSection({
                               openDetailId === m.id ? null : m.id,
                             )
                           }
-                          className="text-[10px] font-medium text-slate-700 underline-offset-2 hover:underline"
+                          className="typo-a4 font-medium text-slate-700 underline-offset-2 hover:underline"
                         >
                           {openDetailId === m.id
                             ? "Details ausblenden"
@@ -347,14 +347,14 @@ export function MilestonesSection({
                           <button
                             type="button"
                             onClick={() => onEdit(m)}
-                            className="text-[10px] text-slate-600 hover:text-slate-900"
+                            className="typo-a4 text-slate-600 hover:text-slate-900"
                           >
                             Bearbeiten
                           </button>
                           <button
                             type="button"
                             onClick={() => onDelete(m.id)}
-                            className="text-[10px] text-rose-500 hover:text-rose-700"
+                            className="typo-a4 text-rose-500 hover:text-rose-700"
                           >
                             Entfernen
                           </button>
@@ -366,7 +366,7 @@ export function MilestonesSection({
             </div>
           </div>
         ) : (
-          <p className="mt-4 text-sm text-slate-500">
+          <p className="typo-a2 mt-4 text-slate-500">
             Noch keine Lebensschritte hinzugefügt. Füge einen Lebensschritt hinzu, um
             den Sparplan realistischer zu planen.
           </p>

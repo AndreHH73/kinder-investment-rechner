@@ -15,10 +15,10 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
     <section className="rounded-3xl bg-white p-6 shadow-lg shadow-slate-900/5">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-sm font-semibold text-slate-900">
+          <h2 className="typo-a1 text-slate-900">
             Anlage-Parameter
           </h2>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="typo-a2 mt-1 text-slate-500">
             Passe die Werte an, um zu sehen, wie sich das Vermögen verändert.
           </p>
         </div>
@@ -26,7 +26,7 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
 
       <div className="mt-5 space-y-5">
         <div>
-          <div className="flex items-center justify-between text-xs font-medium text-slate-600">
+          <div className="typo-a4 flex items-center justify-between font-medium text-slate-600">
             <span>Monatliche Sparrate</span>
             <span className="tabular-nums">
               {formatCurrency(value.monthlyContribution)} / Monat
@@ -51,12 +51,12 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
             onChange={(e) =>
               update({ monthlyContribution: Number(e.target.value) })
             }
-            className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="typo-a4 mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           />
         </div>
 
         <div>
-          <div className="flex items-center justify-between text-xs font-medium text-slate-600">
+          <div className="typo-a4 flex items-center justify-between font-medium text-slate-600">
             <span>Aktuelles Alter des Kindes</span>
             <span className="tabular-nums">{value.childAge} Jahre</span>
           </div>
@@ -75,12 +75,12 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
             max={100}
             value={value.childAge}
             onChange={(e) => update({ childAge: Number(e.target.value) })}
-            className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="typo-a4 mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           />
         </div>
 
         <div>
-          <div className="flex items-center justify-between text-xs font-medium text-slate-600">
+          <div className="typo-a4 flex items-center justify-between font-medium text-slate-600">
             <span>Zielalter</span>
             <span className="tabular-nums">{value.targetAge} Jahre</span>
           </div>
@@ -99,12 +99,12 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
             max={100}
             value={value.targetAge}
             onChange={(e) => update({ targetAge: Number(e.target.value) })}
-            className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="typo-a4 mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           />
         </div>
 
         <div>
-          <div className="flex items-center justify-between text-xs font-medium text-slate-600">
+          <div className="typo-a4 flex items-center justify-between font-medium text-slate-600">
             <span>Erwartete Rendite p.a.</span>
             <span className="tabular-nums">
               {formatPercent(value.expectedReturnPercentPerYear)}
@@ -130,12 +130,12 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
             onChange={(e) =>
               update({ expectedReturnPercentPerYear: Number(e.target.value) })
             }
-            className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="typo-a4 mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           />
         </div>
 
         <div>
-          <div className="flex items-center justify-between text-xs font-medium text-slate-600">
+          <div className="typo-a4 flex items-center justify-between font-medium text-slate-600">
             <span>Startkapital (optional)</span>
             <span className="tabular-nums">
               {formatCurrency(value.initialLumpSum)}
@@ -147,11 +147,11 @@ export function ParameterCard({ value, onChange }: ParameterCardProps) {
             step={500}
             value={value.initialLumpSum}
             onChange={(e) => update({ initialLumpSum: Number(e.target.value) })}
-            className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="typo-a4 mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           />
         </div>
 
-        <p className="text-[11px] text-slate-500">
+        <p className="typo-a4 text-slate-500">
           Tipp: Kleine Änderungen bei Sparrate, Laufzeit oder Rendite können
           langfristig einen großen Unterschied machen.
         </p>

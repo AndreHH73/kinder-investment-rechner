@@ -12,7 +12,7 @@ export function CalculatorHeader() {
           className="h-full w-full object-cover"
         />
       </div>
-      <p className="text-sm font-semibold tracking-tight text-foreground md:text-base">
+      <p className="typo-a1 text-foreground">
         Zukunftsplaner für dein Kind
       </p>
     </header>
