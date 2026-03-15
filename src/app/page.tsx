@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { CalculatorHeader } from "@/components/calculator/Header";
 import { GrowthChart } from "@/components/calculator/GrowthChart";
+import { HeroIntro } from "@/components/calculator/HeroIntro";
 import { HeroResult } from "@/components/calculator/HeroResult";
 import { MilestoneForm } from "@/components/calculator/MilestoneForm";
 import {
@@ -177,15 +178,19 @@ export default function HomePage() {
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
         <CalculatorHeader />
-        <div ref={heroRef}>
-          <HeroResult
-            inputs={inputs}
-            simulation={simulation?.core ?? null}
-            baselineScenario={
-              mobileStep === 2 ? baselineScenario : null
-            }
-            hasMilestones={milestones.length > 0}
-          />
+        {/* Above-the-fold: Hero-Intro + blauer Ergebnisblock als eine Einheit */}
+        <div ref={heroRef} className="flex flex-col">
+          <HeroIntro />
+          <div className="mt-8">
+            <HeroResult
+              inputs={inputs}
+              simulation={simulation?.core ?? null}
+              baselineScenario={
+                mobileStep === 2 ? baselineScenario : null
+              }
+              hasMilestones={milestones.length > 0}
+            />
+          </div>
         </div>
 
         {/* Mobile Flow */}

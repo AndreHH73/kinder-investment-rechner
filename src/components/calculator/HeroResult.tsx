@@ -68,101 +68,112 @@ export function HeroResult({
 
   return (
     <section
-      className={`mx-auto max-w-3xl rounded-3xl px-5 py-5 text-slate-100 shadow-xl transition-transform duration-200 md:max-w-5xl md:px-6 md:py-6 ${
+      className={`mx-auto max-w-3xl overflow-hidden rounded-3xl px-5 py-6 text-slate-100 shadow-xl transition-transform duration-200 md:max-w-5xl md:px-6 md:py-7 ${
         heroPulse ? "scale-[1.01]" : "scale-100"
       }`}
       style={{
         background:
-          "linear-gradient(135deg, #0F2A44 0%, #1C4E80 60%, #0F2A44 100%)",
+          "linear-gradient(180deg, #1a3a5c 0%, #0F2A44 40%, #0a1f33 100%)",
       }}
     >
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="space-y-2">
-          <p className="typo-a2 font-medium text-slate-100">
-            Mit{" "}
-            <span className="font-bold">
-              {formatCurrency(inputs.monthlyContribution).replace("€", "€")}
-            </span>{" "}
-            € monatlich ermöglichst du deinem Kind,
-          </p>
-          <div className="mt-0.5 flex flex-wrap items-baseline gap-2">
-            <p className="text-5xl font-semibold tracking-tight text-[#2FA36B] md:text-6xl">
-              {formatCurrency(displayValue)}*
-            </p>
-            {delta !== 0 && (
-              <span
-                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                  delta > 0
-                    ? "bg-emerald-500/20 text-emerald-400"
-                    : "bg-red-500/20 text-red-400"
-                }`}
-              >
-                {delta > 0 ? (
-                  <>
-                    <span aria-hidden>↑</span>
-                    {formatCurrencyWithSign(delta)}
-                  </>
-                ) : (
-                  <>
-                    <span aria-hidden>↓</span>
-                    {formatCurrencyWithSign(delta)}
-                  </>
-                )}
-              </span>
+      {/* Einleitungszeile */}
+      <p className="text-[15px] font-normal leading-snug text-slate-100">
+        Mit{" "}
+        <span className="font-bold">
+          {formatCurrency(inputs.monthlyContribution).replace("€", "€")}
+        </span>{" "}
+        € monatlich ermöglichst du deinem Kind,
+      </p>
+
+      {/* Große Vermögenszahl + optional Delta */}
+      <div className="mt-2 flex flex-wrap items-baseline gap-2">
+        <p className="text-4xl font-bold tracking-tight text-[#2FA36B] md:text-5xl">
+          {formatCurrency(displayValue)}*
+        </p>
+        {delta !== 0 && (
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
+              delta > 0
+                ? "bg-emerald-500/20 text-emerald-400"
+                : "bg-red-500/20 text-red-400"
+            }`}
+          >
+            {delta > 0 ? (
+              <>
+                <span aria-hidden>↑</span>
+                {formatCurrencyWithSign(delta)}
+              </>
+            ) : (
+              <>
+                <span aria-hidden>↓</span>
+                {formatCurrencyWithSign(delta)}
+              </>
             )}
-          </div>
-          <p className="typo-a4 text-[#2FA36B]">
-            {hasMilestones
-              ? "(inkl. Finanzierung aller Lebensschritte)"
-              : "(ohne geplante Lebensschritte)"}
-          </p>
-          <p className="typo-a4 text-slate-200">
-            mit{" "}
-            <span className="font-semibold">{inputs.targetAge} Jahren</span>{" "}
-            aufzubauen.
-          </p>
-          {showDelta && delta !== 0 && (
-            <p
-              className={`typo-a4-medium mt-1 ${
-                delta > 0 ? "text-emerald-400" : "text-red-400"
-              }`}
-            >
-              {delta > 0 ? (
-                <>
-                  {formatCurrencyWithSign(delta)} mehr als bei{" "}
-                  {formatCurrency(baselineScenario.monthly).replace("€", "€")}{" "}
-                  monatlich
-                </>
-              ) : (
-                <>
-                  {formatCurrencyWithSign(delta)} weniger als bei{" "}
-                  {formatCurrency(baselineScenario.monthly).replace("€", "€")}{" "}
-                  monatlich
-                </>
-              )}
-            </p>
+          </span>
+        )}
+      </div>
+
+      {/* Zusatzzeile darunter (teal) */}
+      <p className="mt-1 text-[13px] font-normal text-[#2FA36B]">
+        {hasMilestones
+          ? "(inkl. Finanzierung aller Lebensschritte)"
+          : "(ohne geplante Lebensschritte)"}
+      </p>
+
+      {/* Delta-Erläuterung nur wenn aktiv */}
+      {showDelta && delta !== 0 && (
+        <p
+          className={`mt-1.5 text-[12px] ${
+            delta > 0 ? "text-emerald-400" : "text-red-400"
+          }`}
+        >
+          {delta > 0 ? (
+            <>
+              {formatCurrencyWithSign(delta)} mehr als bei{" "}
+              {formatCurrency(baselineScenario.monthly).replace("€", "€")}{" "}
+              monatlich
+            </>
+          ) : (
+            <>
+              {formatCurrencyWithSign(delta)} weniger als bei{" "}
+              {formatCurrency(baselineScenario.monthly).replace("€", "€")}{" "}
+              monatlich
+            </>
           )}
-          <div className="mt-4 flex flex-wrap gap-4 text-slate-200 md:gap-6">
-            <div>
-              <p className="typo-a4-medium text-lg text-slate-50">
-                {formatCurrency(totalContributions)}
-              </p>
-              <p className="typo-a3 mt-0.5 text-slate-400">
-                Eingezahlt
-              </p>
-            </div>
-            <div>
-              <p className="typo-a4-medium text-lg text-[#2FA36B]">
-                {formatCurrency(gain)}
-              </p>
-              <p className="typo-a3 mt-0.5 text-slate-400">
-                Ertrag / Gewinn
-              </p>
-            </div>
-          </div>
+        </p>
+      )}
+
+      {/* Trennlinie */}
+      <hr className="mt-5 border-0 border-t border-slate-500/50 md:mt-6" />
+
+      {/* Kennzahlen: Eingezahlt | Ertrag / Gewinn */}
+      <div className="mt-5 flex flex-row justify-between gap-4 md:mt-6">
+        <div>
+          <p className="text-[12px] font-medium uppercase tracking-wide text-slate-400">
+            Eingezahlt
+          </p>
+          <p className="mt-0.5 text-lg font-semibold text-slate-50">
+            {formatCurrency(totalContributions)}
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-[12px] font-medium uppercase tracking-wide text-slate-400">
+            Ertrag / Gewinn
+          </p>
+          <p className="mt-0.5 text-lg font-semibold text-[#2FA36B]">
+            {formatCurrency(gain)}
+          </p>
         </div>
       </div>
+
+      {/* Abschlusszeile */}
+      <p className="mt-4 text-[13px] font-normal text-slate-300">
+        mit{" "}
+        <span className="font-semibold text-slate-100">
+          {inputs.targetAge} Jahren
+        </span>{" "}
+        aufzubauen.
+      </p>
     </section>
   );
 }
-
