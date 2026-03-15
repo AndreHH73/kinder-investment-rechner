@@ -89,7 +89,7 @@ export function HeroResult({
               </span>{" "}
               monatlich
             </span>
-            <span className="block">könnte dein Kind</span>
+            <span className="block">ermöglichst du deinem Kind,</span>
           </h1>
           <div className="mt-0.5 flex flex-wrap items-baseline gap-2">
             <p className="text-5xl font-semibold tracking-tight text-[#2FA36B] md:text-6xl">
@@ -117,10 +117,13 @@ export function HeroResult({
               </span>
             )}
           </div>
+          <p className="text-base font-medium text-slate-100 md:text-lg">
+            aufzubauen.
+          </p>
           <p className="mt-1 text-xs text-[#2FA36B]">
             {hasMilestones
-              ? "(inkl. Finanzierung aller Meilensteine)"
-              : "(ohne geplante Meilensteine)"}
+              ? "(inkl. Finanzierung aller Lebensschritte)"
+              : "(ohne geplante Lebensschritte)"}
           </p>
           {showDelta && delta !== 0 && (
             <p
@@ -148,31 +151,31 @@ export function HeroResult({
             <span className="font-semibold">{inputs.targetAge} Jahren</span>{" "}
             erreichen.
           </p>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-4 text-[11px] text-slate-200 md:justify-end">
-          <div>
-            <p className="text-xl font-semibold text-slate-50">
-              {formatCurrency(totalContributions)}
-            </p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
-              Eingezahlt
-            </p>
-          </div>
-          <div>
-            <p className="text-xl font-semibold text-[#2FA36B]">
-              {formatCurrency(gain)}
-            </p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
-              Ertrag / Gewinn
-            </p>
-          </div>
-          <div>
-            <p className="text-xl font-semibold text-slate-50">
-              {formatPercent(inputs.expectedReturnPercentPerYear)}
-            </p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
-              Renditeannahme
-            </p>
+          <div className="mt-4 flex flex-wrap gap-4 text-[11px] text-slate-200 md:gap-6">
+            <div>
+              <p className="text-xl font-semibold text-slate-50">
+                {formatCurrency(totalContributions)}
+              </p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
+                Eingezahlt
+              </p>
+            </div>
+            <div>
+              <p className="text-xl font-semibold text-[#2FA36B]">
+                {formatCurrency(gain)}
+              </p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
+                Ertrag / Gewinn
+              </p>
+            </div>
+            <div>
+              <p className="text-xl font-semibold text-slate-50">
+                {formatPercent(inputs.expectedReturnPercentPerYear)}
+              </p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-slate-400">
+                Renditeannahme
+              </p>
+            </div>
           </div>
         </div>
       </div>

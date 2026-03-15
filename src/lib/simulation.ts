@@ -18,7 +18,7 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   "rate-change": "Sparrate ändern",
   "lump-sum": "Einmalzahlung",
   withdrawal: "Entnahme",
-  milestone: "Meilenstein",
+  milestone: "Lebensschritt",
 };
 
 const MONTHS_PER_YEAR = 12;
@@ -88,17 +88,17 @@ export function validateInput(
   for (const event of events) {
     if (event.age < input.childCurrentAge || event.age > input.targetAge) {
       errors.push(
-        `Ereignis "${getEventLabel(event)}" liegt außerhalb des gewählten Altersbereichs.`,
+        `Lebensschritt "${getEventLabel(event)}" liegt außerhalb des gewählten Altersbereichs.`,
       );
     }
     if (event.type !== "milestone" && event.amount <= 0) {
       errors.push(
-        `Ereignis "${getEventLabel(event)}" muss einen positiven Betrag haben.`,
+        `Lebensschritt "${getEventLabel(event)}" muss einen positiven Betrag haben.`,
       );
     }
     if (event.type === "milestone" && event.amount !== 0) {
       errors.push(
-        `Meilenstein "${getEventLabel(event)}" darf keinen Betrag haben.`,
+        `Lebensschritt "${getEventLabel(event)}" darf keinen Betrag haben.`,
       );
     }
   }
@@ -273,7 +273,7 @@ export function buildSimulationPoints(
 }
 
 /**
- * Pro Meilenstein-Event: Vermögen unmittelbar davor und danach (sequenziell).
+ * Pro Lebensschritt-Event: Vermögen unmittelbar davor und danach (sequenziell).
  */
 export function computeMilestoneDetails(
   core: SimulationResult,
@@ -378,7 +378,7 @@ const RECOMMENDED_RATE_MAX_EUR = 3000;
 
 /**
  * Ermittelt die kleinste monatliche Sparrate, bei der alle aktiven
- * Meilensteine (sequenziell) vollständig finanzierbar sind.
+ * Lebensschritte (sequenziell) vollständig finanzierbar sind.
  * Iterative Suche in 5-€-Schritten.
  * @returns Empfohlene Sparrate in € oder null, wenn bereits alle finanzierbar sind.
  */

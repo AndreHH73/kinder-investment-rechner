@@ -42,11 +42,11 @@ export function SummaryCards({ result }: SummaryCardsProps) {
           {formatCurrency(core.finalBalance)}
         </p>
         <p className="mt-1 text-[11px] text-slate-500">
-          Nach Berücksichtigung aller Meilensteine, Einzahlungen und Entnahmen.
+          Nach Berücksichtigung aller Lebensschritte, Einzahlungen und Entnahmen.
         </p>
         <div className="mt-2 flex justify-between text-[11px] text-slate-500">
-          <span>Ereignis-Zuflüsse: {formatCurrency(totalMilestoneIncome)}</span>
-          <span>Ereignis-Abflüsse: {formatCurrency(totalMilestoneExpenses)}</span>
+          <span>Lebensschritt-Zuflüsse: {formatCurrency(totalMilestoneIncome)}</span>
+          <span>Lebensschritt-Abflüsse: {formatCurrency(totalMilestoneExpenses)}</span>
         </div>
       </div>
     </section>

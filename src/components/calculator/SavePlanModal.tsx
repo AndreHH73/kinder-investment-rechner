@@ -81,7 +81,7 @@ export function SavePlanModal({
           </button>
         </div>
         <p className="mt-2 text-xs text-slate-500">
-          Speichere die aktuellen Parameter und Meilensteine lokal auf diesem
+          Speichere die aktuellen Parameter und Lebensschritte lokal auf diesem
           Gerät. Später kann diese Funktion mit einem Backend verbunden werden.
         </p>
         <div className="mt-4 space-y-3 text-xs">

@@ -132,7 +132,7 @@ export function ChildLifeTimeline({
         Plane die wichtigsten Lebensschritte deines Kindes – und sieh sofort, ob dein Sparplan dafür reicht.
       </p>
       <p className="mt-1 text-xs text-blue-200/80">
-        Sieh, wie sich das Vermögen über den Lebensweg entwickelt – mit oder ohne geplante Meilensteine.
+        Sieh, wie sich das Vermögen über den Lebensweg entwickelt – mit oder ohne geplante Lebensschritte.
       </p>
 
       <div className="mt-5 flex flex-col gap-5">
@@ -249,9 +249,9 @@ export function ChildLifeTimeline({
       </div>
       {!hasMilestones && (
         <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-3 py-2 text-[11px] text-slate-600">
-          <p className="font-medium">Noch keine Meilensteine geplant</p>
+          <p className="font-medium">Noch keine Lebensschritte geplant</p>
           <p className="mt-0.5">
-            Füge typische Lebensereignisse hinzu, um den Sparplan realistischer zu planen.
+            Füge typische Lebensschritte hinzu, um den Sparplan realistischer zu planen.
           </p>
         </div>
       )}

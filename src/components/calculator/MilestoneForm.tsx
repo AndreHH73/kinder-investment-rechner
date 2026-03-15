@@ -57,7 +57,7 @@ export function MilestoneForm({
   };
 
   const title =
-    mode === "create" ? "Neuen Meilenstein anlegen" : "Meilenstein bearbeiten";
+    mode === "create" ? "Neuen Lebensschritt anlegen" : "Lebensschritt bearbeiten";
 
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-slate-900/40 px-4">
@@ -75,7 +75,7 @@ export function MilestoneForm({
         <div className="mt-4 space-y-3 text-xs">
           <div>
             <label className="block font-medium text-slate-700">
-              Titel des Meilensteins
+              Titel des Lebensschritts
             </label>
             <input
               type="text"
@@ -150,7 +150,7 @@ export function MilestoneForm({
               onClick={handleDelete}
               className="rounded-full border border-rose-200 px-3 py-1.5 text-rose-700 hover:bg-rose-50"
             >
-              Meilenstein löschen
+              Lebensschritt löschen
             </button>
           )}
           <div className="ml-auto flex gap-2">

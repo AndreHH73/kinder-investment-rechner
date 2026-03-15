@@ -60,7 +60,7 @@ export default function HomePage() {
     const base = runCalculatorSimulation(inputs, milestones);
     const basePoints = base.points;
 
-    // Baue Punkte mit sichtbaren "Drops" bei kostenpflichtigen Meilensteinen
+    // Baue Punkte mit sichtbaren "Drops" bei kostenpflichtigen Lebensschritten
     let chartPoints: import("@/types/calculator").SimulationPoint[] = [];
     if (basePoints.length > 0) {
       const expenseMilestones = milestones

@@ -115,15 +115,15 @@ export function MilestonesSection({
           Welche Schritte möchtest du ermöglichen?
         </h2>
         <p className="mt-1 text-xs text-slate-500">
-          Plane wichtige Lebensereignisse deines Kindes und sieh direkt, wie
+          Plane wichtige Lebensschritte deines Kindes und sieh direkt, wie
           sie den Vermögensverlauf beeinflussen.
         </p>
       </div>
 
-      {/* Gruppe 1: Typische Lebensereignisse */}
-      <div className="mt-5">
+      {/* Gruppe 1: Typische Lebensschritte */}
+        <div className="mt-5">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-          Typische Lebensereignisse
+          Typische Lebensschritte
         </h3>
         <div className="mt-2 grid gap-3 sm:grid-cols-2">
           {LIFEEVENT_TEMPLATES.map((template) => (
@@ -158,10 +158,10 @@ export function MilestonesSection({
               <span className="text-xl">➕</span>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-slate-900">
-                  Eigenes Lebensereignis
+                  Eigener Lebensschritt
                 </p>
                 <p className="mt-0.5 text-[11px] text-slate-500">
-                  Plane ein individuelles Ereignis mit eigenem Zeitpunkt und Kosten.
+                  Plane einen individuellen Lebensschritt mit eigenem Zeitpunkt und Kosten.
                 </p>
               </div>
             </div>
@@ -181,7 +181,7 @@ export function MilestonesSection({
         {milestones.length > 0 && recommendation != null && (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
             <p className="text-sm font-semibold text-amber-900">
-              Nicht alle Meilensteine sind aktuell finanzierbar.
+              Nicht alle Lebensschritte sind aktuell finanzierbar.
             </p>
             <p className="mt-1 text-sm text-amber-800">
               Mit ca. {formatCurrency(recommendation.deltaFromCurrent).replace("€", "€")} mehr pro
@@ -208,7 +208,7 @@ export function MilestonesSection({
         {milestones.length > 0 ? (
           <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-4 text-[11px] text-slate-900 shadow-sm shadow-slate-200">
             <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
-              Finanzierungsstatus deiner Meilensteine
+              Finanzierungsstatus deiner Lebensschritte
             </p>
             <p className="mt-1 text-xs text-slate-600">
               Sieh auf einen Blick, welche Ziele bereits voll oder teilweise finanziert sind.
@@ -364,7 +364,7 @@ export function MilestonesSection({
           </div>
         ) : (
           <p className="mt-4 text-sm text-slate-500">
-            Noch keine Meilensteine hinzugefügt. Füge einen Meilenstein hinzu, um
+            Noch keine Lebensschritte hinzugefügt. Füge einen Lebensschritt hinzu, um
             den Sparplan realistischer zu planen.
           </p>
         )}

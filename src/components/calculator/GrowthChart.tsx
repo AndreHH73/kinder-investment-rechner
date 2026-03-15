@@ -54,7 +54,7 @@ export function GrowthChart({
     <section className="rounded-3xl bg-white p-5 shadow-lg shadow-slate-900/5">
       <div>
         <h2 className="text-sm font-semibold text-slate-900">
-          Vermögensverlauf mit Meilensteinen
+          Vermögensverlauf mit Lebensschritten
         </h2>
         <p className="mt-1 text-xs text-slate-500">
           So wächst das Vermögen deines Kindes – inklusive geplanter Ausgaben unterwegs.
@@ -167,7 +167,7 @@ export function GrowthChart({
         </ResponsiveContainer>
       </div>
       <p className="mt-3 text-[11px] text-slate-400">
-        Der Verlauf zeigt das Vermögen nach Finanzierung der Meilensteine.
+        Der Verlauf zeigt das Vermögen nach Finanzierung der Lebensschritte.
       </p>
     </section>
   );

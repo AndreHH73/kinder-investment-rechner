@@ -166,9 +166,9 @@ export function MobileInputStep({
       <button
         type="button"
         onClick={onNext}
-        className="mt-4 w-full rounded-full bg-primary px-4 py-2 text-xs font-medium text-surface shadow-sm hover:bg-[#0b1f33]"
+        className="mt-5 w-full rounded-full bg-primary px-6 py-3.5 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#0b1f33] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       >
-        Details zum Ergebnis
+        Lebensschritte planen
       </button>
 
     </section>
