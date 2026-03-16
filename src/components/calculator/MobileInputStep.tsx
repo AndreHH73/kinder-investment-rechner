@@ -4,31 +4,48 @@ import type { CalculatorInputs } from "@/types/calculator";
 interface MobileInputStepProps {
   value: CalculatorInputs;
   onChange: (value: CalculatorInputs) => void;
-  onNext: () => void;
+  onSliderChange?: (value: CalculatorInputs) => void;
+  onSliderCommit?: (value: CalculatorInputs) => void;
 }
 
 export function MobileInputStep({
   value,
   onChange,
-  onNext,
+  onSliderChange,
+  onSliderCommit,
 }: MobileInputStepProps) {
   const update = (patch: Partial<CalculatorInputs>) => {
     onChange({ ...value, ...patch });
   };
 
+  const updateSlider = (patch: Partial<CalculatorInputs>) => {
+    if (onSliderChange) {
+      onSliderChange({ ...value, ...patch });
+    } else {
+      onChange({ ...value, ...patch });
+    }
+  };
+
+  const commitSlider = (patch: Partial<CalculatorInputs>) => {
+    if (onSliderCommit) {
+      onSliderCommit({ ...value, ...patch });
+    } else {
+      onChange({ ...value, ...patch });
+    }
+  };
+
   return (
     <section className="rounded-3xl bg-surface p-5 shadow-sm shadow-primary/5">
       <h2 className="typo-a1 text-foreground">
-        Schritt 1 – Eckdaten
+        Die Basis für den Pinguin-Plan
       </h2>
       <p className="typo-a2 mt-1 text-slate-500">
-        Starte mit den wichtigsten Angaben. Du kannst Details später jederzeit
-        anpassen.
+        Mit ein paar Angaben entsteht ein Plan, der zu eurem Kind und euren Möglichkeiten passt.
       </p>
 
       <div className="mt-4 grid gap-3 md:grid-cols-3">
         <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
-          <p className="typo-a3 text-slate-500">Alter des Kindes</p>
+          <p className="typo-a3 text-slate-500">Alter deines Kindes heute</p>
           <div className="mt-1 grid grid-cols-[90px_32px_auto] items-center">
             <input
               type="number"
@@ -51,7 +68,17 @@ export function MobileInputStep({
             step={1}
             value={value.childAge}
             onChange={(e) =>
-              update({ childAge: Number(e.target.value) || 0 })
+              updateSlider({ childAge: Number(e.target.value) || 0 })
+            }
+            onMouseUp={(e) =>
+              commitSlider({ childAge: Number((e.target as HTMLInputElement).value) || 0 })
+            }
+            onTouchEnd={(e) => {
+              const target = e.target as HTMLInputElement;
+              commitSlider({ childAge: Number(target.value) || 0 });
+            }}
+            onPointerUp={(e) =>
+              commitSlider({ childAge: Number((e.target as HTMLInputElement).value) || 0 })
             }
             className="ff-slider mt-3 w-full cursor-pointer accent-primary-action"
           />
@@ -82,13 +109,33 @@ export function MobileInputStep({
             step={25}
             value={value.monthlyContribution}
             onChange={(e) =>
-              update({ monthlyContribution: Number(e.target.value) })
+              updateSlider({ monthlyContribution: Number(e.target.value) })
+            }
+            onMouseUp={(e) =>
+              commitSlider({
+                monthlyContribution: Number(
+                  (e.target as HTMLInputElement).value,
+                ),
+              })
+            }
+            onTouchEnd={(e) => {
+              const target = e.target as HTMLInputElement;
+              commitSlider({
+                monthlyContribution: Number(target.value),
+              });
+            }}
+            onPointerUp={(e) =>
+              commitSlider({
+                monthlyContribution: Number(
+                  (e.target as HTMLInputElement).value,
+                ),
+              })
             }
             className="ff-slider mt-3 w-full cursor-pointer accent-primary-action"
           />
         </div>
         <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
-          <p className="typo-a3 text-slate-500">Zielalter</p>
+          <p className="typo-a3 text-slate-500">Plan bis zum Alter von</p>
           <div className="mt-1 grid grid-cols-[90px_32px_auto] items-center">
             <input
               type="number"
@@ -115,7 +162,23 @@ export function MobileInputStep({
             onChange={(e) => {
               const raw = Number(e.target.value) || 16;
               const clamped = Math.max(value.childAge + 1, raw);
-              update({ targetAge: clamped });
+              updateSlider({ targetAge: clamped });
+            }}
+            onMouseUp={(e) => {
+              const raw = Number((e.target as HTMLInputElement).value) || 16;
+              const clamped = Math.max(value.childAge + 1, raw);
+              commitSlider({ targetAge: clamped });
+            }}
+            onTouchEnd={(e) => {
+              const target = e.target as HTMLInputElement;
+              const raw = Number(target.value) || 16;
+              const clamped = Math.max(value.childAge + 1, raw);
+              commitSlider({ targetAge: clamped });
+            }}
+            onPointerUp={(e) => {
+              const raw = Number((e.target as HTMLInputElement).value) || 16;
+              const clamped = Math.max(value.childAge + 1, raw);
+              commitSlider({ targetAge: clamped });
             }}
             className="ff-slider mt-3 w-full cursor-pointer accent-primary-action"
           />
@@ -162,15 +225,6 @@ export function MobileInputStep({
           </div>
         </div>
       </details>
-
-      <button
-        type="button"
-        onClick={onNext}
-        className="mt-5 w-full rounded-full bg-primary-action px-6 py-3.5 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#1a4a75] focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2"
-      >
-        Lebensschritte planen
-      </button>
-
     </section>
   );
 }

@@ -48,6 +48,7 @@ export default function HomePage() {
   } | null>(null);
 
   const heroRef = useRef<HTMLDivElement>(null);
+  const heroScrollTimeoutRef = useRef<number | null>(null);
   const isFirstRender = useRef(true);
 
   const {
@@ -174,40 +175,70 @@ export default function HomePage() {
     });
   }, [mobileStep]);
 
+  const scrollHeroSoft = () => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth >= 1024) return;
+    const el = heroRef.current;
+    if (!el) return;
+
+    if (heroScrollTimeoutRef.current != null) {
+      window.clearTimeout(heroScrollTimeoutRef.current);
+    }
+    heroScrollTimeoutRef.current = window.setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 180);
+  };
+
+  const handleMobileInputsChange = (next: CalculatorInputs) => {
+    setInputs(next);
+  };
+
+  const handleMobileInputsChangeAndScroll = (next: CalculatorInputs) => {
+    setInputs(next);
+    scrollHeroSoft();
+  };
+
+  const handleMobileCtaClick = () => {
+    setBaselineScenario({
+      monthly: inputs.monthlyContribution,
+      endValue: simulation?.core?.finalBalance ?? 0,
+    });
+    setMobileStep(2);
+    scrollHeroSoft();
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
         <CalculatorHeader />
-        {/* Above-the-fold: Hero-Intro + blauer Ergebnisblock als eine Einheit */}
-        <div ref={heroRef} className="flex flex-col">
-          <HeroIntro />
-          <div className="mt-8">
+        <HeroIntro />
+
+        {/* Mobile Flow: Basisdaten -> Hero -> CTA -> Lebensschritte */}
+        <div className="-mt-1 space-y-3 lg:hidden">
+          <MobileInputStep
+            value={inputs}
+            onChange={handleMobileInputsChangeAndScroll}
+            onSliderChange={handleMobileInputsChange}
+            onSliderCommit={handleMobileInputsChangeAndScroll}
+          />
+
+          <div ref={heroRef}>
             <HeroResult
               inputs={inputs}
               simulation={simulation?.core ?? null}
-              baselineScenario={
-                mobileStep === 2 ? baselineScenario : null
-              }
+              baselineScenario={mobileStep === 2 ? baselineScenario : null}
               hasMilestones={milestones.length > 0}
             />
           </div>
-        </div>
 
-        {/* Mobile Flow */}
-        <div className="space-y-4 lg:hidden">
-          {mobileStep === 1 && (
-            <MobileInputStep
-              value={inputs}
-              onChange={setInputs}
-              onNext={() => {
-                setBaselineScenario({
-                  monthly: inputs.monthlyContribution,
-                  endValue: simulation?.core?.finalBalance ?? 0,
-                });
-                setMobileStep(2);
-              }}
-            />
-          )}
+          <button
+            type="button"
+            onClick={handleMobileCtaClick}
+            className="w-full rounded-full bg-primary-action px-6 py-3.5 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#1a4a75] focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2"
+          >
+            Lebensschritte planen
+          </button>
+
           {mobileStep === 2 && (
             <MobileResultStep
               simulation={simulation}
