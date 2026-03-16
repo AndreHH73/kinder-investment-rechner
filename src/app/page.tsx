@@ -153,6 +153,25 @@ export default function HomePage() {
     };
   }, [simulation, inputs, milestones]);
 
+  // Mobile Step-Flow in Browser-History integrieren, damit der Zurück-Button von Schritt 2 zu Schritt 1 führt.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handlePopState = (event: PopStateEvent) => {
+      if (window.innerWidth >= 1024) return;
+      const stateStep = (event.state?.mobileStep ?? 1) as 1 | 2;
+      if (stateStep === 2) {
+        setMobileStep(2);
+      } else {
+        setMobileStep(1);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -204,10 +223,13 @@ export default function HomePage() {
       monthly: inputs.monthlyContribution,
       endValue: simulation?.core?.finalBalance ?? 0,
     });
-    setMobileStep(2);
     if (typeof window !== "undefined") {
+      const url = window.location.href;
+      // Schritt 2 als eigenen History-Eintrag setzen.
+      window.history.pushState({ mobileStep: 2 }, "", url);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+    setMobileStep(2);
   };
 
   return (
