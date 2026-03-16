@@ -7,6 +7,7 @@ import { CalculatorHeader } from "@/components/calculator/Header";
 import { GrowthChart } from "@/components/calculator/GrowthChart";
 import { HeroIntro } from "@/components/calculator/HeroIntro";
 import { HeroResult } from "@/components/calculator/HeroResult";
+import { PlanSummarySection } from "@/components/calculator/PlanSummarySection";
 import { MilestoneForm } from "@/components/calculator/MilestoneForm";
 import {
   MilestonesSection,
@@ -291,6 +292,9 @@ export default function HomePage() {
               }
             />
           )}
+
+          {/* Abschluss-Summary auch auf Mobile am Ende des Plans */}
+          <PlanSummarySection />
         </div>
 
         {/* Desktop Layout */}
@@ -302,6 +306,8 @@ export default function HomePage() {
               milestones={chartMilestones}
             />
           </section>
+
+          <PlanSummarySection />
 
           <div className="space-y-3">
             <SummaryCards result={simulation} />

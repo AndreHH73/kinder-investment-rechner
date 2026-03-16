@@ -135,16 +135,6 @@ export function MobileResultStep({
         points={points}
         milestones={chartMilestones}
       />
-
-      <div className="flex justify-center pt-2">
-        <button
-          type="button"
-          onClick={onBack}
-          className="typo-a4 rounded-full border border-muted bg-background px-4 py-2 font-medium text-foreground shadow-sm"
-        >
-          Eckdaten anpassen
-        </button>
-      </div>
     </div>
   );
 }
