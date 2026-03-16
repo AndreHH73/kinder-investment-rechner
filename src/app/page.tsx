@@ -205,96 +205,116 @@ export default function HomePage() {
       endValue: simulation?.core?.finalBalance ?? 0,
     });
     setMobileStep(2);
-    scrollHeroSoft();
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
         <CalculatorHeader />
-        <HeroIntro />
+        {/* HeroIntro: auf Mobile nur in Schritt 1, auf Desktop immer sichtbar */}
+        <div className="lg:hidden">
+          {mobileStep === 1 && <HeroIntro />}
+        </div>
+        <div className="hidden lg:block">
+          <HeroIntro />
+        </div>
 
-        {/* Mobile Flow: Basisdaten -> Hero -> CTA -> Lebensschritte */}
+        {/* Mobile Flow: Seite 1 (Intro, Basis, Hero, CTA) + Seite 2 (Lebensschritte, Auswertung, Abschluss) */}
         <div className="-mt-1 space-y-3 lg:hidden">
-          <MobileInputStep
-            value={inputs}
-            onChange={handleMobileInputsChangeAndScroll}
-            onSliderChange={handleMobileInputsChange}
-            onSliderCommit={handleMobileInputsChangeAndScroll}
-          />
+          {mobileStep === 1 && (
+            <>
+              <MobileInputStep
+                value={inputs}
+                onChange={handleMobileInputsChangeAndScroll}
+                onSliderChange={handleMobileInputsChange}
+                onSliderCommit={handleMobileInputsChangeAndScroll}
+              />
 
-          <div ref={heroRef}>
-            <HeroResult
-              inputs={inputs}
-              simulation={simulation?.core ?? null}
-              baselineScenario={mobileStep === 2 ? baselineScenario : null}
-              hasMilestones={milestones.length > 0}
-            />
-          </div>
+              <div ref={heroRef}>
+                <HeroResult
+                  inputs={inputs}
+                  simulation={simulation?.core ?? null}
+                  baselineScenario={null}
+                  hasMilestones={milestones.length > 0}
+                />
+              </div>
 
-          <button
-            type="button"
-            onClick={handleMobileCtaClick}
-            className="w-full rounded-full bg-primary-action px-6 py-3.5 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#1a4a75] focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2"
-          >
-            Lebensschritte planen
-          </button>
-
-          {mobileStep === 2 && (
-            <MobileResultStep
-              simulation={simulation}
-              points={chartPoints}
-              chartMilestones={chartMilestones}
-              comparisonRange={comparisonRange}
-              onRangeChange={setComparisonRange}
-              baseMonthly={inputs.monthlyContribution}
-              milestones={milestones}
-              onAddMilestone={() => {
-                const nextAge =
-                  (milestones[milestones.length - 1]?.age ??
-                    inputs.childAge + 1) as number;
-                setMilestoneMode("create");
-                setEditingMilestone({
-                  id: `m-${Date.now()}`,
-                  title: "",
-                  age: nextAge,
-                  amount: 0,
-                  type: "expense",
-                  description: "",
-                });
-              }}
-              onEditMilestone={(milestone) => {
-                setMilestoneMode("edit");
-                setEditingMilestone(milestone);
-              }}
-              onDeleteMilestone={(id) => {
-                setMilestones((prev) => prev.filter((m) => m.id !== id));
-              }}
-              recommendation={recommendation}
-              onApplyRecommended={(amount) => {
-                setInputs((prev) => ({ ...prev, monthlyContribution: amount }));
-                setBaselineScenario(null);
-              }}
-              onAddFromTemplate={(template: MilestoneTemplate) => {
-                setMilestoneMode("create");
-                setEditingMilestone({
-                  id: `m-${Date.now()}`,
-                  title: template.title,
-                  age: template.defaultAge,
-                  amount: template.defaultAmount,
-                  type: "expense",
-                  description: `Typische Kosten: ${template.costLabel}`,
-                });
-              }}
-              onBack={() => setMobileStep(1)}
-              onSelectScenarioAmount={(amount) =>
-                setInputs((prev) => ({ ...prev, monthlyContribution: amount }))
-              }
-            />
+              <button
+                type="button"
+                onClick={handleMobileCtaClick}
+                className="w-full rounded-full bg-primary-action px-6 py-3.5 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#1a4a75] focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2"
+              >
+                Lebensschritte planen
+              </button>
+            </>
           )}
 
-          {/* Abschluss-Summary auch auf Mobile am Ende des Plans */}
-          <PlanSummarySection />
+          {mobileStep === 2 && (
+            <>
+              <MobileResultStep
+                simulation={simulation}
+                points={chartPoints}
+                chartMilestones={chartMilestones}
+                comparisonRange={comparisonRange}
+                onRangeChange={setComparisonRange}
+                baseMonthly={inputs.monthlyContribution}
+                milestones={milestones}
+                onAddMilestone={() => {
+                  const nextAge =
+                    (milestones[milestones.length - 1]?.age ??
+                      inputs.childAge + 1) as number;
+                  setMilestoneMode("create");
+                  setEditingMilestone({
+                    id: `m-${Date.now()}`,
+                    title: "",
+                    age: nextAge,
+                    amount: 0,
+                    type: "expense",
+                    description: "",
+                  });
+                }}
+                onEditMilestone={(milestone) => {
+                  setMilestoneMode("edit");
+                  setEditingMilestone(milestone);
+                }}
+                onDeleteMilestone={(id) => {
+                  setMilestones((prev) => prev.filter((m) => m.id !== id));
+                }}
+                recommendation={recommendation}
+                onApplyRecommended={(amount) => {
+                  setInputs((prev) => ({
+                    ...prev,
+                    monthlyContribution: amount,
+                  }));
+                  setBaselineScenario(null);
+                }}
+                onAddFromTemplate={(template: MilestoneTemplate) => {
+                  setMilestoneMode("create");
+                  setEditingMilestone({
+                    id: `m-${Date.now()}`,
+                    title: template.title,
+                    age: template.defaultAge,
+                    amount: template.defaultAmount,
+                    type: "expense",
+                    description: `Typische Kosten: ${template.costLabel}`,
+                  });
+                }}
+                onBack={() => setMobileStep(1)}
+                onSelectScenarioAmount={(amount) =>
+                  setInputs((prev) => ({
+                    ...prev,
+                    monthlyContribution: amount,
+                  }))
+                }
+              />
+
+              {/* Abschluss-Summary und finaler CTA nur auf Seite 2 (mobil) */}
+              <PlanSummarySection />
+            </>
+          )}
         </div>
 
         {/* Desktop Layout */}
@@ -366,7 +386,11 @@ export default function HomePage() {
           />
         </div>
 
-        <footer className="typo-a4 mt-4 border-t border-slate-200 pt-4 text-slate-500">
+        <footer
+          className={`typo-a4 mt-4 border-t border-slate-200 pt-4 text-slate-500 ${
+            mobileStep === 2 ? "hidden lg:block" : ""
+          }`}
+        >
           <p className="max-w-4xl">
             * Berechnet mit einer angenommenen Rendite von{" "}
             {formatPercent(inputs.expectedReturnPercentPerYear)} p.&nbsp;a. Die
