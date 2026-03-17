@@ -7,6 +7,7 @@ import { CalculatorHeader } from "@/components/calculator/Header";
 import { GrowthChart } from "@/components/calculator/GrowthChart";
 import { HeroIntro } from "@/components/calculator/HeroIntro";
 import { HeroResult } from "@/components/calculator/HeroResult";
+import { PlanBesprechenSection } from "@/components/calculator/PlanBesprechenSection";
 import { PlanSummarySection } from "@/components/calculator/PlanSummarySection";
 import { MilestoneForm } from "@/components/calculator/MilestoneForm";
 import {
@@ -47,6 +48,7 @@ export default function HomePage() {
     monthly: number;
     endValue: number;
   } | null>(null);
+  const [isConsultationOpen, setIsConsultationOpen] = useState(false);
 
   const heroRef = useRef<HTMLDivElement>(null);
   const heroScrollTimeoutRef = useRef<number | null>(null);
@@ -195,6 +197,16 @@ export default function HomePage() {
     });
   }, [mobileStep]);
 
+  useEffect(() => {
+    if (!isConsultationOpen) return;
+    if (typeof window === "undefined") return;
+    const el = document.getElementById("plan-besprechen");
+    if (!el) return;
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [isConsultationOpen]);
+
   const scrollHeroSoft = () => {
     if (typeof window === "undefined") return;
     if (window.innerWidth >= 1024) return;
@@ -231,6 +243,14 @@ export default function HomePage() {
     }
     setMobileStep(2);
   };
+
+  const handleConsultationCtaClick = () => {
+    setIsConsultationOpen(true);
+  };
+
+  useEffect(() => {
+    if (mobileStep === 1) setIsConsultationOpen(false);
+  }, [mobileStep]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -334,7 +354,28 @@ export default function HomePage() {
               />
 
               {/* Abschluss-Summary und finaler CTA nur auf Seite 2 (mobil) */}
-              <PlanSummarySection />
+              <PlanSummarySection
+                onConsultationClick={handleConsultationCtaClick}
+              />
+
+              {/* Disclaimer direkt unter dem CTA (Seite 2, mobil) */}
+              <div className="typo-a4 border-t border-slate-200 pt-4 text-slate-500">
+                <p className="max-w-4xl">
+                  * Berechnet mit einer angenommenen Rendite von{" "}
+                  {formatPercent(inputs.expectedReturnPercentPerYear)} p.&nbsp;a.
+                  Die Berechnungen sind modellhaft und dienen ausschließlich der
+                  Veranschaulichung möglicher Wertentwicklungen. Renditen sind
+                  nicht garantiert, tatsächliche Wertverläufe können von den
+                  Annahmen abweichen. Steuern, Kosten und individuelle
+                  Vertragsbedingungen werden nicht berücksichtigt. Die
+                  Ergebnisse stellen keine Finanz-, Anlage-, Steuer- oder
+                  Rechtsberatung dar und können eine persönliche Beratung nicht
+                  ersetzen.
+                </p>
+              </div>
+
+              {/* Beratungssektion erst nach CTA-Klick sichtbar (komplett unsichtbar im Standardzustand) */}
+              {isConsultationOpen && <PlanBesprechenSection />}
             </>
           )}
         </div>
@@ -349,7 +390,8 @@ export default function HomePage() {
             />
           </section>
 
-          <PlanSummarySection />
+          <PlanSummarySection onConsultationClick={handleConsultationCtaClick} />
+          {isConsultationOpen && <PlanBesprechenSection />}
 
           <div className="space-y-3">
             <SummaryCards result={simulation} />

@@ -24,7 +24,12 @@ const SUMMARY_CARDS = [
   },
 ] as const;
 
-export function PlanSummarySection() {
+export function PlanSummarySection({
+  onConsultationClick,
+}: {
+  onConsultationClick?: () => void;
+}) {
+  // Click-handling is controlled by the parent (open + scroll).
   return (
     <section className="rounded-3xl bg-white px-4 py-5 shadow-sm shadow-slate-900/5">
       <div className="flex flex-col gap-2">
@@ -72,6 +77,7 @@ export function PlanSummarySection() {
           </p>
           <button
             type="button"
+            onClick={onConsultationClick}
             className="mt-1 inline-flex w-full items-center justify-center rounded-full bg-primary-action px-6 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#1a4a75] focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2"
           >
             Kostenfrei Plan besprechen
