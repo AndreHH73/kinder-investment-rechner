@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 type ContactPayload = {
   name: string;
   email: string;
@@ -16,6 +18,19 @@ function isValidEmail(email: string) {
 
 export async function POST(req: Request) {
   try {
+    // TEMP local diagnostics (no secrets, only booleans)
+    // eslint-disable-next-line no-console
+    console.log("[contact] cwd:", process.cwd());
+    // eslint-disable-next-line no-console
+    console.log(
+      "[contact] env present:",
+      JSON.stringify({
+        receiver: !!process.env.CONTACT_FORM_RECEIVER_EMAIL,
+        from: !!process.env.CONTACT_FORM_FROM_EMAIL,
+        resendKey: !!process.env.RESEND_API_KEY,
+      }),
+    );
+
     const body = (await req.json()) as Partial<ContactPayload>;
 
     const name = (body.name ?? "").trim();
@@ -39,9 +54,41 @@ export async function POST(req: Request) {
     }
 
     const receiver = process.env.CONTACT_FORM_RECEIVER_EMAIL;
-    const fromEmail =
-      process.env.CONTACT_FORM_FROM_EMAIL ?? "hallo@mail.4futurefamily.de";
+    const fromEmailEnv = process.env.CONTACT_FORM_FROM_EMAIL;
     const resendKey = process.env.RESEND_API_KEY;
+
+    const fromEmail = fromEmailEnv ?? "hallo@mail.4futurefamily.de";
+
+    if (!receiver || !resendKey) {
+      const missing = {
+        receiverMissing: !receiver,
+        fromMissing: !fromEmailEnv,
+        resendKeyMissing: !resendKey,
+      };
+
+      if (!receiver) {
+        return NextResponse.json(
+          {
+            ok: false,
+            message:
+              "CONTACT_FORM_RECEIVER_EMAIL ist nicht gesetzt. Bitte im Environment konfigurieren.",
+            missing,
+          },
+          { status: 500 },
+        );
+      }
+      if (!resendKey) {
+        return NextResponse.json(
+          {
+            ok: false,
+            message:
+              "RESEND_API_KEY ist nicht gesetzt. Bitte im Environment konfigurieren.",
+            missing,
+          },
+          { status: 500 },
+        );
+      }
+    }
 
     if (!receiver) {
       return NextResponse.json(
