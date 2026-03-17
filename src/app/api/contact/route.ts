@@ -127,7 +127,7 @@ export async function POST(req: Request) {
 
     const subject = `${context} – neue Anfrage`;
 
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: `4futurefamily <${fromEmail}>`,
       to: receiver,
       replyTo: email,
@@ -136,16 +136,55 @@ export async function POST(req: Request) {
     });
 
     if (error) {
+      // eslint-disable-next-line no-console
+      console.error("[contact] resend send failed", {
+        message: (error as any)?.message,
+        name: (error as any)?.name,
+        statusCode: (error as any)?.statusCode,
+        // Helpful context, no secrets:
+        receiverPresent: Boolean(receiver),
+        fromPresent: Boolean(fromEmailEnv),
+        fromUsed: fromEmail,
+        replyToPresent: Boolean(email),
+        resendId: (data as any)?.id,
+      });
+
+      const errorMessage = String((error as any)?.message ?? "");
+      const diagnosis =
+        errorMessage.toLowerCase().includes("domain") ||
+        errorMessage.toLowerCase().includes("verify") ||
+        errorMessage.toLowerCase().includes("verified")
+          ? "domain not verified"
+          : errorMessage.toLowerCase().includes("from")
+            ? "invalid from address"
+            : errorMessage.toLowerCase().includes("api key") ||
+                errorMessage.toLowerCase().includes("unauthorized")
+              ? "api error"
+              : "resend send failed";
+
       return NextResponse.json(
-        { ok: false, message: "Versand fehlgeschlagen. Bitte versuche es erneut." },
+        {
+          ok: false,
+          message: "Versand fehlgeschlagen. Bitte versuche es erneut.",
+          diagnosis,
+        },
         { status: 502 },
       );
     }
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("[contact] handler error", {
+      message: (err as any)?.message,
+      name: (err as any)?.name,
+    });
     return NextResponse.json(
-      { ok: false, message: "Ungültige Anfrage. Bitte versuche es erneut." },
+      {
+        ok: false,
+        message: "Ungültige Anfrage. Bitte versuche es erneut.",
+        diagnosis: "handler error",
+      },
       { status: 400 },
     );
   }
