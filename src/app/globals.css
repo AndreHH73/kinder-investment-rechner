@@ -30,6 +30,15 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@keyframes ff-float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+.ff-animate-float {
+  animation: ff-float 4s ease-in-out infinite;
+}
+
 /* Hide native number spinners (we use custom steppers) */
 input.ff-number[type="number"] {
   appearance: textfield;
@@ -94,6 +103,25 @@ input.ff-slider[type="range"]::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 9999px;
   background-color: #e5e7eb;
+}
+
+/* Softer premium-green slider variant (mobile) */
+input.ff-slider-green[type="range"]::-webkit-slider-runnable-track {
+  background-color: rgba(167, 215, 197, 0.35);
+}
+input.ff-slider-green[type="range"]::-webkit-slider-thumb {
+  border-color: #86BFA8;
+  box-shadow: 0 2px 8px rgba(26, 46, 53, 0.16);
+}
+input.ff-slider-green[type="range"]::-moz-range-track {
+  background-color: rgba(167, 215, 197, 0.35);
+}
+input.ff-slider-green[type="range"]::-moz-range-progress {
+  background-color: #86BFA8;
+}
+input.ff-slider-green[type="range"]::-moz-range-thumb {
+  border-color: #86BFA8;
+  box-shadow: 0 2px 8px rgba(26, 46, 53, 0.16);
 }
 
 input.ff-slider[type="range"]::-webkit-slider-thumb {

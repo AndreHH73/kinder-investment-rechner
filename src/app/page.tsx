@@ -49,6 +49,7 @@ export default function HomePage() {
     endValue: number;
   } | null>(null);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
 
   const heroRef = useRef<HTMLDivElement>(null);
   const heroScrollTimeoutRef = useRef<number | null>(null);
@@ -253,20 +254,36 @@ export default function HomePage() {
   }, [mobileStep]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#F9FBFA]">
       <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
         <CalculatorHeader />
-        {/* HeroIntro: auf Mobile nur in Schritt 1, auf Desktop immer sichtbar */}
+        {/* HeroIntro: auf Mobile eigener Screen (showIntro), auf Desktop immer sichtbar */}
         <div className="lg:hidden">
-          {mobileStep === 1 && <HeroIntro />}
+          {showIntro && (
+            <HeroIntro
+              onStart={() => {
+                setShowIntro(false);
+                if (typeof window === "undefined") return;
+                requestAnimationFrame(() => {
+                  const el = document.getElementById("plan-start");
+                  if (el) {
+                    el.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }
+                });
+              }}
+            />
+          )}
         </div>
         <div className="hidden lg:block">
           <HeroIntro />
         </div>
 
-        {/* Mobile Flow: Seite 1 (Intro, Basis, Hero, CTA) + Seite 2 (Lebensschritte, Auswertung, Abschluss) */}
+        {/* Mobile Flow: Seite 1 (Intro) -> Seite 2 (Rechner) -> Seite 3 (Lebensschritte) */}
         <div className="-mt-1 space-y-3 lg:hidden">
-          {mobileStep === 1 && (
+          {!showIntro && mobileStep === 1 && (
             <>
               <MobileInputStep
                 value={inputs}
@@ -294,7 +311,7 @@ export default function HomePage() {
             </>
           )}
 
-          {mobileStep === 2 && (
+          {!showIntro && mobileStep === 2 && (
             <>
               <MobileResultStep
                 simulation={simulation}
@@ -452,7 +469,7 @@ export default function HomePage() {
 
         <footer
           className={`typo-a4 mt-4 border-t border-slate-200 pt-4 text-slate-500 ${
-            mobileStep === 2 ? "hidden lg:block" : ""
+            mobileStep === 2 || showIntro ? "hidden lg:block" : ""
           }`}
         >
           <p className="max-w-4xl">

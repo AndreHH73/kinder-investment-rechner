@@ -38,16 +38,19 @@ export function MobileInputStep({
   };
 
   return (
-    <section className="rounded-3xl bg-surface p-5 shadow-sm shadow-primary/5">
+    <section
+      id="plan-start"
+      className="rounded-3xl border border-slate-100 bg-white/80 p-5 shadow-sm shadow-slate-900/5 backdrop-blur-[2px]"
+    >
       <h2 className="typo-a1 text-foreground">
         Die Basis für den Pinguin-Plan
       </h2>
-      <p className="typo-a2 mt-1 text-slate-500">
+      <p className="typo-a2 mt-1 text-slate-600">
         Mit ein paar Angaben entsteht ein Plan, der zu deinem Kind und deinen Möglichkeiten passt.
       </p>
 
       <div className="mt-4 grid gap-3 md:grid-cols-3">
-        <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
+        <div className="rounded-3xl border border-slate-100 bg-white/70 px-4 py-3 shadow-sm">
           <p className="typo-a3 text-slate-500">Alter deines Kindes heute</p>
           <div className="mt-1 flex items-center gap-2">
             <button
@@ -58,7 +61,7 @@ export function MobileInputStep({
                   childAge: clamp(value.childAge - 1, 0, 18),
                 })
               }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
             >
               −
             </button>
@@ -81,7 +84,7 @@ export function MobileInputStep({
                   childAge: clamp(value.childAge + 1, 0, 18),
                 })
               }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
             >
               +
             </button>
@@ -106,10 +109,10 @@ export function MobileInputStep({
             onPointerUp={(e) =>
               commitSlider({ childAge: Number((e.target as HTMLInputElement).value) || 0 })
             }
-            className="ff-slider mt-3 w-full cursor-pointer accent-primary-action"
+            className="ff-slider ff-slider-green mt-3 w-full cursor-pointer accent-emerald-600"
           />
         </div>
-        <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
+        <div className="rounded-3xl border border-slate-100 bg-white/70 px-4 py-3 shadow-sm">
           <p className="typo-a3 text-slate-500">Monatliche Sparrate</p>
           <div className="mt-1 flex items-center gap-2">
             <button
@@ -124,7 +127,7 @@ export function MobileInputStep({
                   ),
                 })
               }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
             >
               −
             </button>
@@ -153,7 +156,7 @@ export function MobileInputStep({
                   ),
                 })
               }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
             >
               +
             </button>
@@ -188,10 +191,10 @@ export function MobileInputStep({
                 ),
               })
             }
-            className="ff-slider mt-3 w-full cursor-pointer accent-primary-action"
+            className="ff-slider ff-slider-green mt-3 w-full cursor-pointer accent-emerald-600"
           />
         </div>
-        <div className="rounded-2xl border border-muted bg-background px-4 py-3 shadow-sm">
+        <div className="rounded-3xl border border-slate-100 bg-white/70 px-4 py-3 shadow-sm">
           <p className="typo-a3 text-slate-500">Plan bis zum Alter von</p>
           <div className="mt-1 flex items-center gap-2">
             <button
@@ -203,7 +206,7 @@ export function MobileInputStep({
                   targetAge: clamp(value.targetAge - 1, min, 67),
                 });
               }}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
             >
               −
             </button>
@@ -229,7 +232,7 @@ export function MobileInputStep({
                   targetAge: clamp(value.targetAge + 1, min, 67),
                 });
               }}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
             >
               +
             </button>
@@ -262,12 +265,12 @@ export function MobileInputStep({
               const clamped = Math.max(value.childAge + 1, raw);
               commitSlider({ targetAge: clamped });
             }}
-            className="ff-slider mt-3 w-full cursor-pointer accent-primary-action"
+            className="ff-slider ff-slider-green mt-3 w-full cursor-pointer accent-emerald-600"
           />
         </div>
       </div>
 
-      <details className="typo-a4 mt-4 rounded-2xl border border-muted bg-background px-3 py-2 text-foreground">
+      <details className="typo-a4 mt-4 rounded-3xl border border-slate-100 bg-white/70 px-3 py-2 text-foreground shadow-sm">
         <summary className="cursor-pointer list-none font-medium">
           Weitere Einstellungen
         </summary>

@@ -1,89 +1,249 @@
 "use client";
 
-const HEADLINE = "Der Pinguin-Plan für dein Kind.";
-const SUBLINE =
-  "Alles, was du für dein Kind zurücklegst, wird hier zu einem klaren Plan. So siehst du, ob wichtige Lebensschritte später finanziell erreichbar sind.";
+const BRAND_DARK = "#1A2E35";
+const BRAND_GREEN = "#A7D7C5";
+const BRAND_GREEN_DARK = "#86BFA8";
 
-const CARDS = [
+const HEADLINE = "So wird Sparen zu einem Plan für dein Kind";
+const SUBLINE =
+  "Sieh auf einen Blick, ob Geld später für Führerschein, Studium oder die erste Wohnung reicht.";
+
+const BENEFITS = [
   {
     title: "Mehr Klarheit für Eltern",
     subtitle: "Verstehe auf einen Blick, was möglich wird",
-    bgClass: "bg-[#F0F8FF]",
-    borderClass: "border-sky-200/60",
-    iconBg: "bg-sky-100",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600" aria-hidden>
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <svg
+        className="h-6 w-6"
+        style={{ color: BRAND_GREEN_DARK }}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
     ),
   },
   {
     title: "Lebensschritte sicherer planen",
     subtitle: "Führerschein, Ausbildung, erste Wohnung",
-    bgClass: "bg-[#F0FFF4]",
-    borderClass: "border-emerald-200/60",
-    iconBg: "bg-emerald-100",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-600" aria-hidden>
-        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-        <polyline points="16 7 22 7 22 13" />
+      <svg
+        className="h-6 w-6"
+        style={{ color: BRAND_GREEN_DARK }}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        <path d="M8 7V3m8 4V3m-9 8h10" />
+        <path d="M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     ),
   },
   {
     title: "Mehr Möglichkeiten fürs Kind",
     subtitle: "Chancen eröffnen, Träume ermöglichen",
-    bgClass: "bg-[#FAF5FF]",
-    borderClass: "border-violet-200/60",
-    iconBg: "bg-violet-100",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-violet-600" aria-hidden>
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      <svg
+        className="h-6 w-6"
+        style={{ color: BRAND_GREEN_DARK }}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
       </svg>
     ),
   },
 ] as const;
 
-export function HeroIntro() {
+interface HeroIntroProps {
+  onStart?: () => void;
+}
+
+export function HeroIntro({ onStart }: HeroIntroProps) {
+  const handleStartClick = () => {
+    if (onStart) {
+      onStart();
+      return;
+    }
+    const el = document.getElementById("plan-start");
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
-    <header
-      className="flex flex-col pt-6 pb-8"
-      aria-label="Einstieg in den Pinguin-Plan"
-    >
-      <div className="flex flex-col gap-7">
-        {/* Headline – wie Figma: sehr groß, fett, dunkel */}
-        <h1 className="max-w-xl text-[1.875rem] font-extrabold leading-[1.2] tracking-tight text-[#1A1A1A]">
-          {HEADLINE}
-        </h1>
+    <header aria-label="Einstieg in den Pinguin-Plan">
+      <div className="relative overflow-hidden px-1 pb-12 pt-7">
+        <div className="pointer-events-none absolute -left-20 -top-24 h-52 w-52 rounded-full bg-emerald-200/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -right-24 h-64 w-64 rounded-full bg-emerald-200/25 blur-3xl" />
+        <div className="pointer-events-none absolute inset-x-0 -top-12 h-24 bg-gradient-to-b from-emerald-50/70 to-transparent" />
 
-        {/* Subline – etwas Abstand, gut lesbar, grau */}
-        <p className="max-w-xl text-[15px] leading-[1.6] text-[#4A4A4A]">
-          {SUBLINE}
-        </p>
+        <section className="mx-auto flex max-w-lg flex-col items-center text-center">
+          <h1 className="text-[2.35rem] font-extrabold leading-tight tracking-tight text-[#1A2E35]">
+            {HEADLINE}
+          </h1>
+          <p className="mt-5 text-[17px] leading-relaxed text-slate-600">
+            {SUBLINE}
+          </p>
+        </section>
 
-        {/* 3 Nutzen-Cards – gestapelt, wie Figma: weicher Schatten, dezente Tönung */}
-        <ul className="flex flex-col gap-5" role="list">
-          {CARDS.map((card) => (
-            <li key={card.title}>
+        <section className="relative mx-auto mt-11 w-full max-w-md py-10">
+          <div
+            className="absolute left-0 top-1/2 h-[3px] w-full -translate-y-1/2 rounded-full shadow-[0_1px_0_rgba(26,46,53,0.08)]"
+            style={{
+              background: "linear-gradient(90deg, #A7D7C5 0%, #D1EAE0 100%)",
+            }}
+            aria-hidden
+          />
+
+          <div className="relative z-10 flex items-center justify-between">
+            <div className="flex flex-col items-center">
               <div
-                className={`flex items-center gap-4 rounded-xl border ${card.borderClass} ${card.bgClass} px-4 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]`}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md"
+                style={{ border: `4px solid ${BRAND_GREEN}` }}
               >
                 <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${card.iconBg}`}
+                  className="h-3 w-3 rounded-full"
+                  style={{ background: BRAND_GREEN }}
+                />
+              </div>
+              <span className="mt-2 text-xs font-medium text-slate-400">
+                Geburt
+              </span>
+            </div>
+
+            <div className="-mt-16 flex flex-col items-center ff-animate-float">
+              <div className="rounded-2xl border border-emerald-200/40 bg-white p-3 shadow-lg">
+                <svg
+                  className="h-6 w-6"
+                  style={{ color: BRAND_GREEN_DARK }}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   aria-hidden
                 >
-                  {card.icon}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-bold text-slate-800">{card.title}</p>
-                  <p className="mt-0.5 text-[13px] font-normal leading-snug text-slate-600">
-                    {card.subtitle}
-                  </p>
-                </div>
+                  <path d="M9 12l2 2 4-4" />
+                  <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
-            </li>
+              <div
+                className="mt-2 h-4 w-4 rounded-full shadow-sm"
+                style={{ background: BRAND_GREEN }}
+              />
+              <span className="mt-2 text-xs font-bold text-slate-900">
+                Führerschein
+              </span>
+            </div>
+
+            <div className="mt-12 flex flex-col items-center ff-animate-float">
+              <div className="rounded-2xl border border-emerald-200/40 bg-white p-3 shadow-lg">
+                <svg
+                  className="h-6 w-6"
+                  style={{ color: BRAND_GREEN_DARK }}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M12 6.253v13" />
+                  <path d="M12 6.253C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253" />
+                  <path d="M12 6.253C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <div
+                className="mt-2 h-4 w-4 rounded-full shadow-sm"
+                style={{ background: BRAND_GREEN }}
+              />
+              <span className="mt-2 text-center text-xs font-bold text-slate-900">
+                Studium &amp;
+                <br />
+                Ausbildung
+              </span>
+            </div>
+
+            <div className="-mt-16 flex flex-col items-center ff-animate-float">
+              <div className="rounded-2xl border border-emerald-200/40 bg-white p-3 shadow-lg">
+                <svg
+                  className="h-6 w-6"
+                  style={{ color: BRAND_GREEN_DARK }}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M3 12l2-2m0 0l7-7 7 7" />
+                  <path d="M5 10v10a1 1 0 001 1h3" />
+                  <path d="M19 10v10a1 1 0 01-1 1h-3" />
+                  <path d="M10 21v-4a1 1 0 011-1h2a1 1 0 011 1v4" />
+                </svg>
+              </div>
+              <div
+                className="mt-2 h-4 w-4 rounded-full shadow-sm"
+                style={{ background: BRAND_GREEN }}
+              />
+              <span className="mt-2 text-xs font-bold text-slate-900">
+                Wohnung
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto mt-2 w-full max-w-lg space-y-4">
+          {BENEFITS.map((card) => (
+            <div
+              key={card.title}
+              className="flex items-center gap-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm"
+            >
+              <div
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
+                style={{ background: "rgba(167, 215, 197, 0.10)" }}
+                aria-hidden
+              >
+                {card.icon}
+              </div>
+              <div className="min-w-0">
+                <p className="text-lg font-bold text-slate-900">{card.title}</p>
+                <p className="mt-1 text-[13px] leading-snug text-slate-600">
+                  {card.subtitle}
+                </p>
+              </div>
+            </div>
           ))}
-        </ul>
+        </section>
+
+        <section className="mx-auto mt-6 w-full max-w-lg">
+          <button
+            type="button"
+            onClick={handleStartClick}
+            className="inline-flex w-full items-center justify-center rounded-full px-8 py-4 text-[17px] font-semibold text-white shadow-xl transition-colors hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA]"
+            style={{ background: BRAND_DARK }}
+          >
+            Plan starten
+          </button>
+        </section>
       </div>
     </header>
   );
