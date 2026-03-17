@@ -124,7 +124,7 @@ export function ConsultationLeadForm({
           aria-invalid={Boolean(errors.name)}
         />
         {errors.name && (
-          <p className="mt-1 text-[12px] text-slate-600">{errors.name}</p>
+          <p className="mt-1 text-[12px] text-rose-600">{errors.name}</p>
         )}
       </div>
       <div>
@@ -134,16 +134,18 @@ export function ConsultationLeadForm({
         <input
           type="email"
           value={values.email}
-          onChange={(e) =>
-            setValues((p) => ({ ...p, email: e.target.value }))
-          }
+          onChange={(e) => {
+            const next = e.target.value;
+            setValues((p) => ({ ...p, email: next }));
+            if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
+          }}
           className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           autoComplete="email"
           required
           aria-invalid={Boolean(errors.email)}
         />
         {errors.email && (
-          <p className="mt-1 text-[12px] text-slate-600">{errors.email}</p>
+          <p className="mt-1 text-[12px] text-rose-600">{errors.email}</p>
         )}
       </div>
       <div>
@@ -153,16 +155,18 @@ export function ConsultationLeadForm({
         <input
           type="tel"
           value={values.phone}
-          onChange={(e) =>
-            setValues((p) => ({ ...p, phone: e.target.value }))
-          }
+          onChange={(e) => {
+            const next = e.target.value;
+            setValues((p) => ({ ...p, phone: next }));
+            if (errors.phone) setErrors((p) => ({ ...p, phone: undefined }));
+          }}
           className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           autoComplete="tel"
           required
           aria-invalid={Boolean(errors.phone)}
         />
         {errors.phone && (
-          <p className="mt-1 text-[12px] text-slate-600">{errors.phone}</p>
+          <p className="mt-1 text-[12px] text-rose-600">{errors.phone}</p>
         )}
       </div>
       <div>
