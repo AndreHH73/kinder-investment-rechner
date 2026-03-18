@@ -212,29 +212,23 @@ export function HeroIntro({ onStart }: HeroIntroProps) {
           {BENEFITS.map((card) => (
             <div
               key={card.title}
-              className="grid h-[112px] grid-cols-[48px_1fr] items-start gap-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm md:items-center"
+              className="grid h-[112px] grid-cols-[48px_1fr] items-start gap-4 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:items-center md:p-6"
             >
               <div
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
+                className="flex h-12 w-12 shrink-0 items-center justify-center self-center rounded-2xl"
                 style={{ background: "rgba(167, 215, 197, 0.10)" }}
                 aria-hidden
               >
                 {card.icon}
               </div>
-              <div className="min-w-0 self-stretch">
-                <div className="flex h-full flex-col justify-start pt-0.5 md:justify-center md:pt-0">
-                  {/* Title wrapper: fixed height (up to 2 lines) */}
-                  <div className="h-[44px] overflow-hidden">
-                    <p className="text-lg font-bold leading-[1.22] text-slate-900">
-                      {card.title}
-                    </p>
-                  </div>
-                  {/* Subtitle wrapper: fixed height (up to 2 lines) */}
-                  <div className="mt-1 h-[32px] overflow-hidden">
-                    <p className="text-[13px] leading-snug text-slate-600">
-                      {card.subtitle}
-                    </p>
-                  </div>
+              <div className="min-w-0 self-stretch py-0.5">
+                <div className="flex h-full flex-col justify-start gap-1 md:justify-center">
+                  <p className="text-lg font-bold leading-tight text-slate-900">
+                    {card.title}
+                  </p>
+                  <p className="text-[13px] leading-snug text-slate-600">
+                    {card.subtitle}
+                  </p>
                 </div>
               </div>
             </div>
@@ -245,8 +239,7 @@ export function HeroIntro({ onStart }: HeroIntroProps) {
           <button
             type="button"
             onClick={handleStartClick}
-            className="inline-flex w-full items-center justify-center rounded-full px-8 py-4 text-[17px] font-semibold text-white shadow-xl transition-colors hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA]"
-            style={{ background: BRAND_DARK }}
+            className="inline-flex w-full items-center justify-center rounded-full bg-[#86BFA8] px-8 py-4 text-[17px] font-semibold text-white shadow-xl shadow-emerald-900/10 transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA]"
           >
             Plan starten
           </button>

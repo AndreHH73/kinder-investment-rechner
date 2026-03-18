@@ -4,8 +4,8 @@ export function CalculatorHeader() {
   return (
     <>
       {/* Mobile: reduzierter Brand-Einstieg */}
-      <header className="-mb-4 flex items-center justify-start py-3 md:hidden">
-        <p className="text-[13px] font-semibold tracking-tight text-slate-700">
+      <header className="-mb-4 flex items-center justify-center py-3 md:hidden">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-700/70">
           4futurefamily
         </p>
       </header>
