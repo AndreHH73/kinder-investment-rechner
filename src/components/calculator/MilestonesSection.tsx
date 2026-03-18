@@ -21,6 +21,122 @@ export interface MilestoneTemplate {
   defaultAmount: number;
 }
 
+function TemplateIcon({ id }: { id: string }) {
+  const common = {
+    className: "h-5 w-5",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg",
+    "aria-hidden": "true" as const,
+  };
+
+  if (id === "license") {
+    return (
+      <svg {...common}>
+        <path
+          d="M6.5 15.5h11"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M7.5 11.5l1.4-2.6c.3-.6.9-.9 1.6-.9h2c.7 0 1.3.3 1.6.9l1.4 2.6"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M6.5 15.5V13c0-.5.2-1 .6-1.3l1.3-1c.3-.2.7-.4 1.1-.4h4.9c.4 0 .8.1 1.1.4l1.3 1c.4.3.6.8.6 1.3v2.5"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M9 16.25a1.25 1.25 0 1 1-2.5 0A1.25 1.25 0 0 1 9 16.25zM17.5 16.25a1.25 1.25 0 1 1-2.5 0a1.25 1.25 0 0 1 2.5 0z"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+        <path
+          d="M9.75 11.25h.01M14.25 11.25h.01"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+
+  if (id === "study") {
+    return (
+      <svg {...common}>
+        <path
+          d="M12 4l9 5-9 5L3 9l9-5z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M7 12v4.5c0 .6.32 1.16.84 1.46C9.06 18.6 10.5 19 12 19s2.94-.4 4.16-1.04c.52-.3.84-.86.84-1.46V12"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+
+  if (id === "gapyear") {
+    return (
+      <svg {...common}>
+        <path
+          d="M4 15.5l7.5-2"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M11.5 13.5l6.5-7"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M9 6.5l4.5 2"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M13 5l2.5 1.5"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  // flat
+  return (
+    <svg {...common}>
+      <path
+        d="M4 10.5L12 4l8 6.5V20a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 20v-9.5z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M10 21v-6a2 2 0 0 1 4 0v6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 const LIFEEVENT_TEMPLATES: MilestoneTemplate[] = [
   {
     id: "license",
@@ -96,6 +212,7 @@ export function MilestonesSection({
 }: MilestonesSectionProps) {
   const sorted = [...milestones].sort((a, b) => a.age - b.age);
   const [openDetailId, setOpenDetailId] = useState<string | null>(null);
+  const isMobileVariant = slotBetweenSelectionAndFinancing != null;
 
   const getIconForMilestone = (m: Milestone): string => {
     const templateMatch = LIFEEVENT_TEMPLATES.find(
@@ -117,61 +234,154 @@ export function MilestonesSection({
 
   const selectionBlock = (
     <>
-      <div>
-        <h2 className="typo-a1 text-slate-900">
+      <div className={isMobileVariant ? "space-y-2" : ""}>
+        <h2
+          className={
+            isMobileVariant
+              ? "typo-a1 max-w-[26ch] text-balance leading-snug text-slate-900"
+              : "typo-a1 text-slate-900"
+          }
+        >
           Welche Lebensschritte möchtest du für dein Kind ermöglichen?
         </h2>
-        <p className="typo-a2 mt-1 text-slate-500">
+        <p
+          className={
+            isMobileVariant
+              ? "typo-a2 max-w-[46ch] leading-relaxed text-slate-500"
+              : "typo-a2 mt-1 text-slate-500"
+          }
+        >
           Plane wichtige Lebensschritte deines Kindes und sieh direkt, wie
           sie den Vermögensverlauf beeinflussen.
         </p>
       </div>
-      <div className="mt-5">
+      <div className={isMobileVariant ? "mt-6" : "mt-5"}>
         <h3 className="typo-a3 text-slate-500">
           Typische Lebensschritte
         </h3>
-        <div className="mt-2 grid gap-3 sm:grid-cols-2">
+        <div
+          className={
+            isMobileVariant
+              ? "mt-3 grid gap-2.5 sm:grid-cols-2"
+              : "mt-2 grid gap-3 sm:grid-cols-2"
+          }
+        >
           {LIFEEVENT_TEMPLATES.map((template) => (
             <div
               key={template.id}
-              className="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3"
+              className={
+                isMobileVariant
+                  ? "flex items-center justify-between gap-3 rounded-2xl border border-slate-200/70 bg-white px-4 py-3 shadow-[0_1px_0_rgba(15,23,42,0.04)]"
+                  : "flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3"
+              }
             >
               <div className="flex min-w-0 flex-1 items-center gap-3">
-                <span className="text-xl">{template.icon}</span>
+                <div
+                  className={
+                    isMobileVariant
+                      ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 ring-1 ring-emerald-200/60 text-emerald-700"
+                      : ""
+                  }
+                  aria-hidden
+                >
+                  {isMobileVariant ? (
+                    <TemplateIcon id={template.id} />
+                  ) : (
+                    <span className="text-xl">{template.icon}</span>
+                  )}
+                </div>
                 <div className="min-w-0">
-                  <p className="typo-a4-medium text-slate-900">
+                  <p
+                    className={
+                      isMobileVariant
+                        ? "text-[14px] font-semibold leading-snug text-slate-900"
+                        : "typo-a4-medium text-slate-900"
+                    }
+                  >
                     {template.title}
                   </p>
-                  <p className="typo-a4 mt-0.5 text-slate-500">
+                  <p
+                    className={
+                      isMobileVariant
+                        ? "mt-0.5 text-[12px] leading-snug text-slate-500"
+                        : "typo-a4 mt-0.5 text-slate-500"
+                    }
+                  >
                     {template.typicalCostLabel}
                   </p>
                 </div>
               </div>
+
               {onAddFromTemplate && (
                 <button
                   type="button"
                   onClick={() => onAddFromTemplate(template)}
-                  className="typo-a4 shrink-0 rounded-full bg-[#86BFA8] px-3 py-1.5 font-semibold text-white shadow-xl shadow-emerald-900/10 transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA]"
+                  aria-label={`${template.title} hinzufügen`}
+                  className={
+                    isMobileVariant
+                      ? "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#86BFA8] text-white shadow-[0_10px_22px_-18px_rgba(2,44,30,0.55)] transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA]"
+                      : "typo-a4 shrink-0 rounded-full bg-[#86BFA8] px-3 py-1.5 font-semibold text-white shadow-xl shadow-emerald-900/10 transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA]"
+                  }
                 >
-                  Hinzufügen
+                  {isMobileVariant ? (
+                    <span
+                      className="text-[18px] font-semibold leading-none"
+                      aria-hidden
+                    >
+                      +
+                    </span>
+                  ) : (
+                    "Hinzufügen"
+                  )}
                 </button>
               )}
             </div>
           ))}
+        </div>
+
+        <div
+          className={
+            isMobileVariant
+              ? "mt-4 rounded-2xl border border-dashed border-emerald-200/70 bg-emerald-50/30 p-2.5"
+              : "mt-3"
+          }
+        >
           <button
             type="button"
             onClick={onAdd}
-            className="flex w-full items-center gap-3 rounded-2xl bg-[#86BFA8] px-4 py-3 text-left font-semibold text-white shadow-xl shadow-emerald-900/10 transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA] active:opacity-90"
+            className={
+              isMobileVariant
+                ? "flex w-full items-center justify-between gap-3 rounded-2xl bg-white/60 px-4 py-3 text-left transition-colors active:opacity-90"
+                : "flex w-full items-center gap-3 rounded-2xl bg-[#86BFA8] px-4 py-3 text-left font-semibold text-white shadow-xl shadow-emerald-900/10 transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA] active:opacity-90"
+            }
           >
-            <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/25 text-lg font-semibold text-white"
-              aria-hidden
-            >
-              +
-            </span>
-            <p className="min-w-0 flex-1">
-              Eigenen Lebensschritt planen
-            </p>
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60">
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8 6h13M8 12h13M8 18h13"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M3 6h.01M3 12h.01M3 18h.01"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <p className="min-w-0 text-[14px] font-semibold leading-snug text-emerald-700">
+                Eigenen Lebensschritt planen
+              </p>
+            </div>
           </button>
         </div>
       </div>
