@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { CalculatorHeader } from "@/components/calculator/Header";
 import { GrowthChart } from "@/components/calculator/GrowthChart";
@@ -33,6 +34,12 @@ import type {
 } from "@/types/calculator";
 
 export default function HomePage() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const isIntroScreen = (searchParams.get("screen") ?? "intro") === "intro";
+
   const [inputs, setInputs] = useState<CalculatorInputs>(defaultInputs);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(
@@ -49,7 +56,6 @@ export default function HomePage() {
     endValue: number;
   } | null>(null);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
-  const [showIntro, setShowIntro] = useState(true);
 
   const heroRef = useRef<HTMLDivElement>(null);
   const heroScrollTimeoutRef = useRef<number | null>(null);
@@ -259,20 +265,12 @@ export default function HomePage() {
         <CalculatorHeader />
         {/* HeroIntro: auf Mobile eigener Screen (showIntro), auf Desktop immer sichtbar */}
         <div className="lg:hidden">
-          {showIntro && (
+          {isIntroScreen && (
             <HeroIntro
               onStart={() => {
-                setShowIntro(false);
-                if (typeof window === "undefined") return;
-                requestAnimationFrame(() => {
-                  const el = document.getElementById("plan-start");
-                  if (el) {
-                    el.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }
-                });
+                const next = new URLSearchParams(searchParams.toString());
+                next.set("screen", "calculator");
+                router.push(`${pathname}?${next.toString()}`);
               }}
             />
           )}
@@ -283,7 +281,7 @@ export default function HomePage() {
 
         {/* Mobile Flow: Seite 1 (Intro) -> Seite 2 (Rechner) -> Seite 3 (Lebensschritte) */}
         <div className="-mt-1 space-y-3 lg:hidden">
-          {!showIntro && mobileStep === 1 && (
+          {!isIntroScreen && mobileStep === 1 && (
             <>
               <MobileInputStep
                 value={inputs}
@@ -311,7 +309,7 @@ export default function HomePage() {
             </>
           )}
 
-          {!showIntro && mobileStep === 2 && (
+          {!isIntroScreen && mobileStep === 2 && (
             <>
               <MobileResultStep
                 simulation={simulation}
@@ -469,7 +467,7 @@ export default function HomePage() {
 
         <footer
           className={`typo-a4 mt-4 border-t border-slate-200 pt-4 text-slate-500 ${
-            mobileStep === 2 || showIntro ? "hidden lg:block" : ""
+            mobileStep === 2 || isIntroScreen ? "hidden lg:block" : ""
           }`}
         >
           <p className="max-w-4xl">

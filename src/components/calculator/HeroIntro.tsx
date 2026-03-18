@@ -6,7 +6,7 @@ const BRAND_GREEN_DARK = "#86BFA8";
 
 const HEADLINE = "So wird Sparen zu einem Plan für dein Kind";
 const SUBLINE =
-  "Sieh auf einen Blick, ob Geld später für Führerschein, Studium oder die erste Wohnung reicht.";
+  "Sieh mit dem Pinguin-Plan auf einen Blick, was später möglich wird.";
 
 const BENEFITS = [
   {
@@ -30,7 +30,7 @@ const BENEFITS = [
     ),
   },
   {
-    title: "Lebensschritte sicherer planen",
+    title: "Lebensschritte sicher planen",
     subtitle: "Führerschein, Ausbildung, erste Wohnung",
     icon: (
       <svg
@@ -50,8 +50,8 @@ const BENEFITS = [
     ),
   },
   {
-    title: "Mehr Möglichkeiten fürs Kind",
-    subtitle: "Chancen eröffnen, Träume ermöglichen",
+    title: "Mehr Chancen fürs Kind",
+    subtitle: "Träume ermöglichen und Optionen öffnen",
     icon: (
       <svg
         className="h-6 w-6"
@@ -88,20 +88,17 @@ export function HeroIntro({ onStart }: HeroIntroProps) {
   return (
     <header aria-label="Einstieg in den Pinguin-Plan">
       <div className="relative overflow-hidden px-1 pb-12 pt-7">
-        <div className="pointer-events-none absolute -left-20 -top-24 h-52 w-52 rounded-full bg-emerald-200/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -right-24 h-64 w-64 rounded-full bg-emerald-200/25 blur-3xl" />
-        <div className="pointer-events-none absolute inset-x-0 -top-12 h-24 bg-gradient-to-b from-emerald-50/70 to-transparent" />
 
         <section className="mx-auto flex max-w-lg flex-col items-center text-center">
           <h1 className="text-[2.35rem] font-extrabold leading-tight tracking-tight text-[#1A2E35]">
             {HEADLINE}
           </h1>
-          <p className="mt-5 text-[17px] leading-relaxed text-slate-600">
+          <p className="mt-5 text-[17px] leading-relaxed text-slate-600 [text-wrap:balance]">
             {SUBLINE}
           </p>
         </section>
 
-        <section className="relative mx-auto mt-11 w-full max-w-md py-10">
+        <section className="relative mx-auto mt-2 w-full max-w-md py-6 md:mt-11 md:py-10">
           <div
             className="absolute left-0 top-1/2 h-[3px] w-full -translate-y-1/2 rounded-full shadow-[0_1px_0_rgba(26,46,53,0.08)]"
             style={{
@@ -215,7 +212,7 @@ export function HeroIntro({ onStart }: HeroIntroProps) {
           {BENEFITS.map((card) => (
             <div
               key={card.title}
-              className="flex items-center gap-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm"
+              className="grid h-[112px] grid-cols-[48px_1fr] items-start gap-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm md:items-center"
             >
               <div
                 className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
@@ -224,11 +221,21 @@ export function HeroIntro({ onStart }: HeroIntroProps) {
               >
                 {card.icon}
               </div>
-              <div className="min-w-0">
-                <p className="text-lg font-bold text-slate-900">{card.title}</p>
-                <p className="mt-1 text-[13px] leading-snug text-slate-600">
-                  {card.subtitle}
-                </p>
+              <div className="min-w-0 self-stretch">
+                <div className="flex h-full flex-col justify-start pt-0.5 md:justify-center md:pt-0">
+                  {/* Title wrapper: fixed height (up to 2 lines) */}
+                  <div className="h-[44px] overflow-hidden">
+                    <p className="text-lg font-bold leading-[1.22] text-slate-900">
+                      {card.title}
+                    </p>
+                  </div>
+                  {/* Subtitle wrapper: fixed height (up to 2 lines) */}
+                  <div className="mt-1 h-[32px] overflow-hidden">
+                    <p className="text-[13px] leading-snug text-slate-600">
+                      {card.subtitle}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           ))}

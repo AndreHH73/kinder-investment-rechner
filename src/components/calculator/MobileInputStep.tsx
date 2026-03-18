@@ -46,7 +46,7 @@ export function MobileInputStep({
         Die Basis für den Pinguin-Plan
       </h2>
       <p className="typo-a2 mt-1 text-slate-600">
-        Mit ein paar Angaben entsteht ein Plan, der zu deinem Kind und deinen Möglichkeiten passt.
+        Mit ein paar Angaben entsteht dein persönlicher Pinguin-Plan.
       </p>
 
       <div className="mt-4 grid gap-3 md:grid-cols-3">
