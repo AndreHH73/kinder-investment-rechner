@@ -550,7 +550,7 @@ export function MilestonesSection({
                         >
                           {openDetailId === m.id
                             ? "Details ausblenden"
-                            : "Details zur Berechnung anzeigen"}
+                            : "Details anzeigen"}
                         </button>
                         <div className="flex gap-2">
                           <button
