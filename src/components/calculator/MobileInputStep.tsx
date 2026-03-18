@@ -52,19 +52,21 @@ export function MobileInputStep({
       <div className="mt-4 grid gap-3 md:grid-cols-3">
         <div className="rounded-3xl border border-slate-100 bg-white/70 px-4 py-3 shadow-sm">
           <p className="typo-a3 text-slate-500">Alter deines Kindes heute</p>
-          <div className="mt-1 flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Alter verringern"
-              onClick={() =>
-                update({
-                  childAge: clamp(value.childAge - 1, 0, 18),
-                })
-              }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
-            >
-              −
-            </button>
+          <div className="mt-1 grid grid-cols-[88px_1fr_88px] items-center">
+            <div className="flex items-center justify-start">
+              <button
+                type="button"
+                aria-label="Alter verringern"
+                onClick={() =>
+                  update({
+                    childAge: clamp(value.childAge - 1, 0, 18),
+                  })
+                }
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              >
+                −
+              </button>
+            </div>
             <input
               type="number"
               min={0}
@@ -74,21 +76,26 @@ export function MobileInputStep({
               onChange={(e) =>
                 update({ childAge: Number(e.target.value) || 0 })
               }
-              className="ff-number w-[90px] border-none bg-transparent text-left text-[26px] font-semibold text-foreground outline-none"
+              className="ff-number w-full border-none bg-transparent text-center text-[26px] font-semibold tabular-nums text-foreground outline-none"
             />
-            <button
-              type="button"
-              aria-label="Alter erhöhen"
-              onClick={() =>
-                update({
-                  childAge: clamp(value.childAge + 1, 0, 18),
-                })
-              }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
-            >
-              +
-            </button>
-            <span className="typo-a4 text-slate-500">Jahre</span>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                aria-label="Alter erhöhen"
+                onClick={() =>
+                  update({
+                    childAge: clamp(value.childAge + 1, 0, 18),
+                  })
+                }
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              >
+                +
+              </button>
+              <span className="typo-a4 text-slate-500 md:hidden">J.</span>
+              <span className="typo-a4 hidden text-slate-500 md:inline">
+                Jahre
+              </span>
+            </div>
           </div>
           <input
             type="range"
@@ -114,23 +121,25 @@ export function MobileInputStep({
         </div>
         <div className="rounded-3xl border border-slate-100 bg-white/70 px-4 py-3 shadow-sm">
           <p className="typo-a3 text-slate-500">Monatliche Sparrate</p>
-          <div className="mt-1 flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Sparrate verringern"
-              onClick={() =>
-                update({
-                  monthlyContribution: clamp(
-                    value.monthlyContribution - 25,
-                    25,
-                    1000,
-                  ),
-                })
-              }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
-            >
-              −
-            </button>
+          <div className="mt-1 grid grid-cols-[88px_1fr_88px] items-center">
+            <div className="flex items-center justify-start">
+              <button
+                type="button"
+                aria-label="Sparrate verringern"
+                onClick={() =>
+                  update({
+                    monthlyContribution: clamp(
+                      value.monthlyContribution - 25,
+                      25,
+                      1000,
+                    ),
+                  })
+                }
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              >
+                −
+              </button>
+            </div>
             <input
               type="number"
               min={25}
@@ -142,25 +151,27 @@ export function MobileInputStep({
                   monthlyContribution: Number(e.target.value) || 0,
                 })
               }
-              className="ff-number w-[90px] border-none bg-transparent text-left text-[26px] font-semibold text-foreground outline-none"
+              className="ff-number w-full border-none bg-transparent text-center text-[26px] font-semibold tabular-nums text-foreground outline-none"
             />
-            <button
-              type="button"
-              aria-label="Sparrate erhöhen"
-              onClick={() =>
-                update({
-                  monthlyContribution: clamp(
-                    value.monthlyContribution + 25,
-                    25,
-                    1000,
-                  ),
-                })
-              }
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
-            >
-              +
-            </button>
-            <span className="typo-a4 text-slate-500">€</span>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                aria-label="Sparrate erhöhen"
+                onClick={() =>
+                  update({
+                    monthlyContribution: clamp(
+                      value.monthlyContribution + 25,
+                      25,
+                      1000,
+                    ),
+                  })
+                }
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              >
+                +
+              </button>
+              <span className="typo-a4 text-slate-500">€</span>
+            </div>
           </div>
           <input
             type="range"
@@ -196,20 +207,22 @@ export function MobileInputStep({
         </div>
         <div className="rounded-3xl border border-slate-100 bg-white/70 px-4 py-3 shadow-sm">
           <p className="typo-a3 text-slate-500">Plan bis zum Alter von</p>
-          <div className="mt-1 flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Zielalter verringern"
-              onClick={() => {
-                const min = Math.max(value.childAge + 1, 16);
-                update({
-                  targetAge: clamp(value.targetAge - 1, min, 67),
-                });
-              }}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
-            >
-              −
-            </button>
+          <div className="mt-1 grid grid-cols-[88px_1fr_88px] items-center">
+            <div className="flex items-center justify-start">
+              <button
+                type="button"
+                aria-label="Zielalter verringern"
+                onClick={() => {
+                  const min = Math.max(value.childAge + 1, 16);
+                  update({
+                    targetAge: clamp(value.targetAge - 1, min, 67),
+                  });
+                }}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              >
+                −
+              </button>
+            </div>
             <input
               type="number"
               min={16}
@@ -221,22 +234,27 @@ export function MobileInputStep({
                 const clamped = Math.max(value.childAge + 1, raw);
                 update({ targetAge: clamped });
               }}
-              className="ff-number w-[90px] border-none bg-transparent text-left text-[26px] font-semibold text-foreground outline-none"
+              className="ff-number w-full border-none bg-transparent text-center text-[26px] font-semibold tabular-nums text-foreground outline-none"
             />
-            <button
-              type="button"
-              aria-label="Zielalter erhöhen"
-              onClick={() => {
-                const min = Math.max(value.childAge + 1, 16);
-                update({
-                  targetAge: clamp(value.targetAge + 1, min, 67),
-                });
-              }}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
-            >
-              +
-            </button>
-            <span className="typo-a4 text-slate-500">Jahre</span>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                aria-label="Zielalter erhöhen"
+                onClick={() => {
+                  const min = Math.max(value.childAge + 1, 16);
+                  update({
+                    targetAge: clamp(value.targetAge + 1, min, 67),
+                  });
+                }}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-lg font-semibold text-slate-700 shadow-sm active:opacity-80"
+              >
+                +
+              </button>
+              <span className="typo-a4 text-slate-500 md:hidden">J.</span>
+              <span className="typo-a4 hidden text-slate-500 md:inline">
+                Jahre
+              </span>
+            </div>
           </div>
           <input
             type="range"
