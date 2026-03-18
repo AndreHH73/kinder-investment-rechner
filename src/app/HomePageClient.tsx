@@ -264,6 +264,16 @@ export default function HomePageClient() {
     router.back();
   };
 
+  const handleMobileStep3BackClick = () => {
+    if (typeof window === "undefined") return;
+    if (window.history.length <= 1) {
+      setMobileStep(1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    router.back();
+  };
+
   const handleConsultationCtaClick = () => {
     setIsConsultationOpen(true);
   };
@@ -365,7 +375,7 @@ export default function HomePageClient() {
                 <button
                   type="button"
                   onClick={handleMobileCtaClick}
-                  className="w-full rounded-full bg-[#86BFA8] px-6 py-3.5 text-base font-semibold text-emerald-950 shadow-[0_18px_36px_-24px_rgba(2,44,30,0.55)] transition-colors hover:bg-[#78B59C] focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2"
+                  className="w-full rounded-full bg-[#86BFA8] px-6 py-3.5 text-base font-semibold text-white shadow-[0_18px_36px_-24px_rgba(2,44,30,0.55)] transition-colors hover:bg-[#78B59C] focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2"
                 >
                   Lebensschritte planen
                 </button>
@@ -379,6 +389,41 @@ export default function HomePageClient() {
 
           {!isIntroScreen && mobileStep === 2 && (
             <>
+              {/* Header: identisch zu Seite 2 (Mobile) */}
+              <div className="relative flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={handleMobileStep3BackClick}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-slate-700 shadow-sm ring-1 ring-slate-200/70 backdrop-blur transition-colors hover:bg-white"
+                  aria-label="Zurück"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M15 18L9 12L15 6"
+                      stroke="currentColor"
+                      strokeWidth="2.25"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-700/70">
+                    4futurefamily
+                  </span>
+                </div>
+
+                <div className="h-10 w-10" aria-hidden="true" />
+              </div>
+
               <MobileResultStep
                 simulation={simulation}
                 points={chartPoints}

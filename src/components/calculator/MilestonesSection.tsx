@@ -151,7 +151,7 @@ export function MilestonesSection({
                 <button
                   type="button"
                   onClick={() => onAddFromTemplate(template)}
-                  className="typo-a4 shrink-0 rounded-full bg-primary-action px-3 py-1.5 font-medium text-white shadow-sm hover:bg-[#1a4a75]"
+                  className="typo-a4 shrink-0 rounded-full bg-[#86BFA8] px-3 py-1.5 font-semibold text-white shadow-xl shadow-emerald-900/10 transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA]"
                 >
                   Hinzufügen
                 </button>
@@ -161,8 +161,7 @@ export function MilestonesSection({
           <button
             type="button"
             onClick={onAdd}
-            className="flex w-full items-center gap-3 rounded-2xl border border-[#1a4a75] px-4 py-3 text-left transition-opacity active:opacity-90"
-            style={{ background: "#1C4E80" }}
+            className="flex w-full items-center gap-3 rounded-2xl bg-[#86BFA8] px-4 py-3 text-left font-semibold text-white shadow-xl shadow-emerald-900/10 transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA] active:opacity-90"
           >
             <span
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/25 text-lg font-semibold text-white"
@@ -170,7 +169,7 @@ export function MilestonesSection({
             >
               +
             </span>
-            <p className="typo-a4-medium min-w-0 flex-1 text-white">
+            <p className="min-w-0 flex-1">
               Eigenen Lebensschritt planen
             </p>
           </button>

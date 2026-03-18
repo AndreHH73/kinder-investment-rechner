@@ -96,7 +96,7 @@ export function MobileResultStep({
                 onClick={() => onRangeChange(value)}
                 className={`rounded-full px-3 py-1.5 font-medium ${
                   comparisonRange === value
-                    ? "bg-primary-action text-white"
+                    ? "bg-[#86BFA8] text-white"
                     : "bg-slate-100 text-slate-700"
                 }`}
               >
@@ -114,13 +114,13 @@ export function MobileResultStep({
                   onClick={() => onSelectScenarioAmount(amount)}
                   className={`flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border-2 px-3 py-2 transition-colors ${
                     isCurrent
-                      ? "border-primary-action bg-primary-action/10 text-slate-900"
+                      ? "border-emerald-300 bg-emerald-50 text-slate-900"
                       : "border-transparent bg-slate-100 text-slate-700"
                   }`}
                 >
                   {formatCurrency(amount).replace("€", "€ / Monat")}
                   {isCurrent && (
-                    <span className="typo-a4 rounded-full bg-primary-action/15 px-2 py-0.5 font-medium text-primary-action">
+                    <span className="typo-a4 rounded-full bg-emerald-100 px-2 py-0.5 font-medium text-emerald-800">
                       aktuell
                     </span>
                   )}
