@@ -1,8 +1,10 @@
 import { formatCurrency } from "@/lib/format";
+import { HeroResultLight } from "@/components/calculator/HeroResultLight";
 import type {
   Milestone,
   MilestoneDetail,
   CalculatorSimulationResult,
+  CalculatorInputs,
 } from "@/types/calculator";
 
 interface ChildLifeTimelineProps {
@@ -116,17 +118,24 @@ export function ChildLifeTimeline({
     .filter((item): item is TimelineItem => item !== null)
     .sort((a, b) => a.age - b.age);
 
+  const heroInputs: CalculatorInputs = {
+    monthlyContribution: 0,
+    childAge: Math.round(startYear.age),
+    targetAge: Math.round(endYear.age),
+    expectedReturnPercentPerYear: 0,
+    initialLumpSum: 0,
+  };
+
   return (
     <section
       id="child-life-timeline"
       className="mx-auto w-full max-w-[480px] rounded-3xl bg-white shadow-sm shadow-slate-900/5"
     >
-      {/* Top visual (emotional, aber nicht kitschig) */}
-      <div className="relative overflow-hidden rounded-3xl">
-        {/* Media slot (leicht ersetzbar durch echtes Bild später) */}
-        <div
-          className="h-[140px] w-full rounded-3xl border border-dashed border-emerald-200/70 bg-emerald-50/25"
-          aria-hidden="true"
+      <div className="px-4 pt-4">
+        <HeroResultLight
+          inputs={heroInputs}
+          simulation={core}
+          hasMilestones
         />
       </div>
 
@@ -142,7 +151,7 @@ export function ChildLifeTimeline({
         <div className="mt-6 relative pl-6">
           {/* Feine vertikale Verbindungslinie (durch die Alterskreise geführt) */}
           <div
-            className="absolute left-[44px] top-2 bottom-2 w-[1.25px] bg-emerald-600"
+            className="absolute left-[44px] top-2 bottom-2 w-[1.25px] bg-[#86BFA8]"
             aria-hidden="true"
           />
 
@@ -154,7 +163,7 @@ export function ChildLifeTimeline({
                 <div key={index} className="flex items-start gap-4">
                   {/* Age marker links */}
                   <div className="relative z-10 flex w-10 flex-col items-center">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-700 text-[12px] font-bold text-white shadow-[0_10px_20px_-15px_rgba(2,44,30,0.35)]">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#86BFA8] text-[12px] font-bold text-white shadow-[0_10px_20px_-15px_rgba(2,44,30,0.35)]">
                       {age}
                     </div>
                   </div>
@@ -179,7 +188,7 @@ export function ChildLifeTimeline({
                         </p>
                         <p className="typo-a4 text-slate-600">
                           Vermögen danach:{" "}
-                          <span className="font-semibold text-emerald-700">
+                          <span className="font-semibold text-[#86BFA8]">
                             {item.description}
                           </span>
                         </p>
@@ -194,7 +203,7 @@ export function ChildLifeTimeline({
                         <p className="typo-a4 text-slate-600">
                           Mit {age} Jahren
                         </p>
-                        <p className="typo-a4-medium text-emerald-700">
+                        <p className="typo-a4-medium text-[#86BFA8]">
                           {item.description}
                         </p>
                       </>
@@ -217,7 +226,7 @@ export function ChildLifeTimeline({
                             </p>
                             <p className="typo-a4 text-slate-600">
                               Vermögen danach:{" "}
-                              <span className="font-semibold text-emerald-700">
+                              <span className="font-semibold text-[#86BFA8]">
                                 {formatCurrency(item.detail.balanceAfter)}
                               </span>
                             </p>
