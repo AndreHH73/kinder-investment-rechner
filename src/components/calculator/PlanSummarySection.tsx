@@ -4,23 +4,23 @@ const SUMMARY_CARDS = [
   {
     title: "Mehr Klarheit für dich",
     text: "Du weißt jetzt, was mit deinem aktuellen Sparplan realistisch erreichbar ist.",
-    bgClass: "bg-[#F0F8FF]",
-    borderClass: "border-sky-200/60",
-    iconBg: "bg-sky-100",
+    bgClass: "bg-emerald-50/40",
+    borderClass: "border-emerald-200/70",
+    iconBg: "bg-emerald-100",
   },
   {
     title: "Lebensschritte im Blick",
     text: "Du siehst, welche Stationen für dein Kind finanziell eingeplant werden können.",
-    bgClass: "bg-[#F0FFF4]",
-    borderClass: "border-emerald-200/60",
+    bgClass: "bg-emerald-50/40",
+    borderClass: "border-emerald-200/70",
     iconBg: "bg-emerald-100",
   },
   {
     title: "Mehr Möglichkeiten fürs Kind",
     text: "Schon kleine Anpassungen können später noch mehr möglich machen.",
-    bgClass: "bg-[#FAF5FF]",
-    borderClass: "border-violet-200/60",
-    iconBg: "bg-violet-100",
+    bgClass: "bg-emerald-50/40",
+    borderClass: "border-emerald-200/70",
+    iconBg: "bg-emerald-100",
   },
 ] as const;
 
@@ -34,7 +34,7 @@ export function PlanSummarySection({
     <section className="rounded-3xl bg-white px-4 py-5 shadow-sm shadow-slate-900/5">
       <div className="flex flex-col gap-2">
         <h2 className="typo-a1 text-slate-900">
-          Was dein Plan dir jetzt zeigt
+          Was dein Pinguin-Plan dir jetzt zeigt
         </h2>
         {/* Optional: funktioniert auch ohne Unterzeile, daher sehr dezent gehalten */}
         <p className="typo-a2 text-slate-500">
@@ -52,7 +52,7 @@ export function PlanSummarySection({
                 className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${card.iconBg}`}
                 aria-hidden
               >
-                <span className="text-base text-slate-700">✓</span>
+                <span className="text-base text-emerald-700">✓</span>
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-[14px] font-semibold leading-snug text-slate-800">
@@ -78,7 +78,7 @@ export function PlanSummarySection({
           <button
             type="button"
             onClick={onConsultationClick}
-            className="mt-1 inline-flex w-full items-center justify-center rounded-full bg-primary-action px-6 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#1a4a75] focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2"
+            className="mt-1 inline-flex w-full items-center justify-center rounded-full bg-[#86BFA8] px-6 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
           >
             Kostenfrei Plan besprechen
           </button>

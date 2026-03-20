@@ -1,0 +1,49 @@
+# Projekt: Kinder-Investment-Rechner
+# Stack: Next.js 16, React 19, TypeScript 5, Tailwind CSS 4, Recharts, Resend, Supabase
+
+## Allgemein
+- Antworte immer auf Deutsch.
+- Halte den Code einfach, lesbar und wartbar – kein Over-Engineering.
+- Erkläre kurz, was du änderst und warum, bevor du Code schreibst.
+- Wenn etwas unklar ist, frage nach, bevor du loslegst.
+
+## Tech-Stack & Konventionen
+- Framework: Next.js 16 mit App Router (kein Pages Router).
+- Sprache: TypeScript (locker typisiert, kein strikter Modus nötig – aber Typen wo sinnvoll).
+- Styling: Tailwind CSS 4 – keine inline-styles, kein separates CSS.
+- Diagramme: Recharts für alle Charts und Visualisierungen.
+- E-Mail: Resend für E-Mail-Versand.
+- Backend/Datenbank: Supabase (Auth, DB, ggf. Storage).
+- Linting: ESLint – bestehende Konfiguration respektieren.
+
+## Code-Stil
+- Funktionale React-Komponenten mit Hooks (keine Klassen-Komponenten).
+- Benenne Komponenten und Dateien in PascalCase (z.B. InvestmentChart.tsx).
+- Benenne Utility-Funktionen und Hooks in camelCase.
+- Eine Komponente pro Datei.
+- Verwende "use client" nur wenn nötig (Client Components).
+- Server Components als Standard bevorzugen.
+
+### Dateistruktur
+- /src/app → Routen und Layouts (App Router)
+- /src/components → Wiederverwendbare UI-Komponenten
+- /src/lib → Hilfsfunktionen, Supabase-Client, Typen
+- /src/types → TypeScript-Typen
+- /src/data → Statische Daten
+- /public → Statische Assets
+
+## Supabase
+- Supabase-Client in /lib/supabase.ts zentralisieren.
+- Row Level Security (RLS) bei Datenbankzugriffen beachten.
+- Für Server-Zugriffe den Service-Role-Key nur in Server Components oder API-Routes nutzen.
+
+## Recharts
+- Responsive Container verwenden (<ResponsiveContainer>).
+- Einheitliches Farbschema für alle Diagramme.
+- Deutsche Beschriftungen in Achsen und Tooltips.
+
+## Wichtig
+- Keine Pakete installieren ohne Rückfrage.
+- Keine bestehenden Funktionen löschen oder umbenennen ohne Rückfrage.
+- Bei Fehlern: erst analysieren, dann die minimale Änderung vorschlagen.
+- Immer den bestehenden Code-Stil im Projekt beibehalten.

@@ -439,8 +439,8 @@ export function MilestonesSection({
                   let barColor = "bg-slate-500";
                   let statusTextColor = "text-slate-100";
                   if (detail.status === "finanzierbar") {
-                    barColor = "bg-emerald-400";
-                    statusTextColor = "text-emerald-200";
+                    barColor = "bg-[#86BFA8]";
+                    statusTextColor = "text-[#86BFA8]";
                   } else if (detail.status === "teilweise finanzierbar") {
                     barColor = "bg-amber-400";
                     statusTextColor = "text-amber-200";
