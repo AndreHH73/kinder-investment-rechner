@@ -2,7 +2,8 @@
 
 import { ConsultationLeadForm } from "@/components/calculator/ConsultationLeadForm";
 
-const DEFAULT_BOOKING_URL: string | null = null;
+const DEFAULT_BOOKING_URL =
+  "https://outlook.office.com/book/Buchungsseite-4futurefamily@horbach.de/";
 
 export function PlanBesprechenSection({
   bookingUrl = DEFAULT_BOOKING_URL,
@@ -33,6 +34,8 @@ export function PlanBesprechenSection({
             {bookingUrl ? (
               <a
                 href={bookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center rounded-full bg-primary-action px-6 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#1a4a75] focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2"
               >
                 Kostenfreien Termin auswählen

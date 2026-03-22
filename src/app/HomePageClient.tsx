@@ -59,6 +59,10 @@ export default function HomePageClient() {
   } | null>(null);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
 
+  /** Optional: NEXT_PUBLIC_BOOKING_URL überschreibt den Standard-Link aus PlanBesprechenSection */
+  const bookingUrlOverride =
+    process.env.NEXT_PUBLIC_BOOKING_URL?.trim() || undefined;
+
   const heroRef = useRef<HTMLDivElement>(null);
   const heroScrollTimeoutRef = useRef<number | null>(null);
   const isFirstRender = useRef(true);
@@ -503,7 +507,9 @@ export default function HomePageClient() {
               </div>
 
               {/* Beratungssektion erst nach CTA-Klick sichtbar (komplett unsichtbar im Standardzustand) */}
-              {isConsultationOpen && <PlanBesprechenSection />}
+              {isConsultationOpen && (
+                <PlanBesprechenSection bookingUrl={bookingUrlOverride} />
+              )}
             </>
           )}
         </div>
@@ -516,7 +522,9 @@ export default function HomePageClient() {
           </section>
 
           <PlanSummarySection onConsultationClick={handleConsultationCtaClick} />
-          {isConsultationOpen && <PlanBesprechenSection />}
+          {isConsultationOpen && (
+            <PlanBesprechenSection bookingUrl={bookingUrlOverride} />
+          )}
 
           <div className="space-y-3">
             <SummaryCards result={simulation} />
