@@ -66,6 +66,7 @@ export default function HomePageClient() {
   const heroRef = useRef<HTMLDivElement>(null);
   const heroScrollTimeoutRef = useRef<number | null>(null);
   const isFirstRender = useRef(true);
+  const shouldScrollToBaseInputsRef = useRef(false);
 
   const {
     simulation,
@@ -286,6 +287,27 @@ export default function HomePageClient() {
     if (mobileStep === 1) setIsConsultationOpen(false);
   }, [mobileStep]);
 
+  useEffect(() => {
+    if (isIntroScreen) return;
+    if (mobileStep !== 1) return;
+    if (!shouldScrollToBaseInputsRef.current) return;
+
+    const el = document.getElementById("mobile-base-inputs-start");
+    shouldScrollToBaseInputsRef.current = false;
+    if (!el) return;
+
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [isIntroScreen, mobileStep]);
+
+  const handleIntroStart = () => {
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("screen", "calculator");
+    shouldScrollToBaseInputsRef.current = true;
+    router.push(`${pathname}?${next.toString()}`);
+  };
+
   return (
     <div className="min-h-screen bg-[#F9FBFA]">
       <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
@@ -297,13 +319,7 @@ export default function HomePageClient() {
         {/* HeroIntro: auf Mobile eigener Screen (showIntro), auf Desktop immer sichtbar */}
         <div className="lg:hidden">
           {isIntroScreen && (
-            <HeroIntro
-              onStart={() => {
-                const next = new URLSearchParams(searchParams.toString());
-                next.set("screen", "calculator");
-                router.push(`${pathname}?${next.toString()}`);
-              }}
-            />
+            <HeroIntro onStart={handleIntroStart} />
           )}
         </div>
         <div className="hidden lg:block">
@@ -349,12 +365,14 @@ export default function HomePageClient() {
                 <div className="h-10 w-10" aria-hidden="true" />
               </div>
 
-              <MobileInputStep
-                value={inputs}
-                onChange={handleMobileInputsChangeAndScroll}
-                onSliderChange={handleMobileInputsChange}
-                onSliderCommit={handleMobileInputsChangeAndScroll}
-              />
+              <div id="mobile-base-inputs-start" className="scroll-mt-4">
+                <MobileInputStep
+                  value={inputs}
+                  onChange={handleMobileInputsChangeAndScroll}
+                  onSliderChange={handleMobileInputsChange}
+                  onSliderCommit={handleMobileInputsChangeAndScroll}
+                />
+              </div>
 
               {/* Neuer Hero (Future Plan Overview) kommt nach den Eingaben */}
               <div ref={heroRef} className="space-y-4 pt-2">
