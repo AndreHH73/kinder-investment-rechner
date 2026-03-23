@@ -10,11 +10,16 @@ import type {
 interface ChildLifeTimelineProps {
   milestones: Milestone[];
   simulation: CalculatorSimulationResult | null;
+  /** Ohne eingebettete Ergebnis-Karte (z. B. wenn der Hero separat oben steht) */
+  omitHeroSummary?: boolean;
+  className?: string;
 }
 
 export function ChildLifeTimeline({
   milestones,
   simulation,
+  omitHeroSummary = false,
+  className = "",
 }: ChildLifeTimelineProps) {
   if (!simulation) return null;
 
@@ -129,17 +134,23 @@ export function ChildLifeTimeline({
   return (
     <section
       id="child-life-timeline"
-      className="mx-auto w-full max-w-[480px] rounded-3xl bg-white shadow-sm shadow-slate-900/5"
+      className={`mx-auto w-full max-w-[480px] rounded-3xl bg-white shadow-sm shadow-slate-900/5 lg:max-w-none ${className}`}
     >
-      <div className="px-4 pt-4">
-        <HeroResultLight
-          inputs={heroInputs}
-          simulation={core}
-          hasMilestones
-        />
-      </div>
+      {!omitHeroSummary && (
+        <div className="px-4 pt-4">
+          <HeroResultLight
+            inputs={heroInputs}
+            simulation={core}
+            hasMilestones
+          />
+        </div>
+      )}
 
-      <div className="px-6 pb-6 pt-4">
+      <div
+        className={
+          omitHeroSummary ? "px-6 pb-6 pt-6" : "px-6 pb-6 pt-4"
+        }
+      >
         <h2 className="typo-a1 text-slate-900">Der Lebensweg deines Kindes</h2>
         <p className="typo-a2 mt-2 text-slate-600">
           Plane die wichtigsten Lebensschritte deines Kindes – und sieh sofort, ob dein Sparplan dafür reicht.

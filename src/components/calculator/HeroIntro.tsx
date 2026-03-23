@@ -87,9 +87,9 @@ export function HeroIntro({ onStart }: HeroIntroProps) {
 
   return (
     <header aria-label="Einstieg in den Pinguin-Plan">
-      <div className="relative overflow-hidden px-1 pb-12 pt-7">
+      <div className="relative mx-auto w-full max-w-lg overflow-hidden px-1 pb-12 pt-7 lg:flex lg:max-w-[960px] lg:flex-col lg:gap-16 lg:px-4 lg:pb-16 lg:pt-10">
 
-        <section className="mx-auto flex max-w-lg flex-col items-center text-center">
+        <section className="mx-auto flex w-full max-w-lg flex-col items-center text-center lg:max-w-[700px]">
           <h1 className="text-[2.35rem] font-extrabold leading-tight tracking-tight text-[#1A2E35]">
             {HEADLINE}
           </h1>
@@ -98,7 +98,7 @@ export function HeroIntro({ onStart }: HeroIntroProps) {
           </p>
         </section>
 
-        <section className="relative mx-auto mt-2 w-full max-w-md py-6 md:mt-11 md:py-10">
+        <section className="relative mx-auto mt-2 w-full max-w-md py-6 md:mt-11 md:py-10 lg:mt-0 lg:max-w-[800px] lg:py-0">
           <div
             className="absolute left-0 top-1/2 h-[3px] w-full -translate-y-1/2 rounded-full shadow-[0_1px_0_rgba(26,46,53,0.08)]"
             style={{
@@ -208,21 +208,21 @@ export function HeroIntro({ onStart }: HeroIntroProps) {
           </div>
         </section>
 
-        <section className="mx-auto mt-2 w-full max-w-lg space-y-4">
+        <section className="mx-auto mt-2 w-full max-w-lg space-y-4 lg:mt-0 lg:max-w-none lg:grid lg:grid-cols-3 lg:gap-6 lg:space-y-0">
           {BENEFITS.map((card) => (
             <div
               key={card.title}
-              className="grid h-[112px] grid-cols-[48px_1fr] items-start gap-4 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:items-center md:p-6"
+              className="grid h-[112px] grid-cols-[48px_1fr] items-start gap-4 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm md:items-center md:p-6 lg:flex lg:h-auto lg:min-h-[168px] lg:flex-col lg:items-center lg:justify-start lg:gap-3 lg:p-6 lg:text-center"
             >
               <div
-                className="flex h-12 w-12 shrink-0 items-center justify-center self-center rounded-2xl"
+                className="flex h-12 w-12 shrink-0 items-center justify-center self-center rounded-2xl lg:self-auto"
                 style={{ background: "rgba(167, 215, 197, 0.10)" }}
                 aria-hidden
               >
                 {card.icon}
               </div>
-              <div className="min-w-0 self-stretch py-0.5">
-                <div className="flex h-full flex-col justify-start gap-1 md:justify-center">
+              <div className="min-w-0 self-stretch py-0.5 lg:self-auto lg:py-0">
+                <div className="flex h-full flex-col justify-start gap-1 md:justify-center lg:items-center lg:justify-start lg:gap-1.5">
                   <p className="text-lg font-bold leading-tight text-slate-900">
                     {card.title}
                   </p>
@@ -235,7 +235,7 @@ export function HeroIntro({ onStart }: HeroIntroProps) {
           ))}
         </section>
 
-        <section className="mx-auto mt-6 w-full max-w-lg">
+        <section className="mx-auto mt-6 w-full max-w-lg lg:mt-0 lg:max-w-[360px]">
           <button
             type="button"
             onClick={handleStartClick}

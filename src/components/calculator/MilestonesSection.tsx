@@ -196,6 +196,8 @@ interface MilestonesSectionProps {
   onDelete: (id: string) => void;
   /** Wenn gesetzt (z. B. Mobile): wird zwischen Auswahl und Finanzierungsstatus gerendert; Finanzierungsstatus nur bei milestones.length > 0 */
   slotBetweenSelectionAndFinancing?: ReactNode;
+  /** Ab lg: Auswahl + Finanzierung links, Slot (Timeline) rechts sticky; nur in Kombination mit slotBetweenSelectionAndFinancing */
+  desktopPlanSplit?: boolean;
 }
 
 export function MilestonesSection({
@@ -209,10 +211,12 @@ export function MilestonesSection({
   onEdit,
   onDelete,
   slotBetweenSelectionAndFinancing,
+  desktopPlanSplit = false,
 }: MilestonesSectionProps) {
   const sorted = [...milestones].sort((a, b) => a.age - b.age);
   const [openDetailId, setOpenDetailId] = useState<string | null>(null);
-  const isMobileVariant = slotBetweenSelectionAndFinancing != null;
+  const isMobileVariant =
+    slotBetweenSelectionAndFinancing != null && !desktopPlanSplit;
 
   const getIconForMilestone = (m: Milestone): string => {
     const templateMatch = LIFEEVENT_TEMPLATES.find(
@@ -582,6 +586,22 @@ export function MilestonesSection({
         )}
     </div>
   );
+
+  if (slotBetweenSelectionAndFinancing != null && desktopPlanSplit) {
+    return (
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start lg:gap-8">
+        <section className={`${sectionClass} lg:col-start-1 lg:row-start-1`}>
+          {selectionBlock}
+        </section>
+        <div className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-6 lg:self-start">
+          {slotBetweenSelectionAndFinancing}
+        </div>
+        <section className={`${sectionClass} lg:col-start-1 lg:row-start-2`}>
+          {financingBlock}
+        </section>
+      </div>
+    );
+  }
 
   if (slotBetweenSelectionAndFinancing != null) {
     return (

@@ -6,20 +6,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { CalculatorHeader } from "@/components/calculator/Header";
-import { GrowthChart } from "@/components/calculator/GrowthChart";
 import { HeroIntro } from "@/components/calculator/HeroIntro";
-import { HeroResult } from "@/components/calculator/HeroResult";
 import { HeroResultLight } from "@/components/calculator/HeroResultLight";
 import { PlanBesprechenSection } from "@/components/calculator/PlanBesprechenSection";
 import { PlanSummarySection } from "@/components/calculator/PlanSummarySection";
 import { MilestoneForm } from "@/components/calculator/MilestoneForm";
-import {
-  MilestonesSection,
-  type MilestoneTemplate,
-} from "@/components/calculator/MilestonesSection";
+import type { MilestoneTemplate } from "@/components/calculator/MilestonesSection";
 import { MobileInputStep } from "@/components/calculator/MobileInputStep";
 import { MobileResultStep } from "@/components/calculator/MobileResultStep";
-import { ParameterCard } from "@/components/calculator/ParameterCard";
 import { SavePlanModal } from "@/components/calculator/SavePlanModal";
 import { SummaryCards } from "@/components/calculator/SummaryCards";
 import { defaultInputs } from "@/data/defaultMilestones";
@@ -40,7 +34,9 @@ export default function HomePageClient() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const isIntroScreen = (searchParams.get("screen") ?? "intro") === "intro";
+  const screenParam = searchParams.get("screen") ?? "intro";
+  const isIntroScreen = screenParam === "intro";
+  const isDesktopPlanScreen = screenParam === "plan";
 
   const [inputs, setInputs] = useState<CalculatorInputs>(defaultInputs);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
@@ -58,6 +54,10 @@ export default function HomePageClient() {
     endValue: number;
   } | null>(null);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
+
+  /** Mobil: Lebensschritte-Ansicht per Schritt 2 oder Deep-Link ?screen=plan */
+  const showMobilePlanStep =
+    !isIntroScreen && (mobileStep === 2 || screenParam === "plan");
 
   /** Optional: NEXT_PUBLIC_BOOKING_URL überschreibt den Standard-Link aus PlanBesprechenSection */
   const bookingUrlOverride =
@@ -81,7 +81,7 @@ export default function HomePageClient() {
     const basePoints = base.points;
 
     // Baue Punkte mit sichtbaren "Drops" bei kostenpflichtigen Lebensschritten
-    let chartPoints: import("@/types/calculator").SimulationPoint[] = [];
+    const chartPoints: import("@/types/calculator").SimulationPoint[] = [];
     if (basePoints.length > 0) {
       const expenseMilestones = milestones
         .filter((m) => m.amount < 0)
@@ -180,6 +180,7 @@ export default function HomePageClient() {
         setMobileStep(2);
       } else {
         setMobileStep(1);
+        setIsConsultationOpen(false);
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     };
@@ -193,23 +194,23 @@ export default function HomePageClient() {
       isFirstRender.current = false;
       return;
     }
-    if (mobileStep !== 2) return;
+    if (!showMobilePlanStep) return;
     const el = heroRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
     if (rect.top < 0) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [inputs, milestones, mobileStep]);
+  }, [inputs, milestones, showMobilePlanStep]);
 
   useEffect(() => {
-    if (mobileStep !== 2) return;
+    if (!showMobilePlanStep) return;
     const el = heroRef.current;
     if (!el) return;
     requestAnimationFrame(() => {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     });
-  }, [mobileStep]);
+  }, [showMobilePlanStep]);
 
   useEffect(() => {
     if (!isConsultationOpen) return;
@@ -273,6 +274,7 @@ export default function HomePageClient() {
     if (typeof window === "undefined") return;
     if (window.history.length <= 1) {
       setMobileStep(1);
+      setIsConsultationOpen(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
@@ -283,9 +285,36 @@ export default function HomePageClient() {
     setIsConsultationOpen(true);
   };
 
-  useEffect(() => {
-    if (mobileStep === 1) setIsConsultationOpen(false);
-  }, [mobileStep]);
+  const handleDesktopBackToIntro = () => {
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("screen", "intro");
+    router.push(`${pathname}?${next.toString()}`);
+    if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const handleDesktopBackToConfig = () => {
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("screen", "calculator");
+    router.push(`${pathname}?${next.toString()}`);
+    if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const handleDesktopLifeStepsCtaClick = () => {
+    setBaselineScenario({
+      monthly: inputs.monthlyContribution,
+      endValue: simulation?.core?.finalBalance ?? 0,
+    });
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("screen", "plan");
+    router.push(`${pathname}?${next.toString()}`);
+    if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+    }
+  };
 
   useEffect(() => {
     if (isIntroScreen) return;
@@ -308,6 +337,15 @@ export default function HomePageClient() {
     router.push(`${pathname}?${next.toString()}`);
   };
 
+  const handleDesktopIntroStart = () => {
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("screen", "calculator");
+    router.push(`${pathname}?${next.toString()}`);
+    if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F9FBFA]">
       <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 py-6 md:px-8 md:py-8">
@@ -323,12 +361,14 @@ export default function HomePageClient() {
           )}
         </div>
         <div className="hidden lg:block">
-          <HeroIntro />
+          {isIntroScreen && (
+            <HeroIntro onStart={handleDesktopIntroStart} />
+          )}
         </div>
 
         {/* Mobile Flow: Seite 1 (Intro) -> Seite 2 (Rechner) -> Seite 3 (Lebensschritte) */}
         <div className="-mt-1 space-y-3 lg:hidden">
-          {!isIntroScreen && mobileStep === 1 && (
+          {!isIntroScreen && !showMobilePlanStep && (
             <>
               {/* Oberer Header (Back + Brand) bleibt bestehen */}
               <div className="relative flex items-center justify-between">
@@ -409,7 +449,7 @@ export default function HomePageClient() {
             </>
           )}
 
-          {!isIntroScreen && mobileStep === 2 && (
+          {showMobilePlanStep && (
             <>
               {/* Header: identisch zu Seite 2 (Mobile) */}
               <div className="relative flex items-center justify-between">
@@ -532,78 +572,196 @@ export default function HomePageClient() {
           )}
         </div>
 
-        {/* Desktop Layout */}
+        {/* Desktop: Seite 2 (Konfiguration) oder Seite 3 (Lebensschritte & Ergebnis) */}
         <div className="hidden flex-col gap-6 lg:flex">
-          <section className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)]">
-            <ParameterCard value={inputs} onChange={setInputs} />
-            <GrowthChart points={chartPoints} milestones={chartMilestones} />
-          </section>
+          {!isIntroScreen && (
+            <>
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={
+                    isDesktopPlanScreen
+                      ? handleDesktopBackToConfig
+                      : handleDesktopBackToIntro
+                  }
+                  className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
+                >
+                  <span aria-hidden="true">←</span>
+                  Zurück
+                </button>
+                <div />
+              </div>
 
-          <PlanSummarySection onConsultationClick={handleConsultationCtaClick} />
-          {isConsultationOpen && (
-            <PlanBesprechenSection bookingUrl={bookingUrlOverride} />
+              {isDesktopPlanScreen ? (
+                <>
+                  <HeroResultLight
+                    inputs={inputs}
+                    simulation={simulation?.core ?? null}
+                    hasMilestones={milestones.length > 0}
+                    containerClassName="mx-auto w-full max-w-none"
+                    valueClassName="text-[64px] leading-[1.02] font-bold"
+                    titleClassName="text-[14px]"
+                    noteClassName="text-[16px]"
+                    cardClassName="px-12 py-12"
+                    statsLabelClassName="text-[14px]"
+                    statsValueClassName="text-[20px] font-bold"
+                    statsGridClassName="mt-6 pt-6 gap-6"
+                    centered
+                    contentGapClassName="space-y-6"
+                  />
+
+                  <MobileResultStep
+                    simulation={simulation}
+                    points={chartPoints}
+                    chartMilestones={chartMilestones}
+                    comparisonRange={comparisonRange}
+                    onRangeChange={setComparisonRange}
+                    baseMonthly={inputs.monthlyContribution}
+                    milestones={milestones}
+                    onAddMilestone={() => {
+                      const nextAge =
+                        (milestones[milestones.length - 1]?.age ??
+                          inputs.childAge + 1) as number;
+                      setMilestoneMode("create");
+                      setEditingMilestone({
+                        id: `m-${Date.now()}`,
+                        title: "",
+                        age: nextAge,
+                        amount: 0,
+                        type: "expense",
+                        description: "",
+                      });
+                    }}
+                    onEditMilestone={(milestone) => {
+                      setMilestoneMode("edit");
+                      setEditingMilestone(milestone);
+                    }}
+                    onDeleteMilestone={(id) => {
+                      setMilestones((prev) => prev.filter((m) => m.id !== id));
+                    }}
+                    recommendation={recommendation}
+                    onApplyRecommended={(amount) => {
+                      setInputs((prev) => ({
+                        ...prev,
+                        monthlyContribution: amount,
+                      }));
+                      setBaselineScenario(null);
+                    }}
+                    onAddFromTemplate={(template: MilestoneTemplate) => {
+                      setMilestoneMode("create");
+                      setEditingMilestone({
+                        id: `m-${Date.now()}`,
+                        title: template.title,
+                        age: template.defaultAge,
+                        amount: template.defaultAmount,
+                        type: "expense",
+                        description: `Typische Kosten: ${template.costLabel}`,
+                      });
+                    }}
+                    onBack={handleDesktopBackToConfig}
+                    onSelectScenarioAmount={(amount) =>
+                      setInputs((prev) => ({
+                        ...prev,
+                        monthlyContribution: amount,
+                      }))
+                    }
+                    desktopPlanSplit
+                  />
+
+                  <PlanSummarySection
+                    onConsultationClick={handleConsultationCtaClick}
+                  />
+                  {isConsultationOpen && (
+                    <PlanBesprechenSection bookingUrl={bookingUrlOverride} />
+                  )}
+
+                  <div className="space-y-3">
+                    <SummaryCards result={simulation} />
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => setSaveModalOpen(true)}
+                        className="rounded-full bg-slate-900 px-4 py-2 text-xs font-medium text-slate-50 shadow-sm hover:bg-slate-800"
+                      >
+                        Plan speichern
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <section className="grid gap-5 lg:grid-cols-[minmax(0,50fr)_minmax(0,50fr)] lg:items-start">
+                    <div id="desktop-base-inputs-start">
+                      <MobileInputStep
+                        value={inputs}
+                        onChange={setInputs}
+                        onSliderChange={setInputs}
+                        onSliderCommit={setInputs}
+                        childAgeMax={17}
+                        targetAgeMin={18}
+                        targetAgeMax={67}
+                        layout="desktopStacked"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-4 lg:sticky lg:top-6 lg:self-start lg:pt-8">
+                      <div className="space-y-3">
+                        <h2 className="text-center text-[30px] font-semibold leading-[1.08] tracking-tight text-slate-900">
+                          Dein Plan für die Zukunft
+                        </h2>
+                      </div>
+                      <div className="flex justify-center">
+                        <span className="inline-flex items-center rounded-full border border-emerald-200/60 bg-emerald-50/70 px-5 py-2 text-[18px] font-semibold text-emerald-800/80 shadow-[0_10px_22px_-18px_rgba(2,44,30,0.35)]">
+                          {formatCurrency(inputs.monthlyContribution)} / Monat
+                        </span>
+                      </div>
+                      <p className="mx-auto max-w-[400px] pb-4 text-center text-[17px] font-normal leading-relaxed text-slate-600">
+                        Mit {formatCurrency(inputs.monthlyContribution)} im Monat
+                        kannst du deinem Kind ein Vermögen von{" "}
+                        {formatCurrency(simulation?.core?.finalBalance ?? 0)}{" "}
+                        bis zum Alter von {Math.round(inputs.targetAge)} Jahren
+                        ermöglichen
+                        {milestones.length === 0
+                          ? " – noch ohne geplante Lebensschritte."
+                          : " – unter Berücksichtigung deiner geplanten Lebensschritte."}
+                      </p>
+                      <div className="w-full [&>section]:mx-0 [&>section]:max-w-none">
+                        <HeroResultLight
+                          inputs={inputs}
+                          simulation={simulation?.core ?? null}
+                          hasMilestones={milestones.length > 0}
+                          valueClassName="text-[64px] leading-[1.02] font-bold"
+                          titleClassName="text-[14px]"
+                          noteClassName="text-[16px]"
+                          cardClassName="px-12 py-12"
+                          statsLabelClassName="text-[14px]"
+                          statsValueClassName="text-[20px] font-bold"
+                          statsGridClassName="mt-6 pt-6 gap-6"
+                          centered
+                          contentGapClassName="space-y-6"
+                        />
+                      </div>
+                    </div>
+                  </section>
+
+                  <div className="mx-auto mt-4 flex w-full max-w-[480px] justify-center px-1">
+                    <button
+                      type="button"
+                      onClick={handleDesktopLifeStepsCtaClick}
+                      className="inline-flex w-full items-center justify-center rounded-full bg-[#86BFA8] px-10 py-5 text-[20px] font-semibold text-white shadow-[0_18px_36px_-24px_rgba(2,44,30,0.55)] transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
+                    >
+                      Lebensschritte planen
+                    </button>
+                  </div>
+                </>
+              )}
+            </>
           )}
-
-          <div className="space-y-3">
-            <SummaryCards result={simulation} />
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => setSaveModalOpen(true)}
-                className="rounded-full bg-slate-900 px-4 py-2 text-xs font-medium text-slate-50 shadow-sm hover:bg-slate-800"
-              >
-                Plan speichern
-              </button>
-            </div>
-          </div>
-
-          <MilestonesSection
-            milestones={milestones}
-            milestoneDetails={simulation?.milestoneDetails}
-            recommendation={recommendation}
-            onApplyRecommended={(amount) => {
-              setInputs((prev) => ({ ...prev, monthlyContribution: amount }));
-              setBaselineScenario(null);
-            }}
-            finalBalance={simulation?.core?.finalBalance ?? 0}
-            onAdd={() => {
-              const nextAge =
-                (milestones[milestones.length - 1]?.age ??
-                  inputs.childAge + 1) as number;
-              setMilestoneMode("create");
-              setEditingMilestone({
-                id: `m-${Date.now()}`,
-                title: "",
-                age: nextAge,
-                amount: 0,
-                type: "expense",
-                description: "",
-              });
-            }}
-            onAddFromTemplate={(template: MilestoneTemplate) => {
-              setMilestoneMode("create");
-              setEditingMilestone({
-                id: `m-${Date.now()}`,
-                title: template.title,
-                age: template.defaultAge,
-                amount: template.defaultAmount,
-                type: "expense",
-                description: `Typische Kosten: ${template.costLabel}`,
-              });
-            }}
-            onEdit={(milestone) => {
-              setMilestoneMode("edit");
-              setEditingMilestone(milestone);
-            }}
-            onDelete={(id) => {
-              setMilestones((prev) => prev.filter((m) => m.id !== id));
-            }}
-          />
         </div>
 
         <footer
           className={`typo-a4 mt-4 border-t border-slate-200 pt-4 text-slate-500 ${
-            mobileStep === 2 || isIntroScreen ? "hidden lg:block" : ""
+            showMobilePlanStep || isIntroScreen ? "hidden lg:block" : ""
           }`}
         >
           <p className="max-w-4xl">

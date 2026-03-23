@@ -29,6 +29,8 @@ interface MobileResultStepProps {
   onDeleteMilestone: (id: string) => void;
   onBack: () => void;
   onSelectScenarioAmount: (amount: number) => void;
+  /** Desktop Plan-Seite: Split Lebensschritte | Timeline (sticky), Timeline ohne Mini-Hero */
+  desktopPlanSplit?: boolean;
 }
 
 export function MobileResultStep({
@@ -45,9 +47,11 @@ export function MobileResultStep({
   onAddFromTemplate,
   onEditMilestone,
   onDeleteMilestone,
-  onBack,
+  onBack: _onBack,
   onSelectScenarioAmount,
+  desktopPlanSplit = false,
 }: MobileResultStepProps) {
+  void _onBack;
 
   const delta = comparisonRange;
   const rawScenarios = [
@@ -71,8 +75,13 @@ export function MobileResultStep({
         onAddFromTemplate={onAddFromTemplate}
         onEdit={onEditMilestone}
         onDelete={onDeleteMilestone}
+        desktopPlanSplit={desktopPlanSplit}
         slotBetweenSelectionAndFinancing={
-          <ChildLifeTimeline milestones={milestones} simulation={simulation} />
+          <ChildLifeTimeline
+            milestones={milestones}
+            simulation={simulation}
+            omitHeroSummary={desktopPlanSplit}
+          />
         }
       />
 
