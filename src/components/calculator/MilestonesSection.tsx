@@ -23,9 +23,14 @@ export interface MilestoneTemplate {
 
 function TemplateIcon({ id }: { id: string }) {
   const common = {
-    className: "h-5 w-5",
+    width: "28",
+    height: "28",
     viewBox: "0 0 24 24",
     fill: "none",
+    stroke: "#86BFA8",
+    strokeWidth: "1.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
     xmlns: "http://www.w3.org/2000/svg",
     "aria-hidden": "true" as const,
   };
@@ -33,37 +38,9 @@ function TemplateIcon({ id }: { id: string }) {
   if (id === "license") {
     return (
       <svg {...common}>
-        <path
-          d="M6.5 15.5h11"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M7.5 11.5l1.4-2.6c.3-.6.9-.9 1.6-.9h2c.7 0 1.3.3 1.6.9l1.4 2.6"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M6.5 15.5V13c0-.5.2-1 .6-1.3l1.3-1c.3-.2.7-.4 1.1-.4h4.9c.4 0 .8.1 1.1.4l1.3 1c.4.3.6.8.6 1.3v2.5"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M9 16.25a1.25 1.25 0 1 1-2.5 0A1.25 1.25 0 0 1 9 16.25zM17.5 16.25a1.25 1.25 0 1 1-2.5 0a1.25 1.25 0 0 1 2.5 0z"
-          stroke="currentColor"
-          strokeWidth="2"
-        />
-        <path
-          d="M9.75 11.25h.01M14.25 11.25h.01"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10l-2.7-3.4A2 2 0 0 0 13.7 6H10.3a2 2 0 0 0-1.6.6L6 10l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2" />
+        <circle cx="7" cy="17" r="2" />
+        <circle cx="17" cy="17" r="2" />
       </svg>
     );
   }
@@ -71,18 +48,9 @@ function TemplateIcon({ id }: { id: string }) {
   if (id === "study") {
     return (
       <svg {...common}>
-        <path
-          d="M12 4l9 5-9 5L3 9l9-5z"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M7 12v4.5c0 .6.32 1.16.84 1.46C9.06 18.6 10.5 19 12 19s2.94-.4 4.16-1.04c.52-.3.84-.86.84-1.46V12"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M12 6.253v13" />
+        <path d="M12 6.253C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253" />
+        <path d="M12 6.253C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
       </svg>
     );
   }
@@ -90,30 +58,16 @@ function TemplateIcon({ id }: { id: string }) {
   if (id === "gapyear") {
     return (
       <svg {...common}>
-        <path
-          d="M4 15.5l7.5-2"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M11.5 13.5l6.5-7"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M9 6.5l4.5 2"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M13 5l2.5 1.5"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
+        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />
+      </svg>
+    );
+  }
+
+  if (id === "custom") {
+    return (
+      <svg {...common}>
+        <circle cx="12" cy="12" r="8" />
+        <circle cx="12" cy="12" r="3" />
       </svg>
     );
   }
@@ -121,18 +75,10 @@ function TemplateIcon({ id }: { id: string }) {
   // flat
   return (
     <svg {...common}>
-      <path
-        d="M4 10.5L12 4l8 6.5V20a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 20v-9.5z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M10 21v-6a2 2 0 0 1 4 0v6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <path d="M3 12l2-2m0 0l7-7 7 7" />
+      <path d="M5 10v10a1 1 0 001 1h3" />
+      <path d="M19 10v10a1 1 0 01-1 1h-3" />
+      <path d="M10 21v-4a1 1 0 011-1h2a1 1 0 011 1v4" />
     </svg>
   );
 }
@@ -218,19 +164,19 @@ export function MilestonesSection({
   const isMobileVariant =
     slotBetweenSelectionAndFinancing != null && !desktopPlanSplit;
 
-  const getIconForMilestone = (m: Milestone): string => {
+  const getTemplateIdForMilestone = (m: Milestone): MilestoneTemplate["id"] | "custom" => {
     const templateMatch = LIFEEVENT_TEMPLATES.find(
       (t) => t.title.toLowerCase() === m.title.toLowerCase(),
     );
-    if (templateMatch) return templateMatch.icon;
+    if (templateMatch) return templateMatch.id;
 
     const title = m.title.toLowerCase();
-    if (title.includes("führerschein")) return "🚗";
-    if (title.includes("auslandsjahr") || title.includes("welt")) return "🌍";
-    if (title.includes("studium") || title.includes("studien")) return "🎓";
+    if (title.includes("führerschein")) return "license";
+    if (title.includes("auslandsjahr") || title.includes("welt")) return "gapyear";
+    if (title.includes("studium") || title.includes("studien")) return "study";
     if (title.includes("wohnung") || title.includes("immobilie") || title.includes("haus"))
-      return "🏡";
-    return "🎯";
+      return "flat";
+    return "custom";
   };
 
   const sectionClass =
@@ -288,11 +234,7 @@ export function MilestonesSection({
                   }
                   aria-hidden
                 >
-                  {isMobileVariant ? (
-                    <TemplateIcon id={template.id} />
-                  ) : (
-                    <span className="text-xl">{template.icon}</span>
-                  )}
+                  <TemplateIcon id={template.id} />
                 </div>
                 <div className="min-w-0">
                   <p
@@ -429,9 +371,8 @@ export function MilestonesSection({
             <p className="typo-a2 mt-1 text-slate-600">
               Sieh auf einen Blick, welche Ziele bereits voll oder teilweise finanziert sind.
             </p>
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <div className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {sorted
-                .filter((m) => m.amount < 0)
                 .map((m) => {
                   const detail = milestoneDetails.get(m.id);
                   if (!detail || detail.cost <= 0) return null;
@@ -440,16 +381,13 @@ export function MilestonesSection({
                   const financedAmount = detail.cost - detail.shortfall;
                   const missingAmount = detail.shortfall;
 
-                  let barColor = "bg-slate-500";
+                  const barColor = "bg-[#86BFA8]";
                   let statusTextColor = "text-slate-100";
                   if (detail.status === "finanzierbar") {
-                    barColor = "bg-[#86BFA8]";
                     statusTextColor = "text-[#86BFA8]";
                   } else if (detail.status === "teilweise finanzierbar") {
-                    barColor = "bg-amber-400";
                     statusTextColor = "text-amber-200";
                   } else if (detail.status === "nicht finanzierbar") {
-                    barColor = "bg-rose-400";
                     statusTextColor = "text-rose-200";
                   }
 
@@ -460,7 +398,12 @@ export function MilestonesSection({
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-xl">{getIconForMilestone(m)}</span>
+                          <span
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 ring-1 ring-emerald-200/60"
+                            aria-hidden
+                          >
+                            <TemplateIcon id={getTemplateIdForMilestone(m)} />
+                          </span>
                           <div>
                             <p className="typo-a4-medium text-slate-900">
                               {m.title}
@@ -589,14 +532,14 @@ export function MilestonesSection({
 
   if (slotBetweenSelectionAndFinancing != null && desktopPlanSplit) {
     return (
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start lg:gap-8">
-        <section className={`${sectionClass} lg:col-start-1 lg:row-start-1`}>
-          {selectionBlock}
-        </section>
-        <div className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-6 lg:self-start">
-          {slotBetweenSelectionAndFinancing}
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start lg:gap-8">
+          <section className={sectionClass}>{selectionBlock}</section>
+          <div className="lg:sticky lg:top-6 lg:self-start">
+            {slotBetweenSelectionAndFinancing}
+          </div>
         </div>
-        <section className={`${sectionClass} lg:col-start-1 lg:row-start-2`}>
+        <section className={sectionClass}>
           {financingBlock}
         </section>
       </div>

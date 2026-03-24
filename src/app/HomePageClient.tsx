@@ -15,7 +15,6 @@ import type { MilestoneTemplate } from "@/components/calculator/MilestonesSectio
 import { MobileInputStep } from "@/components/calculator/MobileInputStep";
 import { MobileResultStep } from "@/components/calculator/MobileResultStep";
 import { SavePlanModal } from "@/components/calculator/SavePlanModal";
-import { SummaryCards } from "@/components/calculator/SummaryCards";
 import { defaultInputs } from "@/data/defaultMilestones";
 import { formatCurrency, formatPercent } from "@/lib/format";
 import {
@@ -573,7 +572,11 @@ export default function HomePageClient() {
         </div>
 
         {/* Desktop: Seite 2 (Konfiguration) oder Seite 3 (Lebensschritte & Ergebnis) */}
-        <div className="hidden flex-col gap-6 lg:flex">
+        <div
+          className={`hidden flex-col lg:flex ${
+            isDesktopPlanScreen ? "gap-3" : "gap-6"
+          }`}
+        >
           {!isIntroScreen && (
             <>
               <div className="flex items-center justify-between">
@@ -675,18 +678,6 @@ export default function HomePageClient() {
                     <PlanBesprechenSection bookingUrl={bookingUrlOverride} />
                   )}
 
-                  <div className="space-y-3">
-                    <SummaryCards result={simulation} />
-                    <div className="flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => setSaveModalOpen(true)}
-                        className="rounded-full bg-slate-900 px-4 py-2 text-xs font-medium text-slate-50 shadow-sm hover:bg-slate-800"
-                      >
-                        Plan speichern
-                      </button>
-                    </div>
-                  </div>
                 </>
               ) : (
                 <>
