@@ -29,8 +29,8 @@ function TemplateIcon({ id }: { id: string }) {
     fill: "none",
     stroke: "#86BFA8",
     strokeWidth: "1.5",
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
     xmlns: "http://www.w3.org/2000/svg",
     "aria-hidden": "true" as const,
   };
