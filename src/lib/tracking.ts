@@ -4,7 +4,7 @@ export async function trackEvent(
   eventData?: Record<string, unknown>,
 ): Promise<void> {
   try {
-    await fetch("https://4futurefamily-web.vercel.app/api/pinguin/track", {
+    await fetch("https://www.4futurefamily.de/api/pinguin/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, eventName, eventData }),
