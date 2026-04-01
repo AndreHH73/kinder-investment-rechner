@@ -17,6 +17,7 @@ import { MobileResultStep } from "@/components/calculator/MobileResultStep";
 import { SavePlanModal } from "@/components/calculator/SavePlanModal";
 import { defaultInputs } from "@/data/defaultMilestones";
 import { formatCurrency, formatPercent } from "@/lib/format";
+import { trackEvent } from "@/lib/tracking";
 import {
   getRecommendedMonthlyRate,
   runCalculatorSimulation,
@@ -66,6 +67,8 @@ export default function HomePageClient() {
   const heroScrollTimeoutRef = useRef<number | null>(null);
   const isFirstRender = useRef(true);
   const shouldScrollToBaseInputsRef = useRef(false);
+  const trackingTokenRef = useRef<string | null>(null);
+  const hasTrackedResultRef = useRef(false);
 
   const {
     simulation,
@@ -281,6 +284,14 @@ export default function HomePageClient() {
   };
 
   const handleConsultationCtaClick = () => {
+    try {
+      const token = trackingTokenRef.current;
+      if (token) {
+        void trackEvent(token, "booking_clicked");
+      }
+    } catch {
+      // fail silently
+    }
     setIsConsultationOpen(true);
   };
 
@@ -314,6 +325,37 @@ export default function HomePageClient() {
       window.scrollTo(0, 0);
     }
   };
+
+  useEffect(() => {
+    try {
+      const token = searchParams.get("t");
+      if (!token) return;
+      trackingTokenRef.current = token;
+      void trackEvent(token, "plan_started");
+    } catch {
+      // fail silently
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    try {
+      if (hasTrackedResultRef.current) return;
+      const token = trackingTokenRef.current;
+      if (!token) return;
+      const projectedValue = simulation?.core?.finalBalance;
+      if (projectedValue == null) return;
+      if (isIntroScreen) return;
+
+      hasTrackedResultRef.current = true;
+      void trackEvent(token, "result_viewed", {
+        projectedValue,
+        childAge: inputs.childAge,
+        monthlyRate: inputs.monthlyContribution,
+      });
+    } catch {
+      // fail silently
+    }
+  }, [simulation, isIntroScreen, inputs.childAge, inputs.monthlyContribution]);
 
   useEffect(() => {
     if (isIntroScreen) return;
