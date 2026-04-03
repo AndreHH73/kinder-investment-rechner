@@ -29,10 +29,36 @@ import type {
   Milestone,
 } from "@/types/calculator";
 
+const DEFAULT_PINGUIN_ACCESS_URL = "https://www.4futurefamily.de/pinguin/access";
+
+function DesktopResultGateOverlay({ accessUrl }: { accessUrl: string }) {
+  return (
+    <div className="pointer-events-auto absolute inset-0 z-10 flex items-center justify-center p-6">
+      <div className="max-w-[360px] rounded-2xl border border-emerald-200/70 bg-white/95 p-8 text-center shadow-[0_14px_32px_-22px_rgba(2,44,30,0.35)] backdrop-blur-sm">
+        <p className="text-[17px] font-medium leading-relaxed text-slate-800">
+          Willst du dein konkretes Ergebnis sehen und die Lebensschritte deines
+          Kindes planen?
+        </p>
+        <a
+          href={accessUrl}
+          className="mt-6 flex w-full items-center justify-center rounded-full bg-[#86BFA8] px-6 py-3.5 text-base font-semibold text-white shadow-[0_18px_36px_-24px_rgba(2,44,30,0.55)] transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
+        >
+          Ja, meinen Plan anzeigen
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePageClient() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const hasAccessToken = Boolean(searchParams.get("t")?.trim());
+  const pinguinAccessUrl =
+    process.env.NEXT_PUBLIC_PINGUIN_ACCESS_URL?.trim() ||
+    DEFAULT_PINGUIN_ACCESS_URL;
 
   const screenParam = searchParams.get("screen") ?? "intro";
   const isIntroScreen = screenParam === "intro";
@@ -639,79 +665,92 @@ export default function HomePageClient() {
 
               {isDesktopPlanScreen ? (
                 <>
-                  <HeroResultLight
-                    inputs={inputs}
-                    simulation={simulation?.core ?? null}
-                    hasMilestones={milestones.length > 0}
-                    containerClassName="mx-auto w-full max-w-none"
-                    valueClassName="text-[64px] leading-[1.02] font-bold"
-                    titleClassName="text-[14px]"
-                    noteClassName="text-[16px]"
-                    cardClassName="px-12 py-12"
-                    statsLabelClassName="text-[14px]"
-                    statsValueClassName="text-[20px] font-bold"
-                    statsGridClassName="mt-6 pt-6 gap-6"
-                    centered
-                    contentGapClassName="space-y-6"
-                  />
+                  <div className="relative">
+                    <div
+                      className={
+                        hasAccessToken
+                          ? "space-y-6"
+                          : "pointer-events-none space-y-6 [filter:blur(8px)]"
+                      }
+                    >
+                      <HeroResultLight
+                        inputs={inputs}
+                        simulation={simulation?.core ?? null}
+                        hasMilestones={milestones.length > 0}
+                        containerClassName="mx-auto w-full max-w-none"
+                        valueClassName="text-[64px] leading-[1.02] font-bold"
+                        titleClassName="text-[14px]"
+                        noteClassName="text-[16px]"
+                        cardClassName="px-12 py-12"
+                        statsLabelClassName="text-[14px]"
+                        statsValueClassName="text-[20px] font-bold"
+                        statsGridClassName="mt-6 pt-6 gap-6"
+                        centered
+                        contentGapClassName="space-y-6"
+                      />
 
-                  <MobileResultStep
-                    simulation={simulation}
-                    points={chartPoints}
-                    chartMilestones={chartMilestones}
-                    comparisonRange={comparisonRange}
-                    onRangeChange={setComparisonRange}
-                    baseMonthly={inputs.monthlyContribution}
-                    milestones={milestones}
-                    onAddMilestone={() => {
-                      const nextAge =
-                        (milestones[milestones.length - 1]?.age ??
-                          inputs.childAge + 1) as number;
-                      setMilestoneMode("create");
-                      setEditingMilestone({
-                        id: `m-${Date.now()}`,
-                        title: "",
-                        age: nextAge,
-                        amount: 0,
-                        type: "expense",
-                        description: "",
-                      });
-                    }}
-                    onEditMilestone={(milestone) => {
-                      setMilestoneMode("edit");
-                      setEditingMilestone(milestone);
-                    }}
-                    onDeleteMilestone={(id) => {
-                      setMilestones((prev) => prev.filter((m) => m.id !== id));
-                    }}
-                    recommendation={recommendation}
-                    onApplyRecommended={(amount) => {
-                      setInputs((prev) => ({
-                        ...prev,
-                        monthlyContribution: amount,
-                      }));
-                      setBaselineScenario(null);
-                    }}
-                    onAddFromTemplate={(template: MilestoneTemplate) => {
-                      setMilestoneMode("create");
-                      setEditingMilestone({
-                        id: `m-${Date.now()}`,
-                        title: template.title,
-                        age: template.defaultAge,
-                        amount: template.defaultAmount,
-                        type: "expense",
-                        description: `Typische Kosten: ${template.costLabel}`,
-                      });
-                    }}
-                    onBack={handleDesktopBackToConfig}
-                    onSelectScenarioAmount={(amount) =>
-                      setInputs((prev) => ({
-                        ...prev,
-                        monthlyContribution: amount,
-                      }))
-                    }
-                    desktopPlanSplit
-                  />
+                      <MobileResultStep
+                        simulation={simulation}
+                        points={chartPoints}
+                        chartMilestones={chartMilestones}
+                        comparisonRange={comparisonRange}
+                        onRangeChange={setComparisonRange}
+                        baseMonthly={inputs.monthlyContribution}
+                        milestones={milestones}
+                        onAddMilestone={() => {
+                          const nextAge =
+                            (milestones[milestones.length - 1]?.age ??
+                              inputs.childAge + 1) as number;
+                          setMilestoneMode("create");
+                          setEditingMilestone({
+                            id: `m-${Date.now()}`,
+                            title: "",
+                            age: nextAge,
+                            amount: 0,
+                            type: "expense",
+                            description: "",
+                          });
+                        }}
+                        onEditMilestone={(milestone) => {
+                          setMilestoneMode("edit");
+                          setEditingMilestone(milestone);
+                        }}
+                        onDeleteMilestone={(id) => {
+                          setMilestones((prev) => prev.filter((m) => m.id !== id));
+                        }}
+                        recommendation={recommendation}
+                        onApplyRecommended={(amount) => {
+                          setInputs((prev) => ({
+                            ...prev,
+                            monthlyContribution: amount,
+                          }));
+                          setBaselineScenario(null);
+                        }}
+                        onAddFromTemplate={(template: MilestoneTemplate) => {
+                          setMilestoneMode("create");
+                          setEditingMilestone({
+                            id: `m-${Date.now()}`,
+                            title: template.title,
+                            age: template.defaultAge,
+                            amount: template.defaultAmount,
+                            type: "expense",
+                            description: `Typische Kosten: ${template.costLabel}`,
+                          });
+                        }}
+                        onBack={handleDesktopBackToConfig}
+                        onSelectScenarioAmount={(amount) =>
+                          setInputs((prev) => ({
+                            ...prev,
+                            monthlyContribution: amount,
+                          }))
+                        }
+                        desktopPlanSplit
+                      />
+                    </div>
+                    {!hasAccessToken ? (
+                      <DesktopResultGateOverlay accessUrl={pinguinAccessUrl} />
+                    ) : null}
+                  </div>
 
                   <PlanSummarySection
                     onConsultationClick={handleConsultationCtaClick}
@@ -737,50 +776,67 @@ export default function HomePageClient() {
                       />
                     </div>
 
-                    <div className="flex flex-col gap-4 lg:sticky lg:top-6 lg:self-start lg:pt-8">
-                      <div className="space-y-3">
-                        <h2 className="text-center text-[30px] font-semibold leading-[1.08] tracking-tight text-slate-900">
-                          Dein Plan für die Zukunft
-                        </h2>
+                    <div className="relative flex flex-col gap-4 lg:sticky lg:top-6 lg:self-start lg:pt-8">
+                      <div
+                        className={
+                          hasAccessToken
+                            ? "flex flex-col gap-4"
+                            : "pointer-events-none flex flex-col gap-4 [filter:blur(8px)]"
+                        }
+                      >
+                        <div className="space-y-3">
+                          <h2 className="text-center text-[30px] font-semibold leading-[1.08] tracking-tight text-slate-900">
+                            Dein Plan für die Zukunft
+                          </h2>
+                        </div>
+                        <div className="flex justify-center">
+                          <span className="inline-flex items-center rounded-full border border-emerald-200/60 bg-emerald-50/70 px-5 py-2 text-[18px] font-semibold text-emerald-800/80 shadow-[0_10px_22px_-18px_rgba(2,44,30,0.35)]">
+                            {formatCurrency(inputs.monthlyContribution)} / Monat
+                          </span>
+                        </div>
+                        <p className="mx-auto max-w-[400px] pb-4 text-center text-[17px] font-normal leading-relaxed text-slate-600">
+                          Mit {formatCurrency(inputs.monthlyContribution)} im Monat
+                          kannst du deinem Kind ein Vermögen von{" "}
+                          {formatCurrency(simulation?.core?.finalBalance ?? 0)}{" "}
+                          bis zum Alter von {Math.round(inputs.targetAge)} Jahren
+                          ermöglichen
+                          {milestones.length === 0
+                            ? " – noch ohne geplante Lebensschritte."
+                            : " – unter Berücksichtigung deiner geplanten Lebensschritte."}
+                        </p>
+                        <div className="w-full [&>section]:mx-0 [&>section]:max-w-none">
+                          <HeroResultLight
+                            inputs={inputs}
+                            simulation={simulation?.core ?? null}
+                            hasMilestones={milestones.length > 0}
+                            valueClassName="text-[64px] leading-[1.02] font-bold"
+                            titleClassName="text-[14px]"
+                            noteClassName="text-[16px]"
+                            cardClassName="px-12 py-12"
+                            statsLabelClassName="text-[14px]"
+                            statsValueClassName="text-[20px] font-bold"
+                            statsGridClassName="mt-6 pt-6 gap-6"
+                            centered
+                            contentGapClassName="space-y-6"
+                          />
+                        </div>
                       </div>
-                      <div className="flex justify-center">
-                        <span className="inline-flex items-center rounded-full border border-emerald-200/60 bg-emerald-50/70 px-5 py-2 text-[18px] font-semibold text-emerald-800/80 shadow-[0_10px_22px_-18px_rgba(2,44,30,0.35)]">
-                          {formatCurrency(inputs.monthlyContribution)} / Monat
-                        </span>
-                      </div>
-                      <p className="mx-auto max-w-[400px] pb-4 text-center text-[17px] font-normal leading-relaxed text-slate-600">
-                        Mit {formatCurrency(inputs.monthlyContribution)} im Monat
-                        kannst du deinem Kind ein Vermögen von{" "}
-                        {formatCurrency(simulation?.core?.finalBalance ?? 0)}{" "}
-                        bis zum Alter von {Math.round(inputs.targetAge)} Jahren
-                        ermöglichen
-                        {milestones.length === 0
-                          ? " – noch ohne geplante Lebensschritte."
-                          : " – unter Berücksichtigung deiner geplanten Lebensschritte."}
-                      </p>
-                      <div className="w-full [&>section]:mx-0 [&>section]:max-w-none">
-                        <HeroResultLight
-                          inputs={inputs}
-                          simulation={simulation?.core ?? null}
-                          hasMilestones={milestones.length > 0}
-                          valueClassName="text-[64px] leading-[1.02] font-bold"
-                          titleClassName="text-[14px]"
-                          noteClassName="text-[16px]"
-                          cardClassName="px-12 py-12"
-                          statsLabelClassName="text-[14px]"
-                          statsValueClassName="text-[20px] font-bold"
-                          statsGridClassName="mt-6 pt-6 gap-6"
-                          centered
-                          contentGapClassName="space-y-6"
-                        />
-                      </div>
+                      {!hasAccessToken ? (
+                        <DesktopResultGateOverlay accessUrl={pinguinAccessUrl} />
+                      ) : null}
                     </div>
                   </section>
 
                   <div className="mx-auto mt-4 flex w-full max-w-[480px] justify-center px-1">
                     <button
                       type="button"
-                      onClick={handleDesktopLifeStepsCtaClick}
+                      onClick={() => {
+                        if (!hasAccessToken) {
+                          window.location.assign(pinguinAccessUrl);
+                          return;
+                        }
+                        handleDesktopLifeStepsCtaClick();
+                      }}
                       className="inline-flex w-full items-center justify-center rounded-full bg-[#86BFA8] px-10 py-5 text-[20px] font-semibold text-white shadow-[0_18px_36px_-24px_rgba(2,44,30,0.55)] transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
                     >
                       Lebensschritte planen
