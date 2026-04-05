@@ -12,6 +12,8 @@ import type {
   Milestone,
   MilestoneDetail,
   SimulationPoint,
+  SimulationWithPhasesInput,
+  SparPhase,
 } from "@/types/calculator";
 
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
@@ -107,6 +109,79 @@ export function validateInput(
     valid: errors.length === 0,
     errors,
   };
+}
+
+/** Monatliche Sparrate für das Laufzeitjahr j (0 = erstes Jahr); erste passende Phase gewinnt. */
+function getSparrateForPlanYear(phases: SparPhase[], planYear: number): number {
+  for (const phase of phases) {
+    if (planYear >= phase.vonJahr && planYear <= phase.bisJahr) {
+      return phase.sparrate;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Erzeugt rate-change-Events so, dass ab dem ersten Monat des Laufzeitjahres y die Rate für y gilt
+ * (Wechsel liegt auf dem letzten Monat von y−1, damit runSimulation die neue Rate ab Monat y*12 nutzt).
+ */
+function buildPhaseRateChangeEvents(
+  childCurrentAge: number,
+  lastPlanYear: number,
+  phases: SparPhase[],
+): InvestmentEvent[] {
+  const events: InvestmentEvent[] = [];
+  let previousRate = getSparrateForPlanYear(phases, 0);
+
+  for (let y = 1; y <= lastPlanYear; y += 1) {
+    const rateThisYear = getSparrateForPlanYear(phases, y);
+    if (rateThisYear !== previousRate) {
+      const monthIndex = y * MONTHS_PER_YEAR - 1;
+      const age = childCurrentAge + monthIndex / MONTHS_PER_YEAR;
+      events.push({
+        id: `sparphase-wechsel-nach-laufzeitjahr-${y - 1}`,
+        type: "rate-change",
+        age,
+        amount: rateThisYear,
+      });
+      previousRate = rateThisYear;
+    }
+  }
+
+  return events;
+}
+
+/**
+ * Wie runSimulation, aber monatliche Sparrate aus Phasen (Laufzeitjahr = floor(monthIndex / 12)).
+ * Verzinsung: 6 % p.a. Nutzt intern runSimulation + synthetische rate-change-Events.
+ */
+export function runSimulationWithPhases(
+  input: SimulationWithPhasesInput,
+): SimulationResult {
+  const contributionsAtMonthStart = input.contributionsAtMonthStart ?? true;
+
+  // Gleiche Monatsanzahl wie runSimulation → letztes Laufzeitjahr = floor(totalMonths / 12)
+  const totalMonths =
+    (input.targetAge - input.childCurrentAge) * MONTHS_PER_YEAR;
+  const lastPlanYear = Math.max(0, Math.floor(totalMonths / MONTHS_PER_YEAR));
+
+  const initialRate = getSparrateForPlanYear(input.phases, 0);
+  const syntheticEvents = buildPhaseRateChangeEvents(
+    input.childCurrentAge,
+    lastPlanYear,
+    input.phases,
+  );
+
+  const calculatorInput: CalculatorInput = {
+    childCurrentAge: input.childCurrentAge,
+    targetAge: input.targetAge,
+    initialMonthlyContribution: initialRate,
+    initialLumpSum: input.initialLumpSum,
+    expectedReturnPercentPerYear: 6,
+    contributionsAtMonthStart,
+  };
+
+  return runSimulation(calculatorInput, syntheticEvents);
 }
 
 export function runSimulation(
