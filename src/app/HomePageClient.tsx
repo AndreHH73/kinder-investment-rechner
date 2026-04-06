@@ -22,17 +22,24 @@ import { MobileResultStep } from "@/components/calculator/MobileResultStep";
 import { ParameterCard } from "@/components/calculator/ParameterCard";
 import { SavePlanModal } from "@/components/calculator/SavePlanModal";
 import { SummaryCards } from "@/components/calculator/SummaryCards";
+import {
+  VariableSparraten,
+  type VariableSparratenChangePayload,
+} from "@/components/calculator/VariableSparraten";
 import { defaultInputs } from "@/data/defaultMilestones";
 import { formatCurrency, formatPercent } from "@/lib/format";
 import {
+  buildSimulationPoints,
+  computeMilestoneDetails,
   getRecommendedMonthlyRate,
-  runCalculatorSimulation,
+  runSimulationWithPhases,
 } from "@/lib/simulation";
 import type {
   ChartMilestone,
   CalculatorInputs,
   CalculatorSimulationResult,
   Milestone,
+  SparPhase,
 } from "@/types/calculator";
 
 export default function HomePageClient() {
@@ -53,6 +60,11 @@ export default function HomePageClient() {
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [comparisonRange, setComparisonRange] = useState<number>(50);
   const [mobileStep, setMobileStep] = useState<1 | 2>(1);
+  const [cashflowEvents, setCashflowEvents] = useState<
+    Array<{ age: number; amount: number; label?: string }>
+  >([]);
+  const [variableRatesPayload, setVariableRatesPayload] =
+    useState<VariableSparratenChangePayload | null>(null);
   const [baselineScenario, setBaselineScenario] = useState<{
     monthly: number;
     endValue: number;
@@ -77,7 +89,52 @@ export default function HomePageClient() {
     chartPoints: import("@/types/calculator").SimulationPoint[];
     chartMilestones: ChartMilestone[];
   } = useMemo(() => {
-    const base = runCalculatorSimulation(inputs, milestones);
+    const lastPlanYear = Math.max(0, inputs.targetAge - inputs.childAge);
+    const fallbackPhases: SparPhase[] = [
+      { vonJahr: 0, bisJahr: lastPlanYear, sparrate: inputs.monthlyContribution },
+    ];
+    const phases = variableRatesPayload?.phases ?? fallbackPhases;
+    const core = runSimulationWithPhases(
+      {
+        childCurrentAge: inputs.childAge,
+        targetAge: inputs.targetAge,
+        initialLumpSum: inputs.initialLumpSum,
+        phases,
+        contributionsAtMonthStart: true,
+      },
+      cashflowEvents,
+    );
+    const points = buildSimulationPoints(core);
+    const milestoneDetailsRaw = computeMilestoneDetails(core);
+    const milestoneIdsByCashflowEventId = new Map<string, string>();
+    cashflowEvents.forEach((event, index) => {
+      const milestone = milestones.find(
+        (m) => m.age === event.age && m.amount === event.amount,
+      );
+      if (milestone) {
+        milestoneIdsByCashflowEventId.set(`cashflow-${index}`, milestone.id);
+      }
+    });
+    const milestoneDetails = new Map<string, import("@/types/calculator").MilestoneDetail>();
+    for (const [eventId, detail] of milestoneDetailsRaw.entries()) {
+      const milestoneId = milestoneIdsByCashflowEventId.get(eventId);
+      if (milestoneId) {
+        milestoneDetails.set(milestoneId, detail);
+      }
+    }
+    const totalMilestoneIncome = milestones
+      .filter((m) => m.amount > 0)
+      .reduce((sum, m) => sum + m.amount, 0);
+    const totalMilestoneExpenses = milestones
+      .filter((m) => m.amount < 0)
+      .reduce((sum, m) => sum + Math.abs(m.amount), 0);
+    const base: CalculatorSimulationResult = {
+      core,
+      points,
+      totalMilestoneIncome,
+      totalMilestoneExpenses,
+      milestoneDetails,
+    };
     const basePoints = base.points;
 
     // Baue Punkte mit sichtbaren "Drops" bei kostenpflichtigen Lebensschritten
@@ -151,7 +208,18 @@ export default function HomePageClient() {
       chartPoints,
       chartMilestones,
     };
-  }, [inputs, milestones, comparisonRange]);
+  }, [inputs, milestones, comparisonRange, cashflowEvents, variableRatesPayload]);
+
+  useEffect(() => {
+    const nextCashflows = milestones
+      .filter((m) => m.amount !== 0)
+      .map((m) => ({
+        age: m.age,
+        amount: m.amount,
+        label: m.title,
+      }));
+    setCashflowEvents(nextCashflows);
+  }, [milestones]);
 
   const recommendation = useMemo(() => {
     if (!simulation?.milestoneDetails || milestones.length === 0) return null;
@@ -373,6 +441,13 @@ export default function HomePageClient() {
                   onSliderCommit={handleMobileInputsChangeAndScroll}
                 />
               </div>
+              <VariableSparraten
+                childCurrentAge={inputs.childAge}
+                targetAge={inputs.targetAge}
+                initialLumpSum={inputs.initialLumpSum}
+                baseMonthlyContribution={inputs.monthlyContribution}
+                onChange={setVariableRatesPayload}
+              />
 
               {/* Neuer Hero (Future Plan Overview) kommt nach den Eingaben */}
               <div ref={heroRef} className="space-y-4 pt-2">
@@ -535,7 +610,16 @@ export default function HomePageClient() {
         {/* Desktop Layout */}
         <div className="hidden flex-col gap-6 lg:flex">
           <section className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)]">
-            <ParameterCard value={inputs} onChange={setInputs} />
+            <div className="space-y-4">
+              <ParameterCard value={inputs} onChange={setInputs} />
+              <VariableSparraten
+                childCurrentAge={inputs.childAge}
+                targetAge={inputs.targetAge}
+                initialLumpSum={inputs.initialLumpSum}
+                baseMonthlyContribution={inputs.monthlyContribution}
+                onChange={setVariableRatesPayload}
+              />
+            </div>
             <GrowthChart points={chartPoints} milestones={chartMilestones} />
           </section>
 

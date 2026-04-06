@@ -154,9 +154,12 @@ function buildPhaseRateChangeEvents(
 /**
  * Wie runSimulation, aber monatliche Sparrate aus Phasen (Laufzeitjahr = floor(monthIndex / 12)).
  * Verzinsung: 6 % p.a. Nutzt intern runSimulation + synthetische rate-change-Events.
+ *
+ * Optional: cashflowEvents – positiver amount = Einzahlung (lump-sum), negativ = Entnahme (withdrawal).
  */
 export function runSimulationWithPhases(
   input: SimulationWithPhasesInput,
+  cashflowEvents?: Array<{ age: number; amount: number; label?: string }>,
 ): SimulationResult {
   const contributionsAtMonthStart = input.contributionsAtMonthStart ?? true;
 
@@ -172,6 +175,19 @@ export function runSimulationWithPhases(
     input.phases,
   );
 
+  const mappedCashflowEvents: InvestmentEvent[] = (cashflowEvents ?? [])
+    .filter((e) => e.amount !== 0)
+    .filter((e) => e.age <= input.targetAge)
+    .map((e, index) => ({
+      id: `cashflow-${index}`,
+      age: e.age,
+      type: e.amount > 0 ? ("lump-sum" as const) : ("withdrawal" as const),
+      amount: Math.abs(e.amount),
+      ...(e.label !== undefined ? { description: e.label } : {}),
+    }));
+
+  const mergedEvents = [...syntheticEvents, ...mappedCashflowEvents];
+
   const calculatorInput: CalculatorInput = {
     childCurrentAge: input.childCurrentAge,
     targetAge: input.targetAge,
@@ -181,7 +197,7 @@ export function runSimulationWithPhases(
     contributionsAtMonthStart,
   };
 
-  return runSimulation(calculatorInput, syntheticEvents);
+  return runSimulation(calculatorInput, mergedEvents);
 }
 
 export function runSimulation(
