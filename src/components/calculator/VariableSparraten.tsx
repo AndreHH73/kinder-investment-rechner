@@ -57,10 +57,10 @@ function validateExceptions(
   for (let i = 1; i < sorted.length; i += 1) {
     const cur = sorted[i]!;
     const prev = sorted[i - 1]!;
-    if (cur.vonAlter < prev.bisAlter && !errors.has(cur.id)) {
+    if (cur.vonAlter <= prev.bisAlter && !errors.has(cur.id)) {
       errors.set(
         cur.id,
-        "Von-Alter darf nicht kleiner sein als das Bis-Alter der vorherigen Ausnahme.",
+        `Diese Phase muss nach Alter ${prev.bisAlter} beginnen.`,
       );
     }
   }
@@ -71,13 +71,19 @@ function validateExceptions(
       const b = rows[j]!;
       const overlaps =
         Math.max(a.vonAlter, b.vonAlter) <= Math.min(a.bisAlter, b.bisAlter);
-      if (overlaps) {
-        if (!errors.has(a.id)) {
-          errors.set(a.id, "Ausnahmen dürfen sich nicht überlappen.");
-        }
-        if (!errors.has(b.id)) {
-          errors.set(b.id, "Ausnahmen dürfen sich nicht überlappen.");
-        }
+      if (!overlaps) continue;
+
+      const first =
+        a.vonAlter < b.vonAlter ||
+        (a.vonAlter === b.vonAlter &&
+          (a.bisAlter < b.bisAlter ||
+            (a.bisAlter === b.bisAlter && a.id < b.id)))
+          ? a
+          : b;
+      const second = first.id === a.id ? b : a;
+      const msg = `Diese Phase muss nach Alter ${first.bisAlter} beginnen.`;
+      if (!errors.has(second.id)) {
+        errors.set(second.id, msg);
       }
     }
   }
@@ -336,7 +342,7 @@ export function VariableSparraten({
         vonAlter = childCurrentAge;
         bisAlter = Math.min(vonAlter + 1, targetAge);
       } else {
-        vonAlter = last.bisAlter;
+        vonAlter = last.bisAlter + 1;
         bisAlter = Math.min(vonAlter + 1, targetAge);
         if (bisAlter <= vonAlter) {
           bisAlter = targetAge;
@@ -383,7 +389,7 @@ export function VariableSparraten({
           const err = errorById.get(row.id);
           const prevTimeline = getPreviousInTimeline(exceptions, row.id);
           const vonMin = prevTimeline
-            ? prevTimeline.bisAlter
+            ? prevTimeline.bisAlter + 1
             : childCurrentAge;
           const vonMax = Math.max(
             vonMin,
