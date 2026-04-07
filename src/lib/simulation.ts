@@ -518,7 +518,10 @@ function phasesWithReplacedBase(
  * inputs.monthlyContribution schon 25€ ist — sonst ersetzt phasesWithReplacedBase nichts und die Suche
  * landet bei viel zu hohen Raten.
  */
-function getEmbeddedBaseRate(phases: SparPhase[], sliderBase: number): number {
+function getEmbeddedBaseRate(
+  phases: readonly SparPhase[],
+  sliderBase: number,
+): number {
   const sb = Number(sliderBase);
   let sliderYears = 0;
   const byRate = new Map<number, number>();

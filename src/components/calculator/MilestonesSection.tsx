@@ -37,21 +37,21 @@ function TemplateIcon({ id }: { id: string }) {
           d="M6.5 15.5h11"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
+          strokeLinecap={"round" as const}
         />
         <path
           d="M7.5 11.5l1.4-2.6c.3-.6.9-.9 1.6-.9h2c.7 0 1.3.3 1.6.9l1.4 2.6"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          strokeLinecap={"round" as const}
+          strokeLinejoin={"round" as const}
         />
         <path
           d="M6.5 15.5V13c0-.5.2-1 .6-1.3l1.3-1c.3-.2.7-.4 1.1-.4h4.9c.4 0 .8.1 1.1.4l1.3 1c.4.3.6.8.6 1.3v2.5"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          strokeLinecap={"round" as const}
+          strokeLinejoin={"round" as const}
         />
         <path
           d="M9 16.25a1.25 1.25 0 1 1-2.5 0A1.25 1.25 0 0 1 9 16.25zM17.5 16.25a1.25 1.25 0 1 1-2.5 0a1.25 1.25 0 0 1 2.5 0z"
@@ -62,7 +62,7 @@ function TemplateIcon({ id }: { id: string }) {
           d="M9.75 11.25h.01M14.25 11.25h.01"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
+          strokeLinecap={"round" as const}
         />
       </svg>
     );
@@ -75,13 +75,13 @@ function TemplateIcon({ id }: { id: string }) {
           d="M12 4l9 5-9 5L3 9l9-5z"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinejoin="round"
+          strokeLinejoin={"round" as const}
         />
         <path
           d="M7 12v4.5c0 .6.32 1.16.84 1.46C9.06 18.6 10.5 19 12 19s2.94-.4 4.16-1.04c.52-.3.84-.86.84-1.46V12"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
+          strokeLinecap={"round" as const}
         />
       </svg>
     );
@@ -94,25 +94,25 @@ function TemplateIcon({ id }: { id: string }) {
           d="M4 15.5l7.5-2"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
+          strokeLinecap={"round" as const}
         />
         <path
           d="M11.5 13.5l6.5-7"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
+          strokeLinecap={"round" as const}
         />
         <path
           d="M9 6.5l4.5 2"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
+          strokeLinecap={"round" as const}
         />
         <path
           d="M13 5l2.5 1.5"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinejoin="round"
+          strokeLinejoin={"round" as const}
         />
       </svg>
     );
@@ -125,13 +125,13 @@ function TemplateIcon({ id }: { id: string }) {
         d="M4 10.5L12 4l8 6.5V20a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 20v-9.5z"
         stroke="currentColor"
         strokeWidth="2"
-        strokeLinejoin="round"
+        strokeLinejoin={"round" as const}
       />
       <path
         d="M10 21v-6a2 2 0 0 1 4 0v6"
         stroke="currentColor"
         strokeWidth="2"
-        strokeLinecap="round"
+        strokeLinecap={"round" as const}
       />
     </svg>
   );
@@ -368,13 +368,13 @@ export function MilestonesSection({
                     d="M8 6h13M8 12h13M8 18h13"
                     stroke="currentColor"
                     strokeWidth="2"
-                    strokeLinecap="round"
+                    strokeLinecap={"round" as const}
                   />
                   <path
                     d="M3 6h.01M3 12h.01M3 18h.01"
                     stroke="currentColor"
                     strokeWidth="3"
-                    strokeLinecap="round"
+                    strokeLinecap={"round" as const}
                   />
                 </svg>
               </span>
