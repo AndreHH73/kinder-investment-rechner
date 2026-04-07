@@ -382,17 +382,30 @@ export function VariableSparraten({
       className="rounded-3xl border border-slate-100 bg-white/80 p-5 shadow-sm shadow-slate-900/5 backdrop-blur-[2px]"
       aria-label="Variable Sparraten"
     >
-      <h2 className="typo-a1 text-foreground">Variable Sparraten</h2>
+      <h2 className="typo-a1 text-foreground">Wenn sich deine Sparrate verändert</h2>
       <p className="typo-a2 mt-1 text-slate-600">
-        Eine Basisrate gilt für die ganze Laufzeit. Ausnahmen überschreiben die
-        Rate nur in dem gewählten Altersbereich (auch 0&nbsp;€ möglich). Überall
-        sonst bleibt die Basisrate aktiv; Zinseszins läuft unverändert weiter.
+        Plane auch realistische Phasen ein - zum Beispiel, wenn du vorübergehend
+        weniger sparen kannst, eine Pause brauchst oder später mehr zurücklegen
+        möchtest. Wir zeigen dir sofort, wie sich das auf die Lebensschritte
+        deines Kindes auswirkt.
       </p>
 
       <p className="typo-a2 mt-4 font-medium text-slate-800">
         Basis-Sparrate: {formatCurrency(baseMonthlyContribution)} / Monat
-        (gesamte Laufzeit)
       </p>
+      <p className="typo-a4 mt-1 text-slate-500">
+        Diese Sparrate gilt standardmäßig für die gesamte Laufzeit. Einzelne
+        Sparphasen können sie zeitweise verändern.
+      </p>
+
+      <div className="mt-4 rounded-2xl border border-emerald-200/70 bg-emerald-50/40 p-3">
+        <p className="typo-a3 text-slate-800">Typische Beispiele:</p>
+        <ul className="typo-a4 mt-2 list-disc space-y-1 pl-5 text-slate-700">
+          <li>vorübergehend weniger sparen</li>
+          <li>eine Sparpause einplanen</li>
+          <li>später die Sparrate erhöhen</li>
+        </ul>
+      </div>
 
       <div className="mt-4 flex flex-col gap-4">
         {exceptions.map((row, index) => {
@@ -414,7 +427,7 @@ export function VariableSparraten({
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="typo-a2 font-medium text-slate-800">
-                  Von Alter {row.vonAlter} bis Alter {row.bisAlter}:{" "}
+                  Von {row.vonAlter} bis {row.bisAlter} Jahren sparst du{" "}
                   {formatCurrency(row.sparrate)} / Monat
                 </p>
                 <button
@@ -430,7 +443,7 @@ export function VariableSparraten({
               <div className="mt-3 grid grid-cols-3 gap-2">
                 <ExceptionNumberField
                   inputId={`${row.id}-von`}
-                  label="Von Alter"
+                  label="Ab Alter"
                   value={row.vonAlter}
                   min={vonMin}
                   max={vonMax}
@@ -450,7 +463,7 @@ export function VariableSparraten({
                 />
                 <ExceptionNumberField
                   inputId={`${row.id}-rate`}
-                  label="Sparrate €"
+                  label="Sparrate pro Monat"
                   value={row.sparrate}
                   min={0}
                   max={2000}
@@ -459,6 +472,12 @@ export function VariableSparraten({
                   }
                 />
               </div>
+              <p className="typo-a4 mt-2 text-slate-500">
+                Trage hier ein, in welchem Alter deines Kindes sich deine
+                monatliche Sparrate verändert. So kannst du zum Beispiel eine
+                Sparpause, eine niedrigere Rate oder eine spätere Erhöhung
+                realistisch einplanen.
+              </p>
 
               {err ? (
                 <p className="typo-a4 mt-2 text-red-600" role="alert">
@@ -475,8 +494,16 @@ export function VariableSparraten({
         onClick={addException}
         className="typo-a4 mt-4 inline-flex w-full items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-3 font-semibold text-primary-action shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2 sm:w-auto"
       >
-        Ausnahme hinzufügen
+        Sparphase hinzufügen
       </button>
+
+      <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+        <p className="typo-a3 text-slate-800">So verändert sich dein Plan</p>
+        <p className="typo-a4 mt-1 text-slate-600">
+          Du siehst sofort, ob die Lebensschritte deines Kindes weiterhin
+          finanzierbar bleiben - oder wo noch eine Lücke entsteht.
+        </p>
+      </div>
     </section>
   );
 }

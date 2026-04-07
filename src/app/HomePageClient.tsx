@@ -66,6 +66,7 @@ export default function HomePageClient() {
     endValue: number;
   } | null>(null);
   const [isConsultationOpen, setIsConsultationOpen] = useState(false);
+  const [isVariableRatesOpen, setIsVariableRatesOpen] = useState(false);
 
   /** Mobil: Lebensschritte-Ansicht per Schritt 2 oder Deep-Link ?screen=plan */
   const showMobilePlanStep =
@@ -479,15 +480,6 @@ export default function HomePageClient() {
                   onSliderCommit={handleMobileInputsChangeAndScroll}
                 />
               </div>
-              <VariableSparraten
-                childCurrentAge={inputs.childAge}
-                targetAge={inputs.targetAge}
-                initialLumpSum={inputs.initialLumpSum}
-                baseMonthlyContribution={inputs.monthlyContribution}
-                annualReturnPercent={inputs.expectedReturnPercentPerYear}
-                onChange={setVariableRatesPayload}
-              />
-
               {/* Neuer Hero (Future Plan Overview) kommt nach den Eingaben */}
               <div ref={heroRef} className="space-y-4 pt-2">
                 <div className="space-y-2 pt-1">
@@ -614,6 +606,27 @@ export default function HomePageClient() {
                     ...prev,
                     monthlyContribution: amount,
                   }))
+                }
+                afterMilestonesSection={
+                  <section className="space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsVariableRatesOpen((prev) => !prev)}
+                      className="flex w-full items-center gap-3 rounded-2xl bg-[#86BFA8] px-4 py-3 text-left font-semibold text-white shadow-xl shadow-emerald-900/10 transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA] active:opacity-90"
+                    >
+                      <span className="w-full text-center">Sparplan flexibel anpassen</span>
+                    </button>
+                    {isVariableRatesOpen && (
+                      <VariableSparraten
+                        childCurrentAge={inputs.childAge}
+                        targetAge={inputs.targetAge}
+                        initialLumpSum={inputs.initialLumpSum}
+                        baseMonthlyContribution={inputs.monthlyContribution}
+                        annualReturnPercent={inputs.expectedReturnPercentPerYear}
+                        onChange={setVariableRatesPayload}
+                      />
+                    )}
+                  </section>
                 }
               />
               {hasRecommendation && recommendation && (
@@ -753,6 +766,37 @@ export default function HomePageClient() {
                         monthlyContribution: amount,
                       }))
                     }
+                    afterMilestonesSection={
+                      <section className="space-y-3">
+                        <button
+                          type="button"
+                          onClick={() => setIsVariableRatesOpen((prev) => !prev)}
+                          className="flex w-full items-center gap-3 rounded-2xl bg-[#86BFA8] px-4 py-3 text-left font-semibold text-white shadow-xl shadow-emerald-900/10 transition-colors hover:bg-[#79B19B] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#F9FBFA] active:opacity-90"
+                        >
+                          <span className="w-full text-center">Sparplan flexibel anpassen</span>
+                        </button>
+                        {isVariableRatesOpen && (
+                          <VariableSparraten
+                            childCurrentAge={inputs.childAge}
+                            targetAge={inputs.targetAge}
+                            initialLumpSum={inputs.initialLumpSum}
+                            baseMonthlyContribution={inputs.monthlyContribution}
+                            annualReturnPercent={inputs.expectedReturnPercentPerYear}
+                            onChange={setVariableRatesPayload}
+                          />
+                        )}
+                        {hasRecommendation && recommendation && (
+                          <section className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
+                            <h3 className="mb-2 font-medium">Handlungsempfehlungen</h3>
+                            <ul className="list-disc space-y-1 pl-5">
+                              {recommendation.lines.map((line, idx) => (
+                                <li key={`${idx}-${line}`}>{line}</li>
+                              ))}
+                            </ul>
+                          </section>
+                        )}
+                      </section>
+                    }
                     desktopPlanSplit
                   />
 
@@ -776,14 +820,6 @@ export default function HomePageClient() {
                         targetAgeMin={18}
                         targetAgeMax={67}
                         layout="desktopStacked"
-                      />
-                      <VariableSparraten
-                        childCurrentAge={inputs.childAge}
-                        targetAge={inputs.targetAge}
-                        initialLumpSum={inputs.initialLumpSum}
-                        baseMonthlyContribution={inputs.monthlyContribution}
-                        annualReturnPercent={inputs.expectedReturnPercentPerYear}
-                        onChange={setVariableRatesPayload}
                       />
                     </div>
 

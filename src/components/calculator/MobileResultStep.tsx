@@ -12,6 +12,7 @@ import type {
   Milestone,
   SimulationPoint,
 } from "@/types/calculator";
+import type { ReactNode } from "react";
 
 interface MobileResultStepProps {
   simulation: CalculatorSimulationResult | null;
@@ -31,6 +32,7 @@ interface MobileResultStepProps {
   onSelectScenarioAmount: (amount: number) => void;
   /** Desktop Plan-Seite: Split Lebensschritte | Timeline (sticky), Timeline ohne Mini-Hero */
   desktopPlanSplit?: boolean;
+  afterMilestonesSection?: ReactNode;
 }
 
 export function MobileResultStep({
@@ -50,6 +52,7 @@ export function MobileResultStep({
   onBack: _onBack,
   onSelectScenarioAmount,
   desktopPlanSplit = false,
+  afterMilestonesSection,
 }: MobileResultStepProps) {
   void _onBack;
 
@@ -84,6 +87,7 @@ export function MobileResultStep({
           />
         }
       />
+      {afterMilestonesSection}
 
       <section className="rounded-3xl bg-surface p-6 shadow-sm shadow-slate-200/80">
         <h2 className="typo-a1 text-slate-800">
