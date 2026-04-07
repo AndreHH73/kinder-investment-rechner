@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode, SVGProps } from "react";
 import { useState } from "react";
 
 import { formatCurrency, formatCurrencyWithSign } from "@/lib/format";
@@ -22,7 +22,7 @@ export interface MilestoneTemplate {
 }
 
 function TemplateIcon({ id }: { id: string }) {
-  const common = {
+  const common: SVGProps<SVGSVGElement> = {
     width: "28",
     height: "28",
     viewBox: "0 0 24 24",
@@ -314,13 +314,13 @@ export function MilestonesSection({
                     d="M8 6h13M8 12h13M8 18h13"
                     stroke="currentColor"
                     strokeWidth="2"
-                    strokeLinecap="round"
+                    strokeLinecap={"round" as const}
                   />
                   <path
                     d="M3 6h.01M3 12h.01M3 18h.01"
                     stroke="currentColor"
                     strokeWidth="3"
-                    strokeLinecap="round"
+                    strokeLinecap={"round" as const}
                   />
                 </svg>
               </span>

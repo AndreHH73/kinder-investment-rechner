@@ -1,5 +1,23 @@
 import type { SimulationResult } from "@/types/investment";
 
+/** Eine Sparphase: Laufzeitjahre inkl. Grenzen (0 = erstes Jahr ab Start), monatliche Rate in €. */
+export type SparPhase = {
+  vonJahr: number;
+  bisJahr: number;
+  sparrate: number;
+};
+
+/** Eingabe für Simulation mit Phasen-Raten; Rendite standardmäßig 6 % p.a., falls nicht gesetzt. */
+export interface SimulationWithPhasesInput {
+  childCurrentAge: number;
+  targetAge: number;
+  initialLumpSum: number;
+  phases: SparPhase[];
+  annualReturnPercent?: number;
+  /** Entspricht runCalculatorSimulation / Standard true */
+  contributionsAtMonthStart?: boolean;
+}
+
 export interface CalculatorInputs {
   monthlyContribution: number;
   childAge: number;
