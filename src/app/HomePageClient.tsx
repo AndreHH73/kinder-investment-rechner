@@ -727,7 +727,7 @@ export default function HomePageClient() {
                     onDeleteMilestone={(id) => {
                       setMilestones((prev) => prev.filter((m) => m.id !== id));
                     }}
-                    recommendation={recommendation}
+                    recommendation={null}
                     onApplyRecommended={(amount) => {
                       setInputs((prev) => ({
                         ...prev,
