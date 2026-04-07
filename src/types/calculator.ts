@@ -7,12 +7,13 @@ export type SparPhase = {
   sparrate: number;
 };
 
-/** Eingabe für Simulation mit Phasen-Raten; Rendite wird in runSimulationWithPhases fix mit 6 % p.a. gesetzt. */
+/** Eingabe für Simulation mit Phasen-Raten; Rendite standardmäßig 6 % p.a., falls nicht gesetzt. */
 export interface SimulationWithPhasesInput {
   childCurrentAge: number;
   targetAge: number;
   initialLumpSum: number;
   phases: SparPhase[];
+  annualReturnPercent?: number;
   /** Entspricht runCalculatorSimulation / Standard true */
   contributionsAtMonthStart?: boolean;
 }

@@ -95,28 +95,19 @@ export default function HomePageClient() {
       { vonJahr: 0, bisJahr: lastPlanYear, sparrate: inputs.monthlyContribution },
     ];
     const phases = (variableRatesPayload?.phases ?? fallbackPhases).map((p) => ({ ...p }));
-    console.log("PHASES FOR SIMULATION:", JSON.stringify(phases));
     const core = runSimulationWithPhases(
       {
         childCurrentAge: inputs.childAge,
         targetAge: inputs.targetAge,
         initialLumpSum: inputs.initialLumpSum,
         phases,
+        annualReturnPercent: inputs.expectedReturnPercentPerYear,
         contributionsAtMonthStart: true,
       },
       cashflowEvents,
     );
     const points = buildSimulationPoints(core);
     const milestoneDetailsRaw = computeMilestoneDetails(core);
-    console.log(
-      "CAPITAL AT MILESTONES:",
-      milestones
-        .filter((m) => m.amount < 0)
-        .map((m) => {
-          const detail = milestoneDetailsRaw.get(m.id);
-          return `age ${m.age}: ${Math.round(detail?.balanceAtAge ?? 0)}€`;
-        }),
-    );
     const milestoneIdsByCashflowEventId = new Map<string, string>();
     cashflowEvents.forEach((event, index) => {
       const milestone = milestones.find(
@@ -454,6 +445,7 @@ export default function HomePageClient() {
                 targetAge={inputs.targetAge}
                 initialLumpSum={inputs.initialLumpSum}
                 baseMonthlyContribution={inputs.monthlyContribution}
+                annualReturnPercent={inputs.expectedReturnPercentPerYear}
                 onChange={setVariableRatesPayload}
               />
 
@@ -635,6 +627,7 @@ export default function HomePageClient() {
                 targetAge={inputs.targetAge}
                 initialLumpSum={inputs.initialLumpSum}
                 baseMonthlyContribution={inputs.monthlyContribution}
+                annualReturnPercent={inputs.expectedReturnPercentPerYear}
                 onChange={setVariableRatesPayload}
               />
             </div>

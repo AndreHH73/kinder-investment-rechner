@@ -153,7 +153,7 @@ function buildPhaseRateChangeEvents(
 
 /**
  * Wie runSimulation, aber monatliche Sparrate aus Phasen (Laufzeitjahr = floor(monthIndex / 12)).
- * Verzinsung: 6 % p.a. Nutzt intern runSimulation + synthetische rate-change-Events.
+ * Verzinsung: annualReturnPercent (Fallback 6 % p.a.). Nutzt intern runSimulation + synthetische rate-change-Events.
  *
  * Optional: cashflowEvents – positiver amount = Einzahlung (lump-sum), negativ = Entnahme (withdrawal).
  */
@@ -162,6 +162,7 @@ export function runSimulationWithPhases(
   cashflowEvents?: Array<{ age: number; amount: number; label?: string }>,
 ): SimulationResult {
   const contributionsAtMonthStart = input.contributionsAtMonthStart ?? true;
+  const annualReturnPercent = input.annualReturnPercent ?? 6;
 
   // Gleiche Monatsanzahl wie runSimulation → letztes Laufzeitjahr = floor(totalMonths / 12)
   const totalMonths =
@@ -193,7 +194,7 @@ export function runSimulationWithPhases(
     targetAge: input.targetAge,
     initialMonthlyContribution: initialRate,
     initialLumpSum: input.initialLumpSum,
-    expectedReturnPercentPerYear: 6,
+    expectedReturnPercentPerYear: annualReturnPercent,
     contributionsAtMonthStart,
   };
 
@@ -618,6 +619,7 @@ export function getRecommendedMonthlyRate(
         targetAge: inputs.targetAge,
         initialLumpSum: inputs.initialLumpSum,
         phases: candidatePhases,
+        annualReturnPercent: inputs.expectedReturnPercentPerYear,
         contributionsAtMonthStart: true,
       },
       cashflowEvents,

@@ -162,6 +162,7 @@ type VariableSparratenProps = {
   targetAge: number;
   initialLumpSum: number;
   baseMonthlyContribution: number;
+  annualReturnPercent?: number;
   contributionsAtMonthStart?: boolean;
   onChange: (payload: VariableSparratenChangePayload) => void;
 };
@@ -262,6 +263,7 @@ export function VariableSparraten({
   targetAge,
   initialLumpSum,
   baseMonthlyContribution,
+  annualReturnPercent,
   contributionsAtMonthStart,
   onChange,
 }: VariableSparratenProps) {
@@ -299,6 +301,7 @@ export function VariableSparraten({
       targetAge,
       initialLumpSum,
       phases: merged,
+      annualReturnPercent,
       contributionsAtMonthStart,
     });
 
@@ -315,6 +318,7 @@ export function VariableSparraten({
     targetAge,
     baseMonthlyContribution,
     initialLumpSum,
+    annualReturnPercent,
     contributionsAtMonthStart,
   ]);
 
