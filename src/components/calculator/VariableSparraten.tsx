@@ -136,11 +136,17 @@ function mergeExceptionsToSparPhases(
     });
   }
 
-  return segments.map((p) => ({
-    vonJahr: p.vonAlter - childCurrentAge,
-    bisJahr: p.bisAlter - childCurrentAge,
-    sparrate: p.sparrate,
-  }));
+  return segments.map((p) => {
+    const vonAlter = Number(p.vonAlter);
+    const bisAlter = Number(p.bisAlter);
+    const childAge = Number(childCurrentAge);
+    return {
+      // Altersgrenzen direkt relativ zum aktuellen Kindesalter.
+      vonJahr: vonAlter - childAge,
+      bisJahr: bisAlter - childAge,
+      sparrate: Number(p.sparrate),
+    };
+  });
 }
 
 export type VariableSparratenChangePayload = {

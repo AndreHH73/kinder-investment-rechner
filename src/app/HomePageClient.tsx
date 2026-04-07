@@ -32,6 +32,7 @@ import {
   buildSimulationPoints,
   computeMilestoneDetails,
   getRecommendedMonthlyRate,
+  type RecommendationSet,
   runSimulationWithPhases,
 } from "@/lib/simulation";
 import type {
@@ -93,7 +94,8 @@ export default function HomePageClient() {
     const fallbackPhases: SparPhase[] = [
       { vonJahr: 0, bisJahr: lastPlanYear, sparrate: inputs.monthlyContribution },
     ];
-    const phases = variableRatesPayload?.phases ?? fallbackPhases;
+    const phases = (variableRatesPayload?.phases ?? fallbackPhases).map((p) => ({ ...p }));
+    console.log("PHASES FOR SIMULATION:", JSON.stringify(phases));
     const core = runSimulationWithPhases(
       {
         childCurrentAge: inputs.childAge,
@@ -106,6 +108,15 @@ export default function HomePageClient() {
     );
     const points = buildSimulationPoints(core);
     const milestoneDetailsRaw = computeMilestoneDetails(core);
+    console.log(
+      "CAPITAL AT MILESTONES:",
+      milestones
+        .filter((m) => m.amount < 0)
+        .map((m) => {
+          const detail = milestoneDetailsRaw.get(m.id);
+          return `age ${m.age}: ${Math.round(detail?.balanceAtAge ?? 0)}€`;
+        }),
+    );
     const milestoneIdsByCashflowEventId = new Map<string, string>();
     cashflowEvents.forEach((event, index) => {
       const milestone = milestones.find(
@@ -221,21 +232,18 @@ export default function HomePageClient() {
     setCashflowEvents(nextCashflows);
   }, [milestones]);
 
-  const recommendation = useMemo(() => {
+  const recommendation = useMemo<RecommendationSet | null>(() => {
     if (!simulation?.milestoneDetails || milestones.length === 0) return null;
-    const expenseMilestones = milestones.filter((m) => m.amount < 0);
-    if (expenseMilestones.length === 0) return null;
-    const allFundable = expenseMilestones.every(
-      (m) => simulation.milestoneDetails.get(m.id)?.status === "finanzierbar",
-    );
-    if (allFundable) return null;
-    const recommended = getRecommendedMonthlyRate(inputs, milestones);
-    if (recommended == null) return null;
-    return {
-      recommendedMonthly: recommended,
-      deltaFromCurrent: recommended - inputs.monthlyContribution,
-    };
-  }, [simulation, inputs, milestones]);
+    const ausgabenMilestones = milestones.filter((m) => m.amount < 0);
+    if (ausgabenMilestones.length === 0) return null;
+    const lastPlanYear = Math.max(0, inputs.targetAge - inputs.childAge);
+    const fallbackPhases: SparPhase[] = [
+      { vonJahr: 0, bisJahr: lastPlanYear, sparrate: inputs.monthlyContribution },
+    ];
+    const phases = (variableRatesPayload?.phases ?? fallbackPhases).map((p) => ({ ...p }));
+    return getRecommendedMonthlyRate(inputs, milestones, phases);
+  }, [simulation, inputs, milestones, variableRatesPayload]);
+  const hasRecommendation = Boolean(recommendation?.lines?.length);
 
   // Mobile Step-Flow in Browser-History integrieren, damit der Zurück-Button von Schritt 2 zu Schritt 1 führt.
   useEffect(() => {
@@ -550,7 +558,7 @@ export default function HomePageClient() {
                 onDeleteMilestone={(id) => {
                   setMilestones((prev) => prev.filter((m) => m.id !== id));
                 }}
-                recommendation={recommendation}
+                recommendation={null}
                 onApplyRecommended={(amount) => {
                   setInputs((prev) => ({
                     ...prev,
@@ -577,6 +585,16 @@ export default function HomePageClient() {
                   }))
                 }
               />
+              {hasRecommendation && recommendation && (
+                <section className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
+                  <h3 className="mb-2 font-medium">Handlungsempfehlungen</h3>
+                  <ul className="list-disc space-y-1 pl-5">
+                    {recommendation.lines.map((line, idx) => (
+                      <li key={`${idx}-${line}`}>{line}</li>
+                    ))}
+                  </ul>
+                </section>
+              )}
 
               {/* Abschluss-Summary und finaler CTA nur auf Seite 2 (mobil) */}
               <PlanSummarySection
@@ -630,6 +648,16 @@ export default function HomePageClient() {
 
           <div className="space-y-3">
             <SummaryCards result={simulation} />
+            {hasRecommendation && recommendation && (
+              <section className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
+                <h3 className="mb-2 font-medium">Handlungsempfehlungen</h3>
+                <ul className="list-disc space-y-1 pl-5">
+                  {recommendation.lines.map((line, idx) => (
+                    <li key={`${idx}-${line}`}>{line}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
             <div className="flex justify-end">
               <button
                 type="button"
@@ -644,7 +672,7 @@ export default function HomePageClient() {
           <MilestonesSection
             milestones={milestones}
             milestoneDetails={simulation?.milestoneDetails}
-            recommendation={recommendation}
+            recommendation={null}
             onApplyRecommended={(amount) => {
               setInputs((prev) => ({ ...prev, monthlyContribution: amount }));
               setBaselineScenario(null);

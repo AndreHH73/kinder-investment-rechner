@@ -465,43 +465,362 @@ export function runCalculatorSimulation(
 }
 
 const RECOMMENDED_RATE_STEP_EUR = 5;
-const RECOMMENDED_RATE_MAX_EUR = 3000;
+const RECOMMENDED_BASE_RATE_MAX_EUR = 500;
+const RATE_EQ_EPS = 1e-6;
+
+type FundingStatus = "finanziert" | "teilweise" | "nicht finanzierbar";
+type EventFundingEvaluation = {
+  id: string;
+  title: string;
+  age: number;
+  amount: number;
+  status: FundingStatus;
+  /** Aus computeMilestoneDetails: fehlender Betrag bei Entnahme (0 wenn finanziert). */
+  shortfall: number;
+};
+
+function clonePhases(phases: ReadonlyArray<SparPhase>): SparPhase[] {
+  return phases.map((p) => ({
+    vonJahr: Number(p.vonJahr),
+    bisJahr: Number(p.bisJahr),
+    sparrate: Number(p.sparrate),
+  }));
+}
 
 /**
- * Ermittelt die kleinste monatliche Sparrate, bei der alle aktiven
- * Lebensschritte (sequenziell) vollständig finanzierbar sind.
- * Iterative Suche in 5-€-Schritten.
- * @returns Empfohlene Sparrate in € oder null, wenn bereits alle finanzierbar sind.
+ * Basis-Sparrate im Slider ersetzen: nur Segmente, die zur „eingebetteten“ Basisrate gehören,
+ * auf baseNew setzen; Ausnahmen (andere Beträge) bleiben.
+ * Vergleich numerisch (Number + Toleranz), damit string/float aus UI/JSON nicht scheitert.
+ */
+function phasesWithReplacedBase(
+  phases: ReadonlyArray<SparPhase>,
+  baseOld: number,
+  baseNew: number,
+): SparPhase[] {
+  const bo = Number(baseOld);
+  const bn = Number(baseNew);
+  return phases.map((p) => {
+    const r = Number(p.sparrate);
+    return {
+      ...p,
+      vonJahr: Number(p.vonJahr),
+      bisJahr: Number(p.bisJahr),
+      sparrate: Math.abs(r - bo) < RATE_EQ_EPS ? bn : r,
+    };
+  });
+}
+
+/**
+ * Eingebettete Basisrate in den Phasen: meist die im Plan am häufigsten vorkommende Sparrate (in Planjahren),
+ * außer 0€-Pause. Wenn der Slider-Wert in den Phasen vorkommt, gilt der Slider.
+ * So gleichen wir ab, wenn mergeExceptionsToSparPhases noch eine alte Basis enthält (z. B. 259€) aber
+ * inputs.monthlyContribution schon 25€ ist — sonst ersetzt phasesWithReplacedBase nichts und die Suche
+ * landet bei viel zu hohen Raten.
+ */
+function getEmbeddedBaseRate(phases: SparPhase[], sliderBase: number): number {
+  const sb = Number(sliderBase);
+  let sliderYears = 0;
+  const byRate = new Map<number, number>();
+  for (const p of phases) {
+    const years = Number(p.bisJahr) - Number(p.vonJahr) + 1;
+    const r = Number(p.sparrate);
+    if (Number.isNaN(r) || years <= 0) continue;
+    byRate.set(r, (byRate.get(r) ?? 0) + years);
+    if (Math.abs(r - sb) < RATE_EQ_EPS) sliderYears += years;
+  }
+  if (sliderYears > 0) return sb;
+  let best = sb;
+  let bestY = -1;
+  for (const [r, y] of byRate) {
+    if (Math.abs(r) < RATE_EQ_EPS) continue;
+    if (y > bestY) {
+      bestY = y;
+      best = r;
+    }
+  }
+  return best;
+}
+
+function alignPhasesToSliderBase(
+  phases: ReadonlyArray<SparPhase>,
+  sliderBase: number,
+): SparPhase[] {
+  // Defensiv: niemals mit externen Referenzen arbeiten, nur auf Deep-Copy.
+  const cloned = clonePhases(phases);
+  const embedded = getEmbeddedBaseRate(phases, sliderBase);
+  if (Math.abs(embedded - Number(sliderBase)) < RATE_EQ_EPS) {
+    return cloned;
+  }
+  return phasesWithReplacedBase(cloned, embedded, Number(sliderBase));
+}
+
+/** Längstes Präfix chronologisch sortierter Ausgaben, die alle voll finanziert sind. */
+function fundedPrefixLength(evaluations: EventFundingEvaluation[]): number {
+  let k = 0;
+  for (const e of evaluations) {
+    if (e.status === "finanziert") k += 1;
+    else break;
+  }
+  return k;
+}
+
+export type RecommendationSet = {
+  eventEvaluations: EventFundingEvaluation[];
+  lines: string[];
+  increaseBaseRate?: { recommended: number; delta: number };
+  shortenPause?: { recommendedBisAlter: number; yearsToShorten: number };
+};
+
+/**
+ * Bewertet alle Ausgaben-Lebensschritte sequenziell über die gesamte Timeline
+ * und erzeugt maximal 3 ehrliche Handlungsempfehlungen.
  */
 export function getRecommendedMonthlyRate(
   inputs: CalculatorInputs,
   milestones: Milestone[],
-): number | null {
+  phases: SparPhase[],
+): RecommendationSet | null {
   const filtered = milestones.filter(
     (m) => m.age >= inputs.childAge && m.age <= inputs.targetAge && m.amount < 0,
   );
   if (filtered.length === 0) return null;
 
-  let rate = inputs.monthlyContribution;
-  if (rate > RECOMMENDED_RATE_MAX_EUR) return null;
+  const cashflowEvents = milestones
+    .filter((m) => m.amount !== 0)
+    .map((m) => ({
+      age: m.age,
+      amount: m.amount,
+      label: m.title,
+    }));
+  const expenseEventIdByMilestoneId = new Map<string, string>();
+  let cashflowIdx = 0;
+  for (const m of milestones) {
+    if (m.amount === 0) continue;
+    if (m.amount < 0) {
+      expenseEventIdByMilestoneId.set(m.id, `cashflow-${cashflowIdx}`);
+    }
+    cashflowIdx += 1;
+  }
 
-  const allFundableAt = (monthly: number): boolean => {
-    const result = runCalculatorSimulation(
-      { ...inputs, monthlyContribution: monthly },
-      milestones,
+  const sliderBase = Number(inputs.monthlyContribution);
+  const sourcePhases = clonePhases(phases);
+  const workingPhases = alignPhasesToSliderBase(
+    sourcePhases,
+    sliderBase,
+  );
+
+  const evaluateScenario = (
+    candidatePhases: SparPhase[],
+  ): { allFundable: boolean; evaluations: EventFundingEvaluation[] } => {
+    const core = runSimulationWithPhases(
+      {
+        childCurrentAge: inputs.childAge,
+        targetAge: inputs.targetAge,
+        initialLumpSum: inputs.initialLumpSum,
+        phases: candidatePhases,
+        contributionsAtMonthStart: true,
+      },
+      cashflowEvents,
     );
-    return filtered.every(
-      (m) => result.milestoneDetails.get(m.id)?.status === "finanzierbar",
-    );
+    const details = computeMilestoneDetails(core);
+    const evaluations = filtered
+      .slice()
+      .sort((a, b) => a.age - b.age)
+      .map((m): EventFundingEvaluation => {
+        const eventId = expenseEventIdByMilestoneId.get(m.id);
+        const detail = eventId ? details.get(eventId) : undefined;
+        let status: FundingStatus = "nicht finanzierbar";
+        if (detail?.status === "finanzierbar") status = "finanziert";
+        else if (detail?.status === "teilweise finanzierbar") status = "teilweise";
+        return {
+          id: m.id,
+          title: m.title,
+          age: m.age,
+          amount: Math.abs(m.amount),
+          status,
+          shortfall: detail?.shortfall ?? 0,
+        };
+      });
+    return {
+      allFundable: evaluations.every((e) => e.status === "finanziert"),
+      evaluations,
+    };
   };
 
-  if (allFundableAt(rate)) return null;
+  const allFundableAt = (candidatePhases: SparPhase[]): boolean =>
+    evaluateScenario(candidatePhases).allFundable;
 
-  while (rate <= RECOMMENDED_RATE_MAX_EUR) {
-    rate += RECOMMENDED_RATE_STEP_EUR;
-    if (allFundableAt(rate)) return rate;
+  const baseline = evaluateScenario(workingPhases);
+  const recommendations: RecommendationSet = {
+    eventEvaluations: baseline.evaluations,
+    lines: [],
+  };
+
+  if (baseline.allFundable) {
+    recommendations.lines.push(
+      "Alle Lebensschritte sind mit den aktuellen Einstellungen finanzierbar.",
+    );
+    return recommendations;
   }
-  return null;
+
+  const fundedCount = baseline.evaluations.filter(
+    (e) => e.status === "finanziert",
+  ).length;
+  const unfunded = baseline.evaluations.filter((e) => e.status !== "finanziert");
+  if (fundedCount === 0) {
+    recommendations.lines.push("Aktuell ist kein Lebensschritt vollständig finanzierbar.");
+  } else {
+    const fundedTitles = baseline.evaluations
+      .filter((e) => e.status === "finanziert")
+      .map((e) => `${e.title} (Alter ${e.age})`)
+      .slice(0, 2)
+      .join(", ");
+    const unfundedTitles = unfunded
+      .map((e) => `${e.title} (Alter ${e.age})`)
+      .slice(0, 2)
+      .join(", ");
+    recommendations.lines.push(
+      `Finanziert: ${fundedTitles || "kein Ziel"}. Offen: ${unfundedTitles || "keins"}.`,
+    );
+  }
+
+  const toPlanYear = (age: number): number =>
+    Math.max(0, Math.floor(age - inputs.childAge));
+  const findPhaseAtAge = (age: number): SparPhase | undefined => {
+    const y = toPlanYear(age);
+    return workingPhases.find((p) => y >= p.vonJahr && y <= p.bisJahr);
+  };
+  const isBlockedByZeroException = (age: number): boolean => {
+    const phase = findPhaseAtAge(age);
+    if (!phase || phase.sparrate !== 0) return false;
+    // Eine Basis-Erhöhung wirkt vor dem Event nicht, wenn die 0€-Ausnahmephase ab Start bis zum Event reicht.
+    return phase.vonJahr === 0 && phase.bisJahr >= toPlanYear(age);
+  };
+  const blockedEvents = unfunded.filter((e) => isBlockedByZeroException(e.age));
+  const skipBaseRateRecommendation = blockedEvents.length > 0;
+
+  // 1) Mindest-Basisrate suchen, bei der SIMULATION + computeMilestoneDetails ALLE Ausgaben als "finanzierbar" melden.
+  // Wichtig: Basis nur in Segmenten ersetzen, die der aktuellen Basisrate entsprechen — nicht p.sparrate+delta auf alle Phasen,
+  // sonst würden 0€-Pausen künstlich angehoben und die Suche würde zu früh stoppen (z. B. "65€ reicht für alle" obwohl nur Event 1 passt).
+  const baseRateMax = Math.max(RECOMMENDED_BASE_RATE_MAX_EUR, sliderBase);
+  if (!skipBaseRateRecommendation && sliderBase <= baseRateMax) {
+    for (
+      let r = sliderBase + RECOMMENDED_RATE_STEP_EUR;
+      r <= baseRateMax;
+      r += RECOMMENDED_RATE_STEP_EUR
+    ) {
+      const candidatePhases = phasesWithReplacedBase(workingPhases, sliderBase, r);
+      if (allFundableAt(candidatePhases)) {
+        recommendations.increaseBaseRate = {
+          recommended: r,
+          delta: r - sliderBase,
+        };
+        break;
+      }
+    }
+  }
+
+  // Keine Basisrate bis Cap, die alle Events finanziert: Rate wählen, die das längste finanzierte Präfix (ab frühestem Event) maximiert.
+  let bestPartial: {
+    rate: number;
+    evaluations: EventFundingEvaluation[];
+    prefix: number;
+  } | null = null;
+  if (!skipBaseRateRecommendation && !recommendations.increaseBaseRate) {
+    for (
+      let r = sliderBase;
+      r <= baseRateMax;
+      r += RECOMMENDED_RATE_STEP_EUR
+    ) {
+      const ev = evaluateScenario(
+        phasesWithReplacedBase(workingPhases, sliderBase, r),
+      );
+      const prefix = fundedPrefixLength(ev.evaluations);
+      if (
+        !bestPartial ||
+        prefix > bestPartial.prefix ||
+        (prefix === bestPartial.prefix && r < bestPartial.rate)
+      ) {
+        bestPartial = { rate: r, evaluations: ev.evaluations, prefix };
+      }
+    }
+  }
+
+  // 2) Längste Ausnahmephase jährlich verkürzen.
+  const exceptionIndices = workingPhases
+    .map((p, idx) => ({ p, idx }))
+    .filter(
+      ({ p }) => Math.abs(Number(p.sparrate) - sliderBase) > RATE_EQ_EPS,
+    );
+  const longestException = exceptionIndices.reduce<
+    { p: SparPhase; idx: number } | null
+  >((acc, cur) => {
+    if (!acc) return cur;
+    const accLen = acc.p.bisJahr - acc.p.vonJahr;
+    const curLen = cur.p.bisJahr - cur.p.vonJahr;
+    return curLen > accLen ? cur : acc;
+  }, null);
+  if (longestException) {
+    let candidateBis = longestException.p.bisJahr;
+    while (candidateBis > longestException.p.vonJahr + 1) {
+      candidateBis -= 1;
+      const candidatePhases = clonePhases(workingPhases).map((p, idx) =>
+        idx === longestException.idx ? { ...p, bisJahr: candidateBis } : p,
+      );
+      const nextIdx = longestException.idx + 1;
+      if (nextIdx < candidatePhases.length) {
+        const next = candidatePhases[nextIdx]!;
+        candidatePhases[nextIdx] = {
+          ...next,
+          vonJahr: Math.min(next.bisJahr, candidateBis + 1),
+        };
+      }
+      if (allFundableAt(candidatePhases)) {
+        recommendations.shortenPause = {
+          recommendedBisAlter: inputs.childAge + candidateBis,
+          yearsToShorten: longestException.p.bisJahr - candidateBis,
+        };
+        break;
+      }
+    }
+  }
+
+  if (blockedEvents.length > 0) {
+    const firstBlocked = blockedEvents[0]!;
+    recommendations.lines.push(
+      `${firstBlocked.title} (Alter ${firstBlocked.age}) liegt in einer 0€-Ausnahmephase; Basis-Sparrate hilft hier nicht.`,
+    );
+  } else if (recommendations.increaseBaseRate) {
+    recommendations.lines.push(
+      `Basis-Sparrate auf ${recommendations.increaseBaseRate.recommended}€ erhöhen, um alle offenen Ziele zu finanzieren.`,
+    );
+  } else if (bestPartial) {
+    const parts = bestPartial.evaluations.map((e) =>
+      e.status === "finanziert"
+        ? `${e.title} ✓`
+        : `${e.title} ✗ (fehlen ${Math.round(e.shortfall)}€)`,
+    );
+    recommendations.lines.push(
+      `Mit ${bestPartial.rate}€/Monat: ${parts.join(", ")}.`,
+    );
+  } else {
+    recommendations.lines.push(
+      `Mit einer Basis-Sparrate bis ${baseRateMax}€ sind nicht alle offenen Ziele finanzierbar.`,
+    );
+  }
+
+  if (recommendations.shortenPause) {
+    recommendations.lines.push(
+      `Pause verkürzen: Bis-Alter auf ${recommendations.shortenPause.recommendedBisAlter} setzen (−${recommendations.shortenPause.yearsToShorten} Jahr(e)).`,
+    );
+  } else if (blockedEvents.length > 0) {
+    recommendations.lines.push(
+      "Mindestens ein offenes Ziel liegt in der Pause; dafür ist eine kürzere Ausnahmephase nötig.",
+    );
+  }
+
+  recommendations.lines = recommendations.lines.slice(0, 3);
+  return recommendations;
 }
 
 
