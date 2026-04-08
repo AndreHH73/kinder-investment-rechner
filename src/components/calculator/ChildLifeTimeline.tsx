@@ -238,7 +238,10 @@ export function ChildLifeTimeline({
                             <p className="typo-a4 text-slate-600">
                               Vermögen danach:{" "}
                               <span className="font-semibold text-[#86BFA8]">
-                                {formatCurrency(item.detail.balanceAfter)}
+                                {formatCurrency(
+                                  item.detail.balanceAtAge -
+                                    Math.abs(item.detail.cost),
+                                )}
                               </span>
                             </p>
                             {item.detail.status && (
