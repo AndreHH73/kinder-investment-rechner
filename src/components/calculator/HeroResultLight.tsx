@@ -41,7 +41,9 @@ export function HeroResultLight({
 }: HeroResultLightProps) {
   const endValue = simulation?.finalBalance ?? 0;
   const totalContributions = simulation?.totalContributions ?? 0;
-  const gain = simulation ? simulation.totalInterest : 0;
+  const gain = simulation
+    ? simulation.finalBalance - simulation.totalContributions
+    : 0;
 
   return (
     <section
