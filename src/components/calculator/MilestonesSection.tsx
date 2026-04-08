@@ -471,7 +471,7 @@ export function MilestonesSection({
                             Verbleibend danach
                             {" "}
                             <span className="font-semibold">
-                              {formatCurrency(detail.balanceAfter)}
+                              {formatCurrency(detail.balanceAtAge - Math.abs(detail.cost))}
                             </span>
                           </p>
                           {detail.status && (
