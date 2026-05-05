@@ -1,7 +1,17 @@
 "use client";
 
 import { formatCurrency } from "@/lib/format";
-import type { RecommendationSet } from "@/lib/simulation";
+
+type RecommendationSet = {
+  lines: string[];
+  increaseBaseRate?: {
+    delta: number;
+    recommended: number;
+  } | null;
+  eventEvaluations: Array<{
+    status: "finanziert" | string;
+  }>;
+};
 
 type DesktopRecommendationCardProps = {
   recommendation: RecommendationSet;
