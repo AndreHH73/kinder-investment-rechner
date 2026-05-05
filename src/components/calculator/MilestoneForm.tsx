@@ -46,7 +46,10 @@ export function MilestoneForm({
 
     onSubmit({
       ...draft,
-      amount: safeAmount,
+      amount:
+        draft.type === "expense"
+          ? -Math.abs(safeAmount)
+          : Math.abs(safeAmount),
     });
   };
 
